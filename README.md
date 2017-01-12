@@ -12,7 +12,7 @@ cela va installer les dépendances et librairies requise pour le projet.
 
 Utilisation : 
 
-<code>node ws-server.js</code>
+<code>npm start</code>
 
 puis allez sur <code>http://localhost:3000</code> avec CHROME uniquement
 
