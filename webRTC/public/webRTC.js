@@ -1,7 +1,7 @@
 let offerSent = false;
 let answerSent = false;
-let user = null;
-let user2 = null;
+let myPlayer;
+let myHost;
 let socket = null;
 let pcLocal;
 let pcLocalList = {};
@@ -9,42 +9,18 @@ let dcList = {};
 let dc1 = null;
 let dc2 = null;
 let activedc;
-let j1;
-let j2;
+let isHost = false;
+
 const cfg = {'iceServers': [{'url': "stun:stun.l.google.com:19302"}]},
     con = {'optional': [{'DtlsSrtpKeyAgreement': true}]};
 
 const sdpConstraints = {
     optional: []
 };
-function connectToWebSocket() {
-    socket = io.connect(location.origin);
-    socket.on('welcomeMessage', function (data) {
-        console.log("received message from the server : " + data.message);
-        data.user = user;
-        writeMsg(data);
-    });
-    socket.on('listOfClient', function (list) {
-        updateList(list);
-    });
-    socket.on('negotiationMessage', function (data) {
-        console.log("received message from the server : " + data);
-        if (data.action == "offer") {
-            user2 = data.from;
-            processOffer(data.data);
-        } else if (data.action == "answer") {
-            if (data.to == user) {
-                processAnswer(data.data, data.id);
-            }
-        }
-    });
-    socket.emit('nouveau_client', user);
-}
+
 function connectTo() {
 
-     j1 = new Player("test");
- j2 = new PlayerHost("host");
-
+    /*
     pcLocal = new RTCPeerConnection(cfg, con);
     pcLocal.onicecandidate = function () {
         if (pcLocal.iceGatheringState == "complete" && !offerSent) {
@@ -52,11 +28,11 @@ function connectTo() {
             sendNegotiation("offer", pcLocal.localDescription);
         }
     };
-    dc1 = pcLocal.createDataChannel(createID(user, user2), {reliable: true});
+    dc1 = pcLocal.createDataChannel(createID(myPlayer, myHost), {reliable: true});
     activedc = dc1;
     dc1.onopen = function () {
         console.log('Connected');
-        let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
+        let data = {myPlayer: "system", message: "the datachannel " + dc1.label + " has been opened"};
         writeMsg(data);
         offerSent = false;
     };
@@ -76,10 +52,10 @@ function connectTo() {
     }, function () {
     }, sdpConstraints);
 
-    pcLocalList[createID(user, user2)] = pcLocal;
+    pcLocalList[createID(myPlayer, myHost)] = pcLocal;
     if (dc1 != null) {
-        dcList[createID(user, user2)] = dc1;
-    }
+        dcList[createID(myPlayer, myHost)] = dc1;
+    }*/
 }
 function createID(local, remote) {
     return local + '-' + remote;
@@ -87,28 +63,29 @@ function createID(local, remote) {
 
 function processAnswer(answer) {
     let answerDesc = new RTCSessionDescription(answer);
-    pcLocalList[createID(user, user2)].setRemoteDescription(answerDesc);
+    pcLocalList[createID(myPlayer, myHost)].setRemoteDescription(answerDesc);
     console.log("------ PROCESSED ANSWER ------");
     return true;
 }
 
 function processOffer(offer) {
+    isHost = true;
     let pcRemote = new RTCPeerConnection(cfg, con);
     pcRemote.ondatachannel = function (e) {
         dc2 = e.channel || e;
         activedc = dc2;
         dc2.onopen = function () {
             console.log('Connected');
-            //on écrit dans le chat que le user s'est connecté
+            //on écrit dans le chat que le myPlayer s'est connecté
             let data = {user: "system", message: "the datachannel " + dc2.label + " has been opened"};
             writeMsg(data);
             answerSent = false;
-            pcLocalList[createID(user, user2)] = pcLocal;
+            pcLocalList[createID(myPlayer, myHost)] = pcLocal;
             if (dc1 != null) {
-                dcList[createID(user, user2)] = dc1;
+                dcList[createID(myPlayer, myHost)] = dc1;
             }
             if (dc2 != null) {
-                dcList[createID(user, user2)] = dc2;
+                dcList[createID(myPlayer, myHost)] = dc2;
             }
 
             let conn = new Connection("test-host",dc1,dc2);
@@ -128,9 +105,9 @@ function processOffer(offer) {
         }
     };
 
-    pcLocalList[createID(user, user2)] = pcRemote;
+    pcLocalList[createID(myPlayer, myHost)] = pcRemote;
     if (dc2 != null) {
-        dcList[createID(user, user2)] = dc2;
+        dcList[createID(myPlayer, myHost)] = dc2;
     }
 
     let offerDesc = new RTCSessionDescription(offer);
@@ -157,17 +134,17 @@ if (navigator.webkitGetUserMedia) {
 function sendMessage() {
     if (messageTextBox.value) {
         for (let id in dcList) {
-            dcList[id].send(JSON.stringify({message: messageTextBox.value, user: user}));
+            dcList[id].send(JSON.stringify({message: messageTextBox.value, user: myPlayer}));
         }
-        chatlog.innerHTML += '[' + user + '] ' + messageTextBox.value + '</p>';
+        chatlog.innerHTML += '[' + myPlayer + '] ' + messageTextBox.value + '</p>';
         messageTextBox.value = "";
     }
     return false
 }
 
 function sendNegotiation(type, sdp) {
-    let json = {from: user, to: user2, action: type, data: sdp};
-    console.log("Sending [" + user + "] to [" + user2 + "]: " + JSON.stringify(sdp));
+    let json = {from: myPlayer.name, to: myHost.name, action: type, data: sdp};
+    console.log("Sending [" + myPlayer.name + "] to [" + myHost.name + "]: " + JSON.stringify(sdp));
     socket.emit("negotiationMessage", JSON.stringify(json));
 }
 
@@ -181,7 +158,7 @@ function updateList(list) {
     x.onchange = function () {
         let selected = x.options[x.selectedIndex].value;
         console.log(selected);
-        $("#user2").val(selected);
+        $("#myHost").val(selected);
     };
     while (x.options.length > 0) {
         x.remove(0);
@@ -193,12 +170,50 @@ function updateList(list) {
     });
 }
 
-setid.onclick = function () {
-    user = $("#user").val();
-    connectToWebSocket();
-    return false;
-};
+
 connectToRemote.onclick = function () {
-    user2 = $("#user2").val();
+    let playerHost = $("#myHost").val();
     connectTo();
 };
+
+function createConnection(playerHost, player){
+    let connection = new Connection();
+    myPlayer = player;
+    myHost = playerHost;
+    pcLocal = new RTCPeerConnection(cfg, con);
+    pcLocal.onicecandidate = function () {
+        if (pcLocal.iceGatheringState == "complete" && !offerSent) {
+            offerSent = true;
+            sendNegotiation("offer", pcLocal.localDescription);
+        }
+    };
+    dc1 = pcLocal.createDataChannel(createID(player.name, playerHost.name), {reliable: true});
+    connection.sendChannel = dc1;
+    activedc = dc1;
+    dc1.onopen = function () {
+        console.log('Connected');
+        let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
+        writeMsg(data);
+        offerSent = false;
+    };
+    dc1.onmessage = function (e) {
+        if (e.data.charCodeAt(0) == 2) {
+            return
+        }
+        let data = JSON.parse(e.data);
+        writeMsg(data);
+    };
+    pcLocal.createOffer(function (desc) {
+        pcLocal.setLocalDescription(desc, function () {
+        }, function () {
+        });
+        console.log("------ SEND OFFER ------");
+
+    }, function () {
+    }, sdpConstraints);
+
+    pcLocalList[createID(player, playerHost)] = pcLocal;
+    if (dc1 != null) {
+        dcList[createID(player, playerHost)] = dc1;
+    }
+}

@@ -33,7 +33,7 @@ io.sockets.on('connection', function (socket) {
         const msg = JSON.parse(data);
         for (let i = 0; i < socketList.length; i++) {
             // send to everybody on the site
-            if (socketList[i].user == msg.to) {
+            if (socketList[i].user.name == msg.to) {
                 msg.id = socket.id;
                 socketList[i].emit('negotiationMessage', msg);
                 return;
