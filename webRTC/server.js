@@ -54,12 +54,7 @@ io.sockets.on('connection', function (socket) {
         	}
         	
         	for (let j = 0; j < listPlayers.length; j++) {
-        		var id = listPlayerHosts[0].id + "_" + listPlayers[j]
-        		
-        		var connection = new connection(id, null, null);
-        		
-        		listPlayerHosts[0].addConnection(connection);
-        		listPlayerHosts[0].J.push(listJoueur[j]);
+        		listPlayerHosts[0].playerList.push(listPlayers[j]);
         	}
             // send to everybody on the site
             listPlayerHosts.foreach(function (playerHost){
