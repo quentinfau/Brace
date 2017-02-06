@@ -1,4 +1,4 @@
-var player, speed, cursors;
+var player, speed, cursors, map;
 
 const WORLD_WIDTH = 400300, WORLD_HEIGHT = 400300;
 const ROTATE_SPEED=200;
@@ -17,8 +17,14 @@ var Game = {
         speed = 1;           			// La vitesse du joueur
 
         cursors = game.input.keyboard.createCursorKeys(); // Setup des contrôles PC
-
+        
+        map = new Phaser.Circle(WORLD_WIDTH/2, WORLD_HEIGHT/2, 16000);
         game.add.tileSprite(0, 0, WORLD_WIDTH, WORLD_HEIGHT, 'background');
+        
+        var graphics = game.add.graphics(0, 0);
+        graphics.lineStyle(1, 0x00ff00, 1);
+        graphics.drawCircle(map.x, map.y, map.diameter);
+        
         player = game.add.sprite(WORLD_WIDTH/2, WORLD_HEIGHT/2, 'player');
         player.anchor.setTo(0.5, 0.5);
         game.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
