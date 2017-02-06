@@ -1,4 +1,4 @@
-// Snake by Patrick OReilly and Richard Davey
+    // Snake by Patrick OReilly and Richard Davey
 // Twitter: @pato_reilly Web: http://patricko.byethost9.com
 var snakeHead; //head of snake sprite
 var snakeSection = new Array(); //array of sprites that make the snake body sections
@@ -6,6 +6,7 @@ var snakePath = new Array(); //arrary of positions(points) that have to be store
 var numSnakeSections = 10; //number of snake body sections
 var snakeSpacer = 2; //parameter that sets the spacing between sections
 var lastCell;
+var bounds,circleBounds;
             var oldLastCellx;
 var Game ={
 
@@ -13,6 +14,8 @@ preload:function() {
 
     game.load.image('snake', './assets/images/snake.png');
         game.load.image('apple', './assets/images/apple.png');
+                //game.load.image('circle', './assets/images/circle.jpg');
+
 
 },
 
@@ -30,7 +33,38 @@ create :function(){
         snakeSection = [];
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
+
     game.world.setBounds(0, 0, 2000, 2000);
+
+    var graphics = game.add.graphics();
+    graphics.beginFill(0x999999);
+    graphics.drawCircle(200, 200, 500);
+    graphics.endFill();
+    graphics.boundsPadding=0;
+
+    game.stage.backgroundColor = '#2d2d2d';
+   // circleBounds = game.add.sprite(100,200);
+//    circleBounds.addChild(graphics);
+
+        // game.physics.arcade.enable([circleBounds]);
+   // circleBounds.body.setCircle(50);
+
+
+
+
+
+
+   circleBounds = new Phaser.Circle(100,200,500);
+   console.log("body"+circleBounds.getBounds());
+//
+////    //  Create a graphic so you can see the bounds
+//    var graphics = game.add.graphics(0, 0);
+//    graphics.beginFill(0x999999);
+//    graphics.drawCircle(100,200,500);
+
+//circleBounds.addChild(graphics); console.log(circleBounds);
+
+  //  bounds = game.add.sprite(0,0,'circle');
 
     cursors = game.input.keyboard.createCursorKeys();
 
@@ -161,13 +195,25 @@ console.log("Snake Section "+snakeSection.length);
     wallCollision: function(head) {
 
     // Check if the head of the snake is in the boundaries of the game field.
+//var rec = bounds.getBounds();
+console.log(circleBounds.x);
+    if(head.x >= (circleBounds.x+500) || head.x < 0 || head.y >= (circleBounds.y+500)|| head.y < 0){
 
-    if(head.x >= game.world.width || head.x < 0 || head.y >= game.world.heigth || head.y < 0){
+//console.log(head.getBounds());
+//console.log(circleBounds.getBounds());
 
+//    if(!checkOverlap(head,circleBounds))
+//{
+game.state.start('Game_Over');
+}
 
-        // If it's not in, we've hit a wall. Go to game over screen.
-        game.state.start('Game_Over');
-    }
+//    if(!bounds.contains(head.x,head.y)){
+//
+//        // If it's not in, we've hit a wall. Go to game over screen.
+//        game.state.start('Game_Over');
+//        console.log(bounds);
+//    }
+   // game.physics.arcade.collide(snakeHead,bounds,function(){game.state.start('Game_Over');},null,this);
 
 },
     
@@ -219,8 +265,16 @@ console.log("Snake Section "+snakeSection.length);
 render :function() {
 
     game.debug.spriteInfo(snakeHead, 32, 32);
-    game.debug.spriteInfo(apple, 150, 132);
+    //game.debug.spriteInfo(bounds, 32, 32);
 
 }
 
 };
+
+function checkOverlap(spriteA, spriteB) {
+
+    var boundsA = spriteA.getBounds();
+    var boundsB = spriteB.getBounds();
+    return Phaser.Rectangle.intersects(boundsA, boundsB);
+
+}
