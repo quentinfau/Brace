@@ -10,7 +10,7 @@ function PlayerHost(name) {
     this.PHRightB = null;
     this.PHFather = null;
     this.PHSon = null;
-    this.timestamp = Date().getTime();
+    this.timestamp = new Date().getTime();
     console.log('Nouvel objet Player créé : ' + this.name);
 }
 

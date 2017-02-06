@@ -4,7 +4,7 @@ function Player(name) {
     this.connection = connection;
     this.radius = 0;
     this.angle = 0;
-    this.speed = 0
+    this.speed = 0;
     this.coordonneX = 0;
     this.coordonneY = 0;
     console.log('Nouvel objet Player créé : ' + this.name );

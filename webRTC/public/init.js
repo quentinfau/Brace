@@ -1,11 +1,4 @@
-function connectToWebSocket(name) {
-    let user;
-    if (name=="playerHost"){
-         user = new PlayerHost(name);
-    }
-    else {
-        user = new Player(name);
-    }
+function connectToWebSocket(user) {
 
     socket = io.connect(location.origin);
     socket.on('welcomeMessage', function (data) {
@@ -15,6 +8,10 @@ function connectToWebSocket(name) {
     });
     socket.on('listOfClient', function (list) {
         updateList(list);
+    });
+    socket.on('initPlayerHost', function (host) {
+        playerHost = host;
+        initHost();
     });
     socket.on('negotiationMessage', function (data) {
         console.log("received message from the server : " + data);
@@ -28,19 +25,16 @@ function connectToWebSocket(name) {
         }
     });
     socket.emit('nouveau_client', user);
-
-    if (user instanceof Player){
-        createConnection(getAvailableHost(),user);
-    }
-    else {
-        // myPlayer is an host, wait for connection
-    }
-
 }
 
-function getAvailableHost(){
-return new PlayerHost("playerHost");
+function initHost(){
+    playerHost.playerList.forEach(function (player){
+        createConnection(player);
+    });
 }
+startGame.onclick = function() {
+    socket.emit('startGame');
+};
 
 setid.onclick = function () {
     let name = $("#user").val();
