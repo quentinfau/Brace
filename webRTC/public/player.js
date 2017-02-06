@@ -2,9 +2,9 @@
 function Player(name) {
     this.name = name;
     this.connection = connection;
-    this.rayon = 0;
+    this.radius = 0;
     this.angle = 0;
-    this.vitesse = 0
+    this.speed = 0
     this.coordonneX = 0;
     this.coordonneY = 0;
     console.log('Nouvel objet Player créé : ' + this.name );
@@ -18,12 +18,12 @@ function setCoordonneY(coordonneY){
 	this.coordonneY = coordonneY;
 }
 
-function setRayon(rayon){
-    this.rayon = rayon;
+function setRadius(radius){
+    this.radius = radius;
 }
 
-function setVitesse(rayon){
-    this.vitesse = vitesse;
+function setSpeed(speed){
+    this.speed = speed;
 }
 
 function setAngle(angle){

@@ -2,9 +2,13 @@ let connections = {};
 
 function PlayerHost(name) {
     this.name = name;
-    this.JSLeft = null;
-    this.JSRight = null;
-    this.JSForward = null;
+    this.nbJoueur = 1;
+    this.indicePremierJoueur=1;
+    this.indiceDernierJoueur=1;
+    this.PHLeftB = null;
+    this.PHRightB = null;
+    this.PHFather = null;
+    this.PHSon = null;
     this.timestamp = Date().getTime();
     console.log('Nouvel objet Player créé : ' + this.name );
 }
@@ -17,14 +21,18 @@ function removeConnection(connection){
     this.connections.splice(this.connections.indexOf(connection.id), 1);
 }
 
-function setJSLeft(JSLeft){
-    this.JSLeft = JSLeft;
+function setPHRightB(PHRightB){
+    this.PHRightB = PHRightB;
 }
 
-function setJSRight(JSRight){
-    this.JSRight = JSRight;
+function setPHLeftB(PHLeftB){
+    this.PHLeftB = PHLeftB;
 }
 
-function setJSForward(JSForward){
-    this.JSForward = JSForward;
+function setPHFather(PHFather){
+    this.PHFather = PHFather;
+}
+
+function setPHSon(PHSon){
+    this.PHSon = PHSon;
 }
