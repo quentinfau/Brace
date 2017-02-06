@@ -9,7 +9,8 @@ let dcList = {};
 let dc1 = null;
 let dc2 = null;
 let activedc;
-
+let j1;
+let j2;
 const cfg = {'iceServers': [{'url': "stun:stun.l.google.com:19302"}]},
     con = {'optional': [{'DtlsSrtpKeyAgreement': true}]};
 
@@ -40,6 +41,10 @@ function connectToWebSocket() {
     socket.emit('nouveau_client', user);
 }
 function connectTo() {
+
+     j1 = new Player("test");
+ j2 = new PlayerHost("host");
+
     pcLocal = new RTCPeerConnection(cfg, con);
     pcLocal.onicecandidate = function () {
         if (pcLocal.iceGatheringState == "complete" && !offerSent) {
@@ -105,6 +110,11 @@ function processOffer(offer) {
             if (dc2 != null) {
                 dcList[createID(user, user2)] = dc2;
             }
+
+            let conn = new Connection("test-host",dc1,dc2);
+            j1.setConnection(conn);
+            j2.addConnection(conn);
+            console.log("DONE");
         };
         dc2.onmessage = function (e) {
             let data = JSON.parse(e.data);
