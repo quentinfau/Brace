@@ -5,17 +5,17 @@ const math = require('mathjs');
 const PORT = process.env.PORT || 3000;
 
 const server = express()
-    .use(express.static(__dirname))
+    .use(express.static(__dirname + '/public'))
     .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
 const io = require('socket.io').listen(server);
 
-const PlayerHost = require("./playerHost.js");
-const Player = require("./player.js")
+const PlayerHost = require("./public/playerHost.js");
+const Player = require("./public/player.js");
 
 const socketList = [];
-const listPlayer = [];
-const listPlayerHost = [];
+let listPlayer = [];
+let listPlayerHost = [];
 const listObstacle = [];
 const nbZone = 1;
 const diametre = 400000;
@@ -49,6 +49,8 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('startGame', function () {
+    	listPlayerHost = [];
+    	listPlayer = [];
         //console.log('Got socket message: ' + data);
         //const msg = JSON.parse(data);
         for (let i = 0; i < socketList.length; i++) {
@@ -59,10 +61,8 @@ io.sockets.on('connection', function (socket) {
             	initPlayer(socketList[i].user);
             }
         }
-        
+                
         listPlayerHost[0].setList(listPlayer);
-        
-        console.log(listPlayerHost[0].playerList);
         
         listPlayer.forEach(function (player) {
             getSocketByName(player.name).emit("initPlayer", player);
@@ -77,7 +77,7 @@ io.sockets.on('connection', function (socket) {
         let username_disconnected = this.user;
         
         removePlayerOrPlayerHost(username_disconnected);
-               
+                
         console.log('Client disconnected');
         updateListOfClient();
     });
