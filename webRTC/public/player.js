@@ -1,14 +1,5 @@
 let neighborhood = [] ;
 
-let neighbor = {
-	name,
-	coordonneX,
-	coordonneY,
-	radius,
-	angle,
-	speed
-}
-
 function Player(name) {
     this.name = name;
     this.dataChannel = null;
@@ -19,7 +10,16 @@ function Player(name) {
     this.coordonneY = 0;
     this.rank = 1 ;
     console.log('Nouvel objet Player créé : ' + this.name );
-    
+
+   /* let neighbor = {
+        name,
+        coordonneX,
+        coordonneY,
+        radius,
+        angle,
+        speed
+    };*/
+
     function setCoordonneX(coordonneX){
     	this.coordonneX = coordonneX;
     }

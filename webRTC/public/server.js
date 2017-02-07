@@ -10,7 +10,7 @@ const server = express()
 const io = require('socket.io').listen(server);
 
 const PlayerHost = require("./playerHost.js");
-const Player = require("./player.js")
+const Player = require("./player.js");
 
 const socketList = [];
 const listPlayer = [];
@@ -49,7 +49,7 @@ io.sockets.on('connection', function (socket) {
         //console.log('Got socket message: ' + data);
         //const msg = JSON.parse(data);
         for (let i = 0; i < socketList.length; i++) {
-            if (i == 0) {
+            if (i < 2 ) {
                 let playerHost = new PlayerHost(socketList[i].user);
                 listPlayerHost.push(playerHost);
             } else {
@@ -59,7 +59,9 @@ io.sockets.on('connection', function (socket) {
         }
         //console.log(listPlayerHost[0]);
 
-        listPlayerHost[0].setList(listPlayer);
+        listPlayerHost[0].setList(listPlayer.slice(0,2));
+        listPlayerHost[1].setList(listPlayer.slice(2,3));
+
         listPlayer.forEach(function (player) {
             getSocketByName(player.name).emit("initPlayer", player);
         });

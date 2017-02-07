@@ -13,7 +13,7 @@ function connectToWebSocket(user) {
         playerHost = host;
         myHost = host;
         isHost = true;
-        initHost();
+        initHost(playerHost, 0);
     });
     socket.on('initPlayer', function (player) {
         myPlayer = player;
@@ -22,7 +22,7 @@ function connectToWebSocket(user) {
         console.log("received message from the server : " + data);
         if (data.action == "offer") {
             myHost = data.from;
-           // myPlayer = data.to;
+            // myPlayer = data.to;
             processOffer(data.data);
         } else if (data.action == "answer") {
             if (data.to == user) {
@@ -33,17 +33,19 @@ function connectToWebSocket(user) {
     socket.emit('nouveau_client', user);
 }
 
-function initHost(){
-    playerHost.playerList.forEach(function (player){
+function initHost(playerHost, i) {
+    let player = playerHost.playerList[i];
+    if (player != null) {
         myPlayer = player;
-        createConnection.call(playerHost,player);
-    });
+        createConnection.call(playerHost, player).then(state => {
+            console.log("state : " + state + ' pmlayer : ' + player);
+            initHost(playerHost, i + 1);
+        })
+    }
 }
-startGame.onclick = function() {
-    socket.emit('startGame');
-   // myPlayer = new Player("player");
-   // createConnection.call(myHost,myPlayer);
 
+startGame.onclick = function () {
+    socket.emit('startGame');
 };
 
 setid.onclick = function () {
