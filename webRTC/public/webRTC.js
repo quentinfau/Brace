@@ -77,6 +77,7 @@ function processOffer(offer) {
         dc2.onopen = function () {
             console.log('Connected');
             myPlayer.dataChannel = dc2;
+            //myHost.setList(null);
             //on écrit dans le chat que le myPlayer s'est connecté
             let data = {user: "system", message: "the datachannel " + dc2.label + " has been opened"};
             writeMsg(data);
@@ -126,7 +127,7 @@ function processOffer(offer) {
 }
 
 if (navigator.webkitGetUserMedia) {
-    RTCPeerConnection = webkitRTCPeerConnection
+    RTCPeerConnection = webkitRTCPeerConnection;
 }
 
 function sendMessage() {
