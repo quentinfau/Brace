@@ -77,16 +77,17 @@ function processOffer(offer) {
         dc2.onopen = function () {
             console.log('Connected');
             myPlayer.dataChannel = dc2;
+            //myHost.setList(null);
             //on écrit dans le chat que le myPlayer s'est connecté
             let data = {user: "system", message: "the datachannel " + dc2.label + " has been opened"};
             writeMsg(data);
             answerSent = false;
-            pcLocalList[createID(myPlayer, myHost)] = pcLocal;
+            pcLocalList[createID(myPlayer.name, myHost)] = pcLocal;
             if (dc1 != null) {
-                dcList[createID(myPlayer, myHost)] = dc1;
+                dcList[createID(myPlayer.name, myHost)] = dc1;
             }
             if (dc2 != null) {
-                dcList[createID(myPlayer, myHost)] = dc2;
+                dcList[createID(myPlayer.name, myHost)] = dc2;
             }
 
             console.log("DONE");
@@ -103,9 +104,9 @@ function processOffer(offer) {
         }
     };
 
-    pcLocalList[createID(myPlayer, myHost)] = pcRemote;
+    pcLocalList[createID(myPlayer.name, myHost)] = pcRemote;
     if (dc2 != null) {
-        dcList[createID(myPlayer, myHost)] = dc2;
+        dcList[createID(myPlayer.name, myHost)] = dc2;
     }
 
     let offerDesc = new RTCSessionDescription(offer);
@@ -126,7 +127,7 @@ function processOffer(offer) {
 }
 
 if (navigator.webkitGetUserMedia) {
-    RTCPeerConnection = webkitRTCPeerConnection
+    RTCPeerConnection = webkitRTCPeerConnection;
 }
 
 function sendMessage() {
@@ -134,7 +135,7 @@ function sendMessage() {
         for (let id in dcList) {
             dcList[id].send(JSON.stringify({message: messageTextBox.value, user: myPlayer}));
         }
-        chatlog.innerHTML += '[' + myPlayer + '] ' + messageTextBox.value + '</p>';
+        chatlog.innerHTML += '[' + myPlayer.name + '] ' + messageTextBox.value + '</p>';
         messageTextBox.value = "";
     }
     return false

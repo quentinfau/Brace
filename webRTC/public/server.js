@@ -56,6 +56,8 @@ io.sockets.on('connection', function (socket) {
                 listPlayerHost.push(playerHost);
             } else {
                 let player = new Player(socketList[i].user);
+                //player.setAngle(30);
+                //player.set
                 listPlayer.push(player);
             }
         }
@@ -104,6 +106,8 @@ function removePlayerOrPlayerHost(username_disconnected) {
     	}
     	i++;
     });
+}
+
 function getSocketByName(name) {
     for (let i = 0; i < socketList.length; i++) {
         // send to everybody on the site
