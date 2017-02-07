@@ -1,4 +1,4 @@
-var player, speed, cursors, map, cap, apple, mapCenter;
+var player, speed, cursors, map, cap, apple, mapCenter,obstacles;
 
 const WORLD_WIDTH = 400300, WORLD_HEIGHT = 400300;
 const ROTATE_SPEED=200;
@@ -10,6 +10,7 @@ const DIAMETER=16000;
 const CENTER_WORLD_X = WORLD_WIDTH/2;
 const CENTER_WORLD_Y = WORLD_HEIGHT/2;
 const RAYON = DIAMETER/2;
+const NB_OBSTACLES = 1000;
 
 var Game = {
 
@@ -18,6 +19,10 @@ var Game = {
         game.load.image('background', './assets/images/background.png');
         game.load.image('cap', 'assets/images/arrowCap_small.png');
         game.load.image('apple', './assets/images/apple.png');
+                game.load.image('sida', './assets/images/sida.jpeg');
+
+        player = new Player("f");
+
     },
 
     create : function () {
@@ -49,7 +54,7 @@ var Game = {
         game.camera.follow(player);
         apple = game.add.sprite(CENTER_WORLD_X,CENTER_WORLD_Y, 'apple');
 
-
+        generateObstacles();
         game.physics.enable([player,apple], Phaser.Physics.ARCADE);
 
     },
@@ -84,6 +89,7 @@ var Game = {
 	    wallCollision();
 	    cap.rotation = game.physics.arcade.angleBetween(cap, mapCenter);
         appleCollision(player,apple);
+        obstacleCollision();
     }
 };
 
@@ -136,4 +142,21 @@ function generatePlayer(){
 
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max-min+1)) + min;
+}
+
+function generateObstacles(){
+            obstacles = game.add.group();
+      obstacles.enableBody = true;
+    for(var i=0;i<NB_OBSTACLES;i++){
+          var obstacle = obstacles.create(getRandomInt(CENTER_WORLD_X-RAYON,CENTER_WORLD_X+RAYON), getRandomInt(CENTER_WORLD_Y-RAYON,CENTER_WORLD_Y+RAYON), 'sida');
+
+    }
+}
+
+function obstacleCollision(){
+     game.physics.arcade.collide(player, obstacles,null, function(){
+        // Next time the snake moves, a new block will be added to its length.
+         //apple.destroy();
+        game.state.start('Game_Over');
+    },null,this);
 }
