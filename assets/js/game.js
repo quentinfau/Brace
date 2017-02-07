@@ -57,6 +57,7 @@ var Game = {
 
 
     update: function() {
+    	//smartphone control : https://github.com/flogvit/phaser-swipe
     	
     	player.body.velocity.x = 0;
     	player.body.velocity.y = 0;
