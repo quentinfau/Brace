@@ -49,7 +49,7 @@ var Game = {
         cap.fixedToCamera = true;
         cap.cameraOffset.setTo(35, 40);
         
-        player = generatePlayer();
+        this.generatePlayer();
         game.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
         game.camera.follow(player);
         apple = game.add.sprite(CENTER_WORLD_X,CENTER_WORLD_Y, 'apple');
@@ -69,11 +69,11 @@ var Game = {
 
 	    if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
 	    {
-	    	moveChecker();
+	    	this.moveChecker();
 	    }
 	    else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
 	    {
-	    	moveChecker();
+	    	this.moveChecker();
 	    }
 	    else if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && speed <= MAX_PLAYER_SPEED)
 	    {
@@ -86,59 +86,21 @@ var Game = {
 	        player.animations.currentAnim.speed=ROPE_SPEED*speed;
 	    }
 	    game.physics.arcade.velocityFromAngle(player.angle, INITIAL_SPEED+SPEED_MULTIPLICATOR*speed, player.body.velocity);
-	    wallCollision();
+	    this.wallCollision();
 	    cap.rotation = game.physics.arcade.angleBetween(cap, mapCenter);
+
         appleCollision(player,apple);
         obstacleCollision();
     }
 };
 
-function moveChecker() {
-	if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
-    {
-        player.body.angularVelocity = -ROTATE_SPEED;
-    }
-    else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
-    {
-        player.body.angularVelocity = ROTATE_SPEED;
-    }
-}
 
-function wallCollision(){
+     wallCollision:function(){
 
-	    if (Math.sqrt(Math.pow(WORLD_WIDTH/2-player.body.x,2)+Math.pow(WORLD_HEIGHT/2-player.body.y,2)) >= RAYON) {
-	    	game.state.start('Game_Over');
-	    }
-}
-
-function appleCollision(player,apple){
-     game.physics.arcade.collide(player, apple,null, function(){
-        // Next time the snake moves, a new block will be added to its length.
-         //apple.destroy();
-        game.state.start('Game_Done');
-    },null,this);
-}
-
-function generatePlayer(){
-    var player;
-    var min_x,max_x,min_y,max_y;
-    max_x = CENTER_WORLD_X+RAYON-1000;
-    min_x = CENTER_WORLD_X-RAYON;
-    min_y = CENTER_WORLD_Y-RAYON;
-    max_y = CENTER_WORLD_Y+RAYON - 1000;
-    console.log(CENTER_WORLD_X);
-    console.log(CENTER_WORLD_Y);
-    console.log(min_x);
-
-    player = game.add.sprite(getRandomInt(min_x, max_x),getRandomInt(min_y,max_y), 'player');
-    player.anchor.setTo(0.5, 0.5);
-    game.physics.enable(player, Phaser.Physics.ARCADE);
-    player.body.collideWorldBounds = true;
-    player.animations.add('move', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], ROPE_SPEED, true);
-    player.animations.play('move');
-    console.log("max x : "+max_x+"Player  x :"+player.x+" y : "+player.y);
-    return player;
-}
+    	    if (Math.sqrt(Math.pow(WORLD_WIDTH/2-player.body.x,2)+Math.pow(WORLD_HEIGHT/2-player.body.y,2)) >= RAYON) {
+    	    	game.state.start('Game_Over');
+    	    }
+    },
 
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max-min+1)) + min;
@@ -160,3 +122,41 @@ function obstacleCollision(){
         game.state.start('Game_Over');
     },null,this);
 }
+
+    appleCollision:function(player,apple){
+         game.physics.arcade.collide(player, apple,null, function(){
+            // Next time the snake moves, a new block will be added to its length.
+             //apple.destroy();
+            game.state.start('Game_Done');
+        },null,this);
+    },
+
+    generatePlayer:function(){
+        var min_x,max_x,min_y,max_y;
+        max_x = CENTER_WORLD_X+RAYON-1000;
+        min_x = CENTER_WORLD_X-RAYON;
+        min_y = CENTER_WORLD_Y-RAYON;
+        max_y = CENTER_WORLD_Y+RAYON - 1000;
+        console.log(CENTER_WORLD_X);
+        console.log(CENTER_WORLD_Y);
+        console.log(min_x);
+
+        player = game.add.sprite(this.getRandomInt(min_x, max_x),this.getRandomInt(min_y,max_y), 'player');
+        player.anchor.setTo(0.5, 0.5);
+        game.physics.enable(player, Phaser.Physics.ARCADE);
+        player.body.collideWorldBounds = true;
+        player.animations.add('move', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], ROPE_SPEED, true);
+        player.animations.play('move');
+        console.log("max x : "+max_x+"Player  x :"+player.x+" y : "+player.y);
+    },
+
+    getRandomInt:function(min, max) {
+        return Math.floor(Math.random() * (max-min+1)) + min;
+    },
+
+    getPlayerX:function() {
+    	return this.game.player;
+    }
+
+};
+>>>>>>> origin/master

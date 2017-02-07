@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const math = require('mathjs');
 
 const PORT = process.env.PORT || 3000;
 
@@ -55,14 +56,14 @@ io.sockets.on('connection', function (socket) {
                 let playerHost = new PlayerHost(socketList[i].user);
                 listPlayerHost.push(playerHost);
             } else {
-                let player = new Player(socketList[i].user);
-                //player.setAngle(30);
-                //player.set
-                listPlayer.push(player);
+            	initPlayer(socketList[i].user);
             }
         }
         
         listPlayerHost[0].setList(listPlayer);
+
+        console.log(listPlayerHost[0].playerList);
+
         listPlayer.forEach(function (player) {
             getSocketByName(player.name).emit("initPlayer", player);
         });
@@ -115,4 +116,14 @@ function getSocketByName(name) {
             return socketList[i];
         }
     }
+}
+
+function initPlayer(username) {
+	let player = new Player(username);
+	let ramdomAngle = math.randomInt(0,359);
+	player.angle = ramdomAngle;
+	player.radius = 200000;
+	player.coordonneX = math.multiply(200000,math.cos(ramdomAngle));
+	player.coordonneY = math.multiply(200000,math.sin(ramdomAngle));
+	listPlayer.push(player);
 }
