@@ -9,6 +9,9 @@ const server = express()
 
 const io = require('socket.io').listen(server);
 
+const PlayerHost = require("./playerHost.js");
+const Player = require("./player.js")
+
 const socketList = [];
 const listPlayer = [];
 const listPlayerHost = [];
@@ -53,17 +56,14 @@ io.sockets.on('connection', function (socket) {
                 let player = new Player(socketList[i].user);
         		listPlayer.push(player);
         	}
-        	
-        	for (let j = 0; j < listPlayer.length; j++) {
-        		listPlayerHost[0].playerList.push(listPlayer[j]);
-        	}
-            // send to everybody on the site
-            listPlayerHost.forEach(function (playerHost){
-            	socket.emit("initPlayerHost", playerHost);
-            });
-            //return;
-            //}
         }
+        //console.log(listPlayerHost[0]);
+        
+        listPlayerHost[0].setList(listPlayer);
+        
+        listPlayerHost.forEach(function (playerHost){
+        	socket.emit("initPlayerHost", playerHost);
+        });
     });
     
     socket.on('disconnect', function () {
