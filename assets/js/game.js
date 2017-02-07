@@ -5,6 +5,7 @@ const ROTATE_SPEED=200;
 const MAX_PLAYER_SPEED=10,MIN_PLAYER_SPEED=1;
 const INITIAL_SPEED=634, SPEED_MULTIPLICATOR=35;
 const ROPE_SPEED=10;
+const DIAMETER=16000;
 
 var Game = {
 
@@ -18,7 +19,7 @@ var Game = {
 
         cursors = game.input.keyboard.createCursorKeys(); // Setup des contrôles PC
         
-        map = new Phaser.Circle(WORLD_WIDTH/2, WORLD_HEIGHT/2, 16000);
+        map = new Phaser.Circle(WORLD_WIDTH/2, WORLD_HEIGHT/2, DIAMETER);
         game.add.tileSprite(0, 0, WORLD_WIDTH, WORLD_HEIGHT, 'background');
         
         var graphics = game.add.graphics(0, 0);
@@ -64,9 +65,7 @@ var Game = {
 	    
 	    game.physics.arcade.velocityFromAngle(player.angle, INITIAL_SPEED+SPEED_MULTIPLICATOR*speed, player.body.velocity);
 	    console.log(Math.sqrt(Math.pow(WORLD_WIDTH/2-player.body.x,2)+Math.pow(WORLD_HEIGHT/2-player.body.y,2)));
-	    if (Math.sqrt(Math.pow(WORLD_WIDTH/2-player.body.x,2)+Math.pow(WORLD_HEIGHT/2-player.body.y,2)) >= 8000) {
-	    	game.state.start('Game_Over');
-	    }
+	    wallCollision();
     }
 };
 
@@ -79,4 +78,11 @@ function moveChecker() {
     {
         player.body.angularVelocity = ROTATE_SPEED;
     }
+}
+
+function wallCollision(){
+
+	    if (Math.sqrt(Math.pow(WORLD_WIDTH/2-player.body.x,2)+Math.pow(WORLD_HEIGHT/2-player.body.y,2)) >= (DIAMETER/2)) {
+	    	game.state.start('Game_Over');
+	    }
 }
