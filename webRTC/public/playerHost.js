@@ -1,4 +1,4 @@
-let connections = {};
+let dataChannels = [];
 let playerList = {};
 let parent;
 let method = PlayerHost.prototype;
@@ -17,20 +17,20 @@ function PlayerHost(name) {
 }
 
 function createConnection(player) {
-    let connection = new Connection();
+
     parent = this;
     pcLocal = new RTCPeerConnection(cfg, con);
     pcLocal.onicecandidate = function () {
         if (pcLocal.iceGatheringState == "complete" && !offerSent) {
             offerSent = true;
-            sendNegotiation("offer", pcLocal.localDescription, parent, player);
+            sendNegotiation("offer", pcLocal.localDescription, parent.name, player.name);
         }
     };
     dc1 = pcLocal.createDataChannel(createID(player.name, this.name), {reliable: true});
-    connection.sendChannel = dc1;
     activedc = dc1;
     dc1.onopen = function () {
         console.log('Connected');
+        dataChannels.push(dc1);
         let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
         writeMsg(data);
         offerSent = false;

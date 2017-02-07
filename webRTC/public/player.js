@@ -1,7 +1,7 @@
 
 function Player(name) {
     this.name = name;
-    this.connection = null;
+    this.dataChannel = null;
     this.radius = 0;
     this.angle = 0;
     this.speed = 0;
@@ -29,8 +29,8 @@ function Player(name) {
         this.angle = angle;
     }
 
-    function setConnection(connection){
-        this.connection = connection;
+    function setDataChannel(dataChannel){
+        this.dataChannel = dataChannel;
     }
 }
 

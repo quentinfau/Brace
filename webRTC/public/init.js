@@ -21,7 +21,7 @@ function connectToWebSocket(user) {
     socket.on('negotiationMessage', function (data) {
         console.log("received message from the server : " + data);
         if (data.action == "offer") {
-           // myHost = data.from;
+            myHost = data.from;
            // myPlayer = data.to;
             processOffer(data.data);
         } else if (data.action == "answer") {

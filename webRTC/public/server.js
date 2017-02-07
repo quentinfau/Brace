@@ -44,49 +44,49 @@ io.sockets.on('connection', function (socket) {
             }
         }
     });
-    
+
     socket.on('startGame', function () {
         //console.log('Got socket message: ' + data);
         //const msg = JSON.parse(data);
         for (let i = 0; i < socketList.length; i++) {
-        	if(i == 0) {
-        		let playerHost = new PlayerHost(socketList[i].user);
-        		listPlayerHost.push(playerHost);
-        	} else {
+            if (i == 0) {
+                let playerHost = new PlayerHost(socketList[i].user);
+                listPlayerHost.push(playerHost);
+            } else {
                 let player = new Player(socketList[i].user);
-        		listPlayer.push(player);
-        	}
+                listPlayer.push(player);
+            }
         }
         //console.log(listPlayerHost[0]);
-        
+
         listPlayerHost[0].setList(listPlayer);
         listPlayer.forEach(function (player) {
-            socket.emit("initPlayer", player);
+            getSocketByName(player.name).emit("initPlayer", player);
         });
-        listPlayerHost.forEach(function (playerHost){
-        	socket.emit("initPlayerHost", playerHost);
+        listPlayerHost.forEach(function (playerHost) {
+            getSocketByName(playerHost.name).emit("initPlayerHost", playerHost);
         });
     });
-    
+
     socket.on('disconnect', function () {
         socketList.splice(socketList.indexOf(this), 1);
         let username_disconnected = this.user;
-        
+
         let i = 0;
-        listPlayerHost.forEach(function (playerHost){ 
-        	if(username_disconnected == playerHost.name) {
-        		listPlayerHost.splice(i, 1);
-        	}
-        	i++;
+        listPlayerHost.forEach(function (playerHost) {
+            if (username_disconnected == playerHost.name) {
+                listPlayerHost.splice(i, 1);
+            }
+            i++;
         });
         i = 0;
-        listPlayer.forEach(function (player){ 
-        	if(username_disconnected == player.name) {
-        		listPlayer.splice(i, 1);
-        	}
-        	i++;
+        listPlayer.forEach(function (player) {
+            if (username_disconnected == player.name) {
+                listPlayer.splice(i, 1);
+            }
+            i++;
         });
-        
+
         console.log('Client disconnected');
         updateListOfClient();
     });
@@ -99,4 +99,13 @@ function updateListOfClient() {
     socketList.forEach(function (socket) {
         socket.emit('listOfClient', userList);
     })
+}
+
+function getSocketByName(name) {
+    for (let i = 0; i < socketList.length; i++) {
+        // send to everybody on the site
+        if (socketList[i].user == name) {
+            return socketList[i];
+        }
+    }
 }
