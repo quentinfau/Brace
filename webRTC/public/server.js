@@ -68,11 +68,23 @@ io.sockets.on('connection', function (socket) {
     
     socket.on('disconnect', function () {
         socketList.splice(socketList.indexOf(this), 1);
-        if(i == 0) {
-        	listPlayerHost.splice(0, 1);
-    	} else {
-    		listPlayer.splice(listPlayer.indexOf(this), 1);
-    	}
+        let username_disconnected = this.user;
+        
+        let i = 0;
+        listPlayerHost.forEach(function (playerHost){ 
+        	if(username_disconnected == playerHost.name) {
+        		listPlayerHost.splice(i, 1);
+        	}
+        	i++;
+        });
+        i = 0;
+        listPlayer.forEach(function (player){ 
+        	if(username_disconnected == player.name) {
+        		listPlayer.splice(i, 1);
+        	}
+        	i++;
+        });
+        
         console.log('Client disconnected');
         updateListOfClient();
     });
