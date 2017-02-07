@@ -68,6 +68,11 @@ io.sockets.on('connection', function (socket) {
     
     socket.on('disconnect', function () {
         socketList.splice(socketList.indexOf(this), 1);
+        if(i == 0) {
+        	listPlayerHost.splice(0, 1);
+    	} else {
+    		listPlayer.splice(listPlayer.indexOf(this), 1);
+    	}
         console.log('Client disconnected');
         updateListOfClient();
     });
