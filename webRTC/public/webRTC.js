@@ -101,7 +101,7 @@ function processOffer(offer) {
     pcRemote.onicecandidate = function () {
         if (pcRemote.iceGatheringState == "complete" && !answerSent) {
             answerSent = true;
-            sendNegotiation("answer", pcRemote.localDescription);
+            sendNegotiation("answer", pcRemote.localDescription, myPlayer , myHost);
         }
     };
 
@@ -142,9 +142,9 @@ function sendMessage() {
     return false
 }
 
-function sendNegotiation(type, sdp, myHost , myPlayer) {
-    let json = {from: myHost.name, to: myPlayer.name, action: type, data: sdp};
-    console.log("Sending [" + myHost.name + "] to [" + myPlayer.name + "]: " + JSON.stringify(sdp));
+function sendNegotiation(type, sdp, sender , receiver) {
+    let json = {from: sender.name, to: receiver.name, action: type, data: sdp};
+    console.log("Sending [" + sender.name + "] to [" + receiver.name + "]: " + JSON.stringify(sdp));
     socket.emit("negotiationMessage", JSON.stringify(json));
 }
 

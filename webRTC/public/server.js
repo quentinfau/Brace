@@ -60,7 +60,9 @@ io.sockets.on('connection', function (socket) {
         //console.log(listPlayerHost[0]);
         
         listPlayerHost[0].setList(listPlayer);
-        
+        listPlayer.forEach(function (player) {
+            socket.emit("initPlayer", player);
+        });
         listPlayerHost.forEach(function (playerHost){
         	socket.emit("initPlayerHost", playerHost);
         });
