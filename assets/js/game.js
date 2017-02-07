@@ -14,13 +14,17 @@ const RAYON = DIAMETER/2;
 var Game = {
 
     preload : function () {
-        game.load.spritesheet('player', './assets/images/balloon_animated.png', 300, 150);
+        game.load.spritesheet('player', './assets/images/balloon_animated_small.png', 100, 50);
         game.load.image('background', './assets/images/background.png');
-        game.load.image('cap', 'assets/images/arrowCap.png');
+        game.load.image('cap', 'assets/images/arrowCap_small.png');
         game.load.image('apple', './assets/images/apple.png');
     },
 
     create : function () {
+    	this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    	//this.scale.pageAlignHorizontally = true;
+    	this.scale.pageAlignVertically = true;
+    	this.scale.setScreenSize( true );
 
         speed = 1;           			// La vitesse du joueur
         mapCenter = new Phaser.Point(WORLD_WIDTH/2, WORLD_HEIGHT/2);
@@ -29,21 +33,21 @@ var Game = {
         map = new Phaser.Circle(CENTER_WORLD_X, CENTER_WORLD_Y, DIAMETER);
         game.add.tileSprite(0, 0, WORLD_WIDTH, WORLD_HEIGHT, 'background');
         
-        apple = game.add.sprite(CENTER_WORLD_X +1500,CENTER_WORLD_Y, 'apple');
+        
 
         var graphics = game.add.graphics(0, 0);
         graphics.lineStyle(20, 0x00ff00, 1);
         graphics.drawCircle(map.x, map.y, map.diameter);
         
-        cap = game.add.sprite(100, 100, 'cap');
+        cap = game.add.sprite(35, 40, 'cap');
         cap.anchor.setTo(0.5, 0.5);
         cap.fixedToCamera = true;
-        cap.cameraOffset.setTo(100, 100);
+        cap.cameraOffset.setTo(35, 40);
         
         player = generatePlayer();
         game.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
         game.camera.follow(player);
-
+        apple = game.add.sprite(CENTER_WORLD_X,CENTER_WORLD_Y, 'apple');
 
 
         game.physics.enable([player,apple], Phaser.Physics.ARCADE);
