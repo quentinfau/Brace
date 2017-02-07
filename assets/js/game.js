@@ -54,7 +54,7 @@ var Game = {
         game.camera.follow(player);
         apple = game.add.sprite(CENTER_WORLD_X,CENTER_WORLD_Y, 'apple');
 
-        generateObstacles();
+        this.generateObstacles();
         game.physics.enable([player,apple], Phaser.Physics.ARCADE);
 
     },
@@ -89,49 +89,24 @@ var Game = {
 	    this.wallCollision();
 	    cap.rotation = game.physics.arcade.angleBetween(cap, mapCenter);
 
-        appleCollision(player,apple);
-        obstacleCollision();
-    }
-};
+        this.appleCollision(player,apple);
+        this.obstacleCollision();
+    },
+    moveChecker : function(){
+        if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
+            player.body.angularVelocity = -ROTATE_SPEED;
+        }else if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
+            player.body.angularVelocity = ROTATE_SPEED;
+        }
 
-
+    },
      wallCollision:function(){
 
     	    if (Math.sqrt(Math.pow(WORLD_WIDTH/2-player.body.x,2)+Math.pow(WORLD_HEIGHT/2-player.body.y,2)) >= RAYON) {
     	    	game.state.start('Game_Over');
     	    }
     },
-
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max-min+1)) + min;
-}
-
-function generateObstacles(){
-            obstacles = game.add.group();
-      obstacles.enableBody = true;
-    for(var i=0;i<NB_OBSTACLES;i++){
-          var obstacle = obstacles.create(getRandomInt(CENTER_WORLD_X-RAYON,CENTER_WORLD_X+RAYON), getRandomInt(CENTER_WORLD_Y-RAYON,CENTER_WORLD_Y+RAYON), 'sida');
-
-    }
-}
-
-function obstacleCollision(){
-     game.physics.arcade.collide(player, obstacles,null, function(){
-        // Next time the snake moves, a new block will be added to its length.
-         //apple.destroy();
-        game.state.start('Game_Over');
-    },null,this);
-}
-
-    appleCollision:function(player,apple){
-         game.physics.arcade.collide(player, apple,null, function(){
-            // Next time the snake moves, a new block will be added to its length.
-             //apple.destroy();
-            game.state.start('Game_Done');
-        },null,this);
-    },
-
-    generatePlayer:function(){
+ generatePlayer:function(){
         var min_x,max_x,min_y,max_y;
         max_x = CENTER_WORLD_X+RAYON-1000;
         min_x = CENTER_WORLD_X-RAYON;
@@ -153,10 +128,42 @@ function obstacleCollision(){
     getRandomInt:function(min, max) {
         return Math.floor(Math.random() * (max-min+1)) + min;
     },
-
+     appleCollision:function(player,apple){
+         game.physics.arcade.collide(player, apple,null, function(){
+            // Next time the snake moves, a new block will be added to its length.
+             //apple.destroy();
+            game.state.start('Game_Done');
+        },null,this);
+    },
     getPlayerX:function() {
     	return this.game.player;
+    },
+     getRandomInt: function(min, max) {
+    return Math.floor(Math.random() * (max-min+1)) + min;
+},
+
+ generateObstacles: function(){
+            obstacles = game.add.group();
+      obstacles.enableBody = true;
+    for(var i=0;i<NB_OBSTACLES;i++){
+          var obstacle = obstacles.create(this.getRandomInt(CENTER_WORLD_X-RAYON,CENTER_WORLD_X+RAYON), this.getRandomInt(CENTER_WORLD_Y-RAYON,CENTER_WORLD_Y+RAYON), 'sida');
+
     }
+},
+
+ obstacleCollision: function(){
+     game.physics.arcade.collide(player, obstacles,null, function(){
+        // Next time the snake moves, a new block will be added to its length.
+         //apple.destroy();
+        game.state.start('Game_Over');
+    },null,this);
+},
 
 };
->>>>>>> origin/master
+
+
+
+
+
+
+
