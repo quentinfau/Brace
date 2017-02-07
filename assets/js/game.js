@@ -23,7 +23,7 @@ var Game = {
         game.add.tileSprite(0, 0, WORLD_WIDTH, WORLD_HEIGHT, 'background');
         
         var graphics = game.add.graphics(0, 0);
-        graphics.lineStyle(1, 0x00ff00, 1);
+        graphics.lineStyle(20, 0x00ff00, 1);
         graphics.drawCircle(map.x, map.y, map.diameter);
         
         player = game.add.sprite(WORLD_WIDTH/2, WORLD_HEIGHT/2, 'player');
@@ -62,7 +62,6 @@ var Game = {
 	        speed--;
 	        player.animations.currentAnim.speed=ROPE_SPEED*speed;
 	    }
-	    
 	    game.physics.arcade.velocityFromAngle(player.angle, INITIAL_SPEED+SPEED_MULTIPLICATOR*speed, player.body.velocity);
 	    console.log(Math.sqrt(Math.pow(WORLD_WIDTH/2-player.body.x,2)+Math.pow(WORLD_HEIGHT/2-player.body.y,2)));
 	    wallCollision();
