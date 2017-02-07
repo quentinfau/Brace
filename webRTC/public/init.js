@@ -1,9 +1,5 @@
 function connectToWebSocket(user) {
-if (user=="playerHost"){
-    myHost = new PlayerHost(user);
-} else {
-    myPlayer = new Player(user);
-}
+
     socket = io.connect(location.origin);
     socket.on('welcomeMessage', function (data) {
         console.log("received message from the server : " + data.message);
@@ -33,13 +29,13 @@ if (user=="playerHost"){
 
 function initHost(){
     playerHost.playerList.forEach(function (player){
-        createConnection(player);
+        createConnection.call(playerHost,player);
     });
 }
 startGame.onclick = function() {
-    //socket.emit('startGame');
-    myPlayer = new Player("player");
-    createConnection.call(myHost,myPlayer);
+    socket.emit('startGame');
+   // myPlayer = new Player("player");
+   // createConnection.call(myHost,myPlayer);
 
 };
 

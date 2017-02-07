@@ -142,7 +142,7 @@ function sendMessage() {
     return false
 }
 
-function sendNegotiation(type, sdp) {
+function sendNegotiation(type, sdp, myHost , myPlayer) {
     let json = {from: myHost.name, to: myPlayer.name, action: type, data: sdp};
     console.log("Sending [" + myHost.name + "] to [" + myPlayer.name + "]: " + JSON.stringify(sdp));
     socket.emit("negotiationMessage", JSON.stringify(json));
@@ -175,7 +175,3 @@ connectToRemote.onclick = function () {
     let playerHost = $("#myHost").val();
     connectTo();
 };
-
-function createConnection(playerHost, player){
-
-}

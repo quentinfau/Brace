@@ -1,7 +1,7 @@
 let connections = {};
 let playerList = {};
-
-var method = PlayerHost.prototype;
+let parent;
+let method = PlayerHost.prototype;
 
 function PlayerHost(name) {
     this.name = name;
@@ -18,12 +18,12 @@ function PlayerHost(name) {
 
 function createConnection(player) {
     let connection = new Connection();
-
+    parent = this;
     pcLocal = new RTCPeerConnection(cfg, con);
     pcLocal.onicecandidate = function () {
         if (pcLocal.iceGatheringState == "complete" && !offerSent) {
             offerSent = true;
-            sendNegotiation("offer", pcLocal.localDescription);
+            sendNegotiation("offer", pcLocal.localDescription, parent, player);
         }
     };
     dc1 = pcLocal.createDataChannel(createID(player.name, this.name), {reliable: true});
@@ -57,36 +57,33 @@ function createConnection(player) {
     }
 }
 
-    method.setList = function(playerList) {
-        this.playerList = playerList;
-    }
+method.setList = function (playerList) {
+    this.playerList = playerList;
+};
 
-    function addConnection(connection) {
-        this.connections[connection.id] = connection;
-    }
-
-    function removeConnection(connection) {
-        this.connections.splice(this.connections.indexOf(connection.id), 1);
-    }
-
-    function setPHRightB(PHRightB) {
-        this.PHRightB = PHRightB;
-    }
-
-    function setPHLeftB(PHLeftB) {
-        this.PHLeftB = PHLeftB;
-    }
-
-    function setPHFather(PHFather) {
-        this.PHFather = PHFather;
-    }
-
-    function setPHSon(PHSon) {
-        this.PHSon = PHSon;
-    }
-
+function addConnection(connection) {
+    this.connections[connection.id] = connection;
 }
 
+function removeConnection(connection) {
+    this.connections.splice(this.connections.indexOf(connection.id), 1);
+}
+
+function setPHRightB(PHRightB) {
+    this.PHRightB = PHRightB;
+}
+
+function setPHLeftB(PHLeftB) {
+    this.PHLeftB = PHLeftB;
+}
+
+function setPHFather(PHFather) {
+    this.PHFather = PHFather;
+}
+
+function setPHSon(PHSon) {
+    this.PHSon = PHSon;
+}
 
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = PlayerHost;
