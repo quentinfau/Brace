@@ -15,7 +15,9 @@ const Player = require("./player.js")
 const socketList = [];
 const listPlayer = [];
 const listPlayerHost = [];
-
+const listObstacle = [];
+const nbZone = 1;
+const diametre = 400000;
 
 io.sockets.on('connection', function (socket) {
     console.log('Un client est connecté !');
@@ -57,7 +59,6 @@ io.sockets.on('connection', function (socket) {
         		listPlayer.push(player);
         	}
         }
-        //console.log(listPlayerHost[0]);
         
         listPlayerHost[0].setList(listPlayer);
         
@@ -70,21 +71,8 @@ io.sockets.on('connection', function (socket) {
         socketList.splice(socketList.indexOf(this), 1);
         let username_disconnected = this.user;
         
-        let i = 0;
-        listPlayerHost.forEach(function (playerHost){ 
-        	if(username_disconnected == playerHost.name) {
-        		listPlayerHost.splice(i, 1);
-        	}
-        	i++;
-        });
-        i = 0;
-        listPlayer.forEach(function (player){ 
-        	if(username_disconnected == player.name) {
-        		listPlayer.splice(i, 1);
-        	}
-        	i++;
-        });
-        
+        removePlayerOrPlayerHost(username_disconnected);
+                
         console.log('Client disconnected');
         updateListOfClient();
     });
@@ -97,4 +85,21 @@ function updateListOfClient() {
     socketList.forEach(function (socket) {
         socket.emit('listOfClient', userList);
     })
+}
+
+function removePlayerOrPlayerHost(username_disconnected) {
+	let i = 0;
+    listPlayerHost.forEach(function (playerHost){ 
+    	if(username_disconnected == playerHost.name) {
+    		listPlayerHost.splice(i, 1);
+    	}
+    	i++;
+    });
+    i = 0;
+    listPlayer.forEach(function (player){ 
+    	if(username_disconnected == player.name) {
+    		listPlayer.splice(i, 1);
+    	}
+    	i++;
+    });
 }
