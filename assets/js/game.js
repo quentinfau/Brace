@@ -1,238 +1,170 @@
-var snake, apple, squareSize, score, speed,
-    updateDelay, direction, new_direction,
-    addNew, cursors, scoreTextValue, speedTextValue,   
-    textStyle_Key, textStyle_Value;
+var player, speed, cursors, map, cap, apple, mapCenter,obstacles;
+
+const WORLD_WIDTH = 400300, WORLD_HEIGHT = 400300;
+const ROTATE_SPEED=200;
+const MAX_PLAYER_SPEED=10,MIN_PLAYER_SPEED=1;
+const INITIAL_SPEED=634, SPEED_MULTIPLICATOR=35;
+const ROPE_SPEED=10;
+const DIAMETER=16000;
+
+const CENTER_WORLD_X = WORLD_WIDTH/2;
+const CENTER_WORLD_Y = WORLD_HEIGHT/2;
+const RAYON = DIAMETER/2;
+const NB_OBSTACLES = 1000;
 
 var Game = {
 
     preload : function () {
-        // Here we load all the needed resources for the level.
-        // In our case, that's just two squares - one for the snake body and one for the apple.
-        game.load.image('snake', './assets/images/snake.png');
+        game.load.spritesheet('player', './assets/images/balloon_animated_small.png', 100, 50);
+        game.load.image('background', './assets/images/background.png');
+        game.load.image('cap', 'assets/images/arrowCap_small.png');
         game.load.image('apple', './assets/images/apple.png');
+                game.load.image('sida', './assets/images/sida.jpeg');
+
+        player = new Player("f");
+
     },
 
     create : function () {
+    	this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    	//this.scale.pageAlignHorizontally = true;
+    	this.scale.pageAlignVertically = true;
+    	this.scale.setScreenSize( true );
 
-        // By setting up global variables in the create function, we initialise them on game start.
-        // We need them to be globally available so that the update function can alter them.
+        speed = 1;           			// La vitesse du joueur
+        mapCenter = new Phaser.Point(WORLD_WIDTH/2, WORLD_HEIGHT/2);
+        cursors = game.input.keyboard.createCursorKeys(); // Setup des contrôles PC
+        
+        map = new Phaser.Circle(CENTER_WORLD_X, CENTER_WORLD_Y, DIAMETER);
+        game.add.tileSprite(0, 0, WORLD_WIDTH, WORLD_HEIGHT, 'background');
+        
+        
 
-        snake = [];                     // This will work as a stack, containing the parts of our snake
-        apple = {};                     // An object for the apple;
-        squareSize = 15;                // The length of a side of the squares. Our image is 15x15 pixels.
-        score = 0;                      // Game score.
-        speed = 0;                      // Game speed.
-        updateDelay = 0;                // A variable for control over update rates.
-        direction = 'right';            // The direction of our snake.
-        new_direction = null;           // A buffer to store the new direction into.
-        addNew = false;                 // A variable used when an apple has been eaten.
+        var graphics = game.add.graphics(0, 0);
+        graphics.lineStyle(20, 0x00ff00, 1);
+        graphics.drawCircle(map.x, map.y, map.diameter);
+        
+        cap = game.add.sprite(35, 40, 'cap');
+        cap.anchor.setTo(0.5, 0.5);
+        cap.fixedToCamera = true;
+        cap.cameraOffset.setTo(35, 40);
+        
+        this.generatePlayer();
+        game.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+        game.camera.follow(player);
+        apple = game.add.sprite(CENTER_WORLD_X,CENTER_WORLD_Y, 'apple');
 
-        // Set up a Phaser controller for keyboard input.
-        cursors = game.input.keyboard.createCursorKeys();
-
-        game.stage.backgroundColor = '#061f27';
-
-        // Generate the initial snake stack. Our snake will be 10 elements long.
-        // Beginning at X=150 Y=150 and increasing the X on every iteration.
-        for (var i = 0; i < 10; i++){
-            snake[i] = game.add.sprite(150+i*squareSize, 150, 'snake');  // Parameters are (X coordinate, Y coordinate, image)
-        }
-
-game.world.setBounds(0, 0, 2000, 2000);
-        // Genereate the first apple.
-        this.generateApple();
-
-
-        // Add Text to top of game.
-        textStyle_Key = { font: "bold 14px sans-serif", fill: "#46c0f9", align: "center" };
-        textStyle_Value = { font: "bold 18px sans-serif", fill: "#fff", align: "center" };
-
-        // Score.
-        game.add.text(30, 20, "SCORE", textStyle_Key);
-        scoreTextValue = game.add.text(90, 18, score.toString(), textStyle_Value);
-        // Speed.
-        game.add.text(500, 20, "SPEED", textStyle_Key);
-        speedTextValue = game.add.text(558, 18, speed.toString(), textStyle_Value);
-//        game.camera.follow(snake[0], Phaser.Camera.FOLLOW_LOCKON);
-
+        this.generateObstacles();
+        game.physics.enable([player,apple], Phaser.Physics.ARCADE);
 
     },
 
 
 
     update: function() {
+    	//smartphone control : https://github.com/flogvit/phaser-swipe
+    	
+    	player.body.velocity.x = 0;
+    	player.body.velocity.y = 0;
+    	player.body.angularVelocity = 0;
 
-        // Handle arrow key presses, while not allowing illegal direction changes that will kill the player.
+	    if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
+	    {
+	    	this.moveChecker();
+	    }
+	    else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
+	    {
+	    	this.moveChecker();
+	    }
+	    else if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && speed <= MAX_PLAYER_SPEED)
+	    {
+	        speed++;
+	        player.animations.currentAnim.speed=ROPE_SPEED*speed;
+	    }
+	    else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN) && speed > MIN_PLAYER_SPEED)
+	    {
+	        speed--;
+	        player.animations.currentAnim.speed=ROPE_SPEED*speed;
+	    }
+	    game.physics.arcade.velocityFromAngle(player.angle, INITIAL_SPEED+SPEED_MULTIPLICATOR*speed, player.body.velocity);
+	    this.wallCollision();
+	    cap.rotation = game.physics.arcade.angleBetween(cap, mapCenter);
 
-    if (cursors.right.isDown && direction!='left')
-    {
-        new_direction = 'right';
-    }
-    else if (cursors.left.isDown && direction!='right')
-    {
-        new_direction = 'left';
-    }
-    else if (cursors.up.isDown && direction!='down')
-    {
-        new_direction = 'up';
-    }
-    else if (cursors.down.isDown && direction!='up')
-    {
-        new_direction = 'down';
-    }
-
-
-    // A formula to calculate game speed based on the score.
-    // The higher the score, the higher the game speed, with a maximum of 10;
-    speed = Math.min(10, Math.floor(score/5));
-    // Update speed value on game screen.
-    speedTextValue.text = '' + speed;
-
-    // Since the update function of Phaser has an update rate of around 60 FPS,
-    // we need to slow that down make the game playable.
-
-    // Increase a counter on every update call.
-    updateDelay++;
-
-    // Do game stuff only if the counter is aliquot to (10 - the game speed).
-    // The higher the speed, the more frequently this is fulfilled,
-    // making the snake move faster.
-    if (updateDelay % (10 - speed) == 0) {
-
-
-        // Snake movement
-
-        var firstCell = snake[snake.length - 1],
-            lastCell = snake.shift(),
-            oldLastCellx = lastCell.x,
-            oldLastCelly = lastCell.y;
-
-        // If a new direction has been chosen from the keyboard, make it the direction of the snake now.
-        if(new_direction){
-            direction = new_direction;
-            new_direction = null;
+        this.appleCollision(player,apple);
+        this.obstacleCollision();
+    },
+    moveChecker : function(){
+        if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
+            player.body.angularVelocity = -ROTATE_SPEED;
+        }else if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
+            player.body.angularVelocity = ROTATE_SPEED;
         }
 
+    },
+     wallCollision:function(){
 
-        // Change the last cell's coordinates relative to the head of the snake, according to the direction.
+    	    if (Math.sqrt(Math.pow(WORLD_WIDTH/2-player.body.x,2)+Math.pow(WORLD_HEIGHT/2-player.body.y,2)) >= RAYON) {
+    	    	game.state.start('Game_Over');
+    	    }
+    },
+ generatePlayer:function(){
+        var min_x,max_x,min_y,max_y;
+        max_x = CENTER_WORLD_X+RAYON-1000;
+        min_x = CENTER_WORLD_X-RAYON;
+        min_y = CENTER_WORLD_Y-RAYON;
+        max_y = CENTER_WORLD_Y+RAYON - 1000;
+        console.log(CENTER_WORLD_X);
+        console.log(CENTER_WORLD_Y);
+        console.log(min_x);
 
-        if(direction == 'right'){
-
-            lastCell.x = firstCell.x + 15;
-            lastCell.y = firstCell.y;
-            game.camera.x += speed+10;
-        }
-        else if(direction == 'left'){
-            lastCell.x = firstCell.x - 15;
-            lastCell.y = firstCell.y;
-            game.camera.x -= speed+10;
-
-        }
-        else if(direction == 'up'){
-            lastCell.x = firstCell.x;
-            lastCell.y = firstCell.y - 15;
-            game.camera.y -= speed+10;
-
-        }
-        else if(direction == 'down'){
-            lastCell.x = firstCell.x;
-            lastCell.y = firstCell.y + 15;
-            game.camera.y += speed+10;
-        }
-
-
-        // Place the last cell in the front of the stack.
-        // Mark it the first cell.
-
-        snake.push(lastCell);
-        firstCell = lastCell;
-         if(addNew){
-            snake.unshift(game.add.sprite(oldLastCellx, oldLastCelly, 'snake'));
-            addNew = false;
-        }
-
-        // Check for apple collision.
-        this.appleCollision();
-
-        // Check for collision with self. Parameter is the head of the snake.
-        this.selfCollision(firstCell);
-
-        // Check with collision with wall. Parameter is the head of the snake.
-        this.wallCollision(firstCell);
-
-    }
-
-       
+        player = game.add.sprite(this.getRandomInt(min_x, max_x),this.getRandomInt(min_y,max_y), 'player');
+        player.anchor.setTo(0.5, 0.5);
+        game.physics.enable(player, Phaser.Physics.ARCADE);
+        player.body.collideWorldBounds = true;
+        player.animations.add('move', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], ROPE_SPEED, true);
+        player.animations.play('move');
+        console.log("max x : "+max_x+"Player  x :"+player.x+" y : "+player.y);
     },
 
-appleCollision: function() {
-
-    // Check if any part of the snake is overlapping the apple.
-    // This is needed if the apple spawns inside of the snake.
-    for(var i = 0; i < snake.length; i++){
-        if(snake[i].x == apple.x && snake[i].y == apple.y){
-
+    getRandomInt:function(min, max) {
+        return Math.floor(Math.random() * (max-min+1)) + min;
+    },
+     appleCollision:function(player,apple){
+         game.physics.arcade.collide(player, apple,null, function(){
             // Next time the snake moves, a new block will be added to its length.
-            addNew = true;
-
-            // Destroy the old apple.
-            apple.destroy();
-
-            // Make a new one.
-            this.generateApple();
-
-            // Increase score.
-            score++;
-            speed++;
-
-            // Refresh scoreboard.
-            scoreTextValue.text = score.toString();
-
-        }
-    }
-
-},
-
-selfCollision: function(head) {
-
-    // Check if the head of the snake overlaps with any part of the snake.
-    for(var i = 0; i < snake.length - 1; i++){
-        if(head.x == snake[i].x && head.y == snake[i].y){
-
-            // If so, go to game over screen.
-            game.state.start('Game_Over');
-        }
-    }
-
-},
-
-wallCollision: function(head) {
-
-    // Check if the head of the snake is in the boundaries of the game field.
-
-    if(head.x >= 1600 || head.x < 0 || head.y >= 1450 || head.y < 0){
-
-
-        // If it's not in, we've hit a wall. Go to game over screen.
-        game.state.start('Game_Over');
-    }
-
-},
-     generateApple: function(){
-
-        // Chose a random place on the grid.
-        // X is between 0 and 585 (39*15)
-        // Y is between 0 and 435 (29*15)
-
-        var randomX = Math.floor(Math.random() * 40 ) * squareSize,
-            randomY = Math.floor(Math.random() * 30 ) * squareSize;
-
-        // Add a new apple.
-        apple = game.add.sprite(randomX, randomY, 'apple');
+             //apple.destroy();
+            game.state.start('Game_Done');
+        },null,this);
     },
-    render: function() {
+    getPlayerX:function() {
+    	return this.game.player;
+    },
+     getRandomInt: function(min, max) {
+    return Math.floor(Math.random() * (max-min+1)) + min;
+},
 
-    game.debug.cameraInfo(game.camera, 32, 32);
+ generateObstacles: function(){
+            obstacles = game.add.group();
+      obstacles.enableBody = true;
+    for(var i=0;i<NB_OBSTACLES;i++){
+          var obstacle = obstacles.create(this.getRandomInt(CENTER_WORLD_X-RAYON,CENTER_WORLD_X+RAYON), this.getRandomInt(CENTER_WORLD_Y-RAYON,CENTER_WORLD_Y+RAYON), 'sida');
 
-}
+    }
+},
+
+ obstacleCollision: function(){
+     game.physics.arcade.collide(player, obstacles,null, function(){
+        // Next time the snake moves, a new block will be added to its length.
+         //apple.destroy();
+        game.state.start('Game_Over');
+    },null,this);
+},
+
 };
+
+
+
+
+
+
+

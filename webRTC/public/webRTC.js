@@ -87,7 +87,7 @@ function processOffer(offer) {
 }
 
 if (navigator.webkitGetUserMedia) {
-    RTCPeerConnection = webkitRTCPeerConnection
+    RTCPeerConnection = webkitRTCPeerConnection;
 }
 
 function sendMessage() {
@@ -131,8 +131,3 @@ function updateList(list) {
         x.options.add(c);
     });
 }
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
