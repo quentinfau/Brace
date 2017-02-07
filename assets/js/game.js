@@ -1,4 +1,4 @@
-var player, speed, cursors, map;
+var player, speed, cursors, map, cap, mapCenter;
 
 const WORLD_WIDTH = 400300, WORLD_HEIGHT = 400300;
 const ROTATE_SPEED=200;
@@ -12,11 +12,12 @@ var Game = {
     preload : function () {
         game.load.spritesheet('player', './assets/images/balloon_animated.png', 300, 150);
         game.load.image('background', './assets/images/background.png');
+        game.load.image('cap', 'assets/images/arrowCap.png');
     },
 
     create : function () {
         speed = 1;           			// La vitesse du joueur
-
+        mapCenter = new Phaser.Point(WORLD_WIDTH/2, WORLD_HEIGHT/2);
         cursors = game.input.keyboard.createCursorKeys(); // Setup des contrôles PC
         
         map = new Phaser.Circle(WORLD_WIDTH/2, WORLD_HEIGHT/2, DIAMETER);
@@ -25,6 +26,11 @@ var Game = {
         var graphics = game.add.graphics(0, 0);
         graphics.lineStyle(20, 0x00ff00, 1);
         graphics.drawCircle(map.x, map.y, map.diameter);
+        
+        cap = game.add.sprite(100, 100, 'cap');
+        cap.anchor.setTo(0.5, 0.5);
+        cap.fixedToCamera = true;
+        cap.cameraOffset.setTo(100, 100);
         
         player = game.add.sprite(WORLD_WIDTH/2, WORLD_HEIGHT/2, 'player');
         player.anchor.setTo(0.5, 0.5);
@@ -63,8 +69,10 @@ var Game = {
 	        player.animations.currentAnim.speed=ROPE_SPEED*speed;
 	    }
 	    game.physics.arcade.velocityFromAngle(player.angle, INITIAL_SPEED+SPEED_MULTIPLICATOR*speed, player.body.velocity);
-	    console.log(Math.sqrt(Math.pow(WORLD_WIDTH/2-player.body.x,2)+Math.pow(WORLD_HEIGHT/2-player.body.y,2)));
 	    wallCollision();
+	    
+	    cap.rotation = game.physics.arcade.angleBetween(cap, mapCenter);
+	    
     }
 };
 
