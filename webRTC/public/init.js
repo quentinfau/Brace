@@ -11,12 +11,18 @@ function connectToWebSocket(user) {
     });
     socket.on('initPlayerHost', function (host) {
         playerHost = host;
+        myHost = host;
+        isHost = true;
         initHost();
+    });
+    socket.on('initPlayer', function (player) {
+        myPlayer = player;
     });
     socket.on('negotiationMessage', function (data) {
         console.log("received message from the server : " + data);
         if (data.action == "offer") {
             myHost = data.from;
+           // myPlayer = data.to;
             processOffer(data.data);
         } else if (data.action == "answer") {
             if (data.to == user) {
@@ -29,6 +35,7 @@ function connectToWebSocket(user) {
 
 function initHost(){
     playerHost.playerList.forEach(function (player){
+        myPlayer = player;
         createConnection.call(playerHost,player);
     });
 }
