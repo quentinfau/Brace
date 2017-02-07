@@ -1,4 +1,4 @@
-var player, speed, cursors, map, cap, apple, mapCenter;
+var player, speed, cursors, map, cap, apple, mapCenter,obstacles;
 
 const WORLD_WIDTH = 400300, WORLD_HEIGHT = 400300;
 const ROTATE_SPEED=200;
@@ -10,6 +10,7 @@ const DIAMETER=16000;
 const CENTER_WORLD_X = WORLD_WIDTH/2;
 const CENTER_WORLD_Y = WORLD_HEIGHT/2;
 const RAYON = DIAMETER/2;
+const NB_OBSTACLES = 1000;
 
 var Game = {
 
@@ -18,6 +19,10 @@ var Game = {
         game.load.image('background', './assets/images/background.png');
         game.load.image('cap', 'assets/images/arrowCap_small.png');
         game.load.image('apple', './assets/images/apple.png');
+                game.load.image('sida', './assets/images/sida.jpeg');
+
+        player = new Player("f");
+
     },
 
     create : function () {
@@ -49,7 +54,7 @@ var Game = {
         game.camera.follow(player);
         apple = game.add.sprite(CENTER_WORLD_X,CENTER_WORLD_Y, 'apple');
 
-
+        this.generateObstacles();
         game.physics.enable([player,apple], Phaser.Physics.ARCADE);
 
     },
@@ -57,6 +62,7 @@ var Game = {
 
 
     update: function() {
+    	//smartphone control : https://github.com/flogvit/phaser-swipe
     	
     	player.body.velocity.x = 0;
     	player.body.velocity.y = 0;
@@ -83,40 +89,25 @@ var Game = {
 	    game.physics.arcade.velocityFromAngle(player.angle, INITIAL_SPEED+SPEED_MULTIPLICATOR*speed, player.body.velocity);
 	    this.wallCollision();
 	    cap.rotation = game.physics.arcade.angleBetween(cap, mapCenter);
-	    this.appleCollision(player,apple);
+
+        this.appleCollision(player,apple);
+        this.obstacleCollision();
     },
-    
-    render: function() {
-    	
-    },
-    
-    moveChecker:function() {
-    	if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
-        {
+    moveChecker : function(){
+        if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
             player.body.angularVelocity = -ROTATE_SPEED;
-        }
-        else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
-        {
+        }else if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
             player.body.angularVelocity = ROTATE_SPEED;
         }
-    },
 
+    },
      wallCollision:function(){
 
     	    if (Math.sqrt(Math.pow(WORLD_WIDTH/2-player.body.x,2)+Math.pow(WORLD_HEIGHT/2-player.body.y,2)) >= RAYON) {
     	    	game.state.start('Game_Over');
     	    }
     },
-
-    appleCollision:function(player,apple){
-         game.physics.arcade.collide(player, apple,null, function(){
-            // Next time the snake moves, a new block will be added to its length.
-             //apple.destroy();
-            game.state.start('Game_Done');
-        },null,this);
-    },
-
-    generatePlayer:function(){
+ generatePlayer:function(){
         var min_x,max_x,min_y,max_y;
         max_x = CENTER_WORLD_X+RAYON-1000;
         min_x = CENTER_WORLD_X-RAYON;
@@ -138,9 +129,42 @@ var Game = {
     getRandomInt:function(min, max) {
         return Math.floor(Math.random() * (max-min+1)) + min;
     },
-
+     appleCollision:function(player,apple){
+         game.physics.arcade.collide(player, apple,null, function(){
+            // Next time the snake moves, a new block will be added to its length.
+             //apple.destroy();
+            game.state.start('Game_Done');
+        },null,this);
+    },
     getPlayerX:function() {
     	return this.game.player;
+    },
+     getRandomInt: function(min, max) {
+    return Math.floor(Math.random() * (max-min+1)) + min;
+},
+
+ generateObstacles: function(){
+            obstacles = game.add.group();
+      obstacles.enableBody = true;
+    for(var i=0;i<NB_OBSTACLES;i++){
+          var obstacle = obstacles.create(this.getRandomInt(CENTER_WORLD_X-RAYON,CENTER_WORLD_X+RAYON), this.getRandomInt(CENTER_WORLD_Y-RAYON,CENTER_WORLD_Y+RAYON), 'sida');
+
     }
+},
+
+ obstacleCollision: function(){
+     game.physics.arcade.collide(player, obstacles,null, function(){
+        // Next time the snake moves, a new block will be added to its length.
+         //apple.destroy();
+        game.state.start('Game_Over');
+    },null,this);
+},
 
 };
+
+
+
+
+
+
+
