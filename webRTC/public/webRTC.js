@@ -142,9 +142,9 @@ function sendMessage() {
     return false
 }
 
-function sendNegotiation(type, sdp) {
-    let json = {from: myPlayer.name, to: myHost.name, action: type, data: sdp};
-    console.log("Sending [" + myPlayer.name + "] to [" + myHost.name + "]: " + JSON.stringify(sdp));
+function sendNegotiation(type, sdp, myHost , myPlayer) {
+    let json = {from: myHost.name, to: myPlayer.name, action: type, data: sdp};
+    console.log("Sending [" + myHost.name + "] to [" + myPlayer.name + "]: " + JSON.stringify(sdp));
     socket.emit("negotiationMessage", JSON.stringify(json));
 }
 
@@ -175,45 +175,3 @@ connectToRemote.onclick = function () {
     let playerHost = $("#myHost").val();
     connectTo();
 };
-
-function createConnection(playerHost, player){
-    let connection = new Connection();
-    myPlayer = player;
-    myHost = playerHost;
-    pcLocal = new RTCPeerConnection(cfg, con);
-    pcLocal.onicecandidate = function () {
-        if (pcLocal.iceGatheringState == "complete" && !offerSent) {
-            offerSent = true;
-            sendNegotiation("offer", pcLocal.localDescription);
-        }
-    };
-    dc1 = pcLocal.createDataChannel(createID(player.name, playerHost.name), {reliable: true});
-    connection.sendChannel = dc1;
-    activedc = dc1;
-    dc1.onopen = function () {
-        console.log('Connected');
-        let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
-        writeMsg(data);
-        offerSent = false;
-    };
-    dc1.onmessage = function (e) {
-        if (e.data.charCodeAt(0) == 2) {
-            return
-        }
-        let data = JSON.parse(e.data);
-        writeMsg(data);
-    };
-    pcLocal.createOffer(function (desc) {
-        pcLocal.setLocalDescription(desc, function () {
-        }, function () {
-        });
-        console.log("------ SEND OFFER ------");
-
-    }, function () {
-    }, sdpConstraints);
-
-    pcLocalList[createID(player, playerHost)] = pcLocal;
-    if (dc1 != null) {
-        dcList[createID(player, playerHost)] = dc1;
-    }
-}

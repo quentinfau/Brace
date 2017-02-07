@@ -29,11 +29,14 @@ function connectToWebSocket(user) {
 
 function initHost(){
     playerHost.playerList.forEach(function (player){
-        createConnection(player);
+        createConnection.call(playerHost,player);
     });
 }
 startGame.onclick = function() {
     socket.emit('startGame');
+   // myPlayer = new Player("player");
+   // createConnection.call(myHost,myPlayer);
+
 };
 
 setid.onclick = function () {
