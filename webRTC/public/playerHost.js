@@ -12,6 +12,14 @@ function PlayerHost(name) {
     this.PHRightB = null;
     this.PHFather = null;
     this.PHSon = null;
+    
+    // Coordonnées zones :
+    
+    this.point1 = {1,1};
+    this.point2 = {2,2};
+    this.point3 = {3,3};
+    this.point4 = {4,4};
+    	
     this.timestamp = new Date().getTime();
     console.log('Nouvel objet PlayerHost créé : ' + this.name);
 }
@@ -84,6 +92,34 @@ function setPHFather(PHFather) {
 function setPHSon(PHSon) {
     this.PHSon = PHSon;
 }
+
+function getPHRightB() {
+    return PHRightB;
+}
+
+function getPHLeftB() {
+	return PHLeftB;
+}
+
+function getPHFather() {
+	return PHFather;
+}
+
+function getPHSon() {
+	return PHSon;
+}
+
+function setZone(point11,point22,point33,point44) {
+    this.point1 = point11;
+    this.point2 = point22;
+    this.point3 = point33;
+    this.point4 = point44;
+}
+
+function getZone() {
+	return null;
+}
+
 
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = PlayerHost;
