@@ -15,10 +15,10 @@ function PlayerHost(name) {
     
     // Coordonnées zones :
     
-    this.point1 = {1,1};
-    this.point2 = {2,2};
-    this.point3 = {3,3};
-    this.point4 = {4,4};
+    this.point1 = [1,1];
+    this.point2 = [2,2];
+    this.point3 = [3,3];
+    this.point4 = [4,4];
     	
     this.timestamp = new Date().getTime();
     console.log('Nouvel objet PlayerHost créé : ' + this.name);

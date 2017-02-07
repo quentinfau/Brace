@@ -1,11 +1,11 @@
-let neighborhood [] ;
+let neighborhood = [] ;
 
-var neighbor {
-	name
-	coordonneX
-	coordonneY
-	radius
-	angle
+let neighbor = {
+	name,
+	coordonneX,
+	coordonneY,
+	radius,
+	angle,
 	speed
 }
 
