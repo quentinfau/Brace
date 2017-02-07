@@ -1,8 +1,8 @@
-var Game_Over = {
+var Game_Done = {
 
     preload : function() {
         // Load the needed image for this game screen.
-        game.load.image('gameover', './assets/images/gameover.png');
+        game.load.image('gameover', './assets/images/BabyTrumpDump.png');
     },
 
     create : function() {
