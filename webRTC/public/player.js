@@ -1,7 +1,7 @@
 
 function Player(name) {
     this.name = name;
-    this.connection = connection;
+    this.connection = null;
     this.radius = 0;
     this.angle = 0;
     this.speed = 0;

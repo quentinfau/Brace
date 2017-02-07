@@ -1,5 +1,9 @@
 function connectToWebSocket(user) {
-
+if (user=="playerHost"){
+    myHost = new PlayerHost(user);
+} else {
+    myPlayer = new Player(user);
+}
     socket = io.connect(location.origin);
     socket.on('welcomeMessage', function (data) {
         console.log("received message from the server : " + data.message);
@@ -33,7 +37,10 @@ function initHost(){
     });
 }
 startGame.onclick = function() {
-    socket.emit('startGame');
+    //socket.emit('startGame');
+    myPlayer = new Player("player");
+    createConnection.call(myHost,myPlayer);
+
 };
 
 setid.onclick = function () {

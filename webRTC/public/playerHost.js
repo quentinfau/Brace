@@ -11,11 +11,48 @@ function PlayerHost(name) {
     this.PHFather = null;
     this.PHSon = null;
     this.timestamp = new Date().getTime();
-    console.log('Nouvel objet Player créé : ' + this.name);
+    console.log('Nouvel objet PlayerHost créé : ' + this.name);
 }
 
 function createConnection(player) {
+    let connection = new Connection();
 
+    pcLocal = new RTCPeerConnection(cfg, con);
+    pcLocal.onicecandidate = function () {
+        if (pcLocal.iceGatheringState == "complete" && !offerSent) {
+            offerSent = true;
+            sendNegotiation("offer", pcLocal.localDescription);
+        }
+    };
+    dc1 = pcLocal.createDataChannel(createID(player.name, this.name), {reliable: true});
+    connection.sendChannel = dc1;
+    activedc = dc1;
+    dc1.onopen = function () {
+        console.log('Connected');
+        let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
+        writeMsg(data);
+        offerSent = false;
+    };
+    dc1.onmessage = function (e) {
+        if (e.data.charCodeAt(0) == 2) {
+            return
+        }
+        let data = JSON.parse(e.data);
+        writeMsg(data);
+    };
+    pcLocal.createOffer(function (desc) {
+        pcLocal.setLocalDescription(desc, function () {
+        }, function () {
+        });
+        console.log("------ SEND OFFER ------");
+
+    }, function () {
+    }, sdpConstraints);
+
+    pcLocalList[createID(player, this)] = pcLocal;
+    if (dc1 != null) {
+        dcList[createID(player, this)] = dc1;
+    }
 }
 
 function setList(playerList) {
