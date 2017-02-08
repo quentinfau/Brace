@@ -54,16 +54,18 @@ io.sockets.on('connection', function (socket) {
         //console.log('Got socket message: ' + data);
         //const msg = JSON.parse(data);
         for (let i = 0; i < socketList.length; i++) {
-            if (i == 0) {
+            if (i < 2 ) {
                 let playerHost = new PlayerHost(socketList[i].user);
                 listPlayerHost.push(playerHost);
             } else {
             	initPlayer(socketList[i].user);
             }
         }
-                
-        listPlayerHost[0].setList(listPlayer);
-        
+        //console.log(listPlayerHost[0]);
+
+        listPlayerHost[0].setList(listPlayer.slice(0,2));
+        listPlayerHost[1].setList(listPlayer.slice(2,3));
+
         listPlayer.forEach(function (player) {
             getSocketByName(player.name).emit("initPlayer", player);
         });
@@ -75,9 +77,9 @@ io.sockets.on('connection', function (socket) {
     socket.on('disconnect', function () {
         socketList.splice(socketList.indexOf(this), 1);
         let username_disconnected = this.user;
-        
+
         removePlayerOrPlayerHost(username_disconnected);
-                
+
         console.log('Client disconnected');
         updateListOfClient();
     });
@@ -94,14 +96,14 @@ function updateListOfClient() {
 
 function removePlayerOrPlayerHost(username_disconnected) {
 	let i = 0;
-    listPlayerHost.forEach(function (playerHost){ 
+    listPlayerHost.forEach(function (playerHost){
     	if(username_disconnected == playerHost.name) {
     		listPlayerHost.splice(i, 1);
     	}
     	i++;
     });
     i = 0;
-    listPlayer.forEach(function (player){ 
+    listPlayer.forEach(function (player){
     	if(username_disconnected == player.name) {
     		listPlayer.splice(i, 1);
     	}
