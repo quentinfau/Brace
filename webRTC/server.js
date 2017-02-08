@@ -19,6 +19,7 @@ let listPlayerHost = [];
 const listObstacle = [];
 const nbZone = 1;
 const diametre = 400000;
+const nbPlayerByHost = 2;
 
 io.sockets.on('connection', function (socket) {
     console.log('Un client est connecté !');
@@ -61,6 +62,7 @@ io.sockets.on('connection', function (socket) {
                 initPlayer(socketList[i].user);
             }
         }
+
         //console.log(listPlayerHost[0]);
         const data1 = {
             "playerList": listPlayer.slice(0, 2),
@@ -136,3 +138,4 @@ function initPlayer(username) {
      player.coordonneY = math.multiply(200000,math.sin(ramdomAngle));*/
     listPlayer.push(username);
 }
+
