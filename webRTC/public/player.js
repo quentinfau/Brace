@@ -1,6 +1,6 @@
 
 
-let Player = function (){
+let Player = function (name){
 
 	
 
@@ -13,7 +13,7 @@ let Player = function (){
 		speed : "m"
 	};
 	this.neighborhood = [this.neighbor] ;*/
-	this.name = "bob";
+	this.name = name;
 	this.dataChannel = null;
 	this.radius = 0;
 	this.angle = 0;
@@ -22,7 +22,7 @@ let Player = function (){
 	this.coordonneY = 0;
 	this.rank = 1 ;
 		
-    //console.log('Nouvel objet Player créé : ' + name );
+    console.log('Nouvel objet Player créé : ' + name );
     
 	this.getCoordonneX = function (coordonneX){
     	coordonneX = coordonneX;

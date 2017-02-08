@@ -8,12 +8,14 @@ function connectToWebSocket(name) {
     socket.on('listOfClient', function (list) {
         updateList(list);
     });
-    socket.on('initPlayerHost', function (user) {
-        player = user;
+    socket.on('initPlayerHost', function (data) {
+        const msg = JSON.parse(data);
+        player = new PlayerHost(msg.user);
+        player.setList(msg.playerList);
         initHost(player, 0);
     });
     socket.on('initPlayer', function (user) {
-        player = user;
+        player = new Player(user);
     });
     socket.on('negotiationMessage', function (data) {
         console.log("received message from the server : " + data);
@@ -32,9 +34,10 @@ function connectToWebSocket(name) {
 function initHost(host, i) {
     let currentPlayer = host.playerList[i];
     if (currentPlayer != null) {
-        remote = currentPlayer.name;
-        createConnection.call(host, remote).then(state => {
-            console.log("state : " + state + ' pmlayer : ' + remote);
+        remote = currentPlayer;
+        host.createConnection(remote)
+        .then(state => {
+            console.log("state : " + state + ' player : ' + remote);
             initHost(host, i + 1);
         })
     }

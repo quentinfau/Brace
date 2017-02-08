@@ -49,29 +49,36 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('startGame', function () {
-    	listPlayerHost = [];
-    	listPlayer = [];
+        listPlayerHost = [];
+        listPlayer = [];
         //console.log('Got socket message: ' + data);
         //const msg = JSON.parse(data);
         for (let i = 0; i < socketList.length; i++) {
-            if (i < 2 ) {
-                let playerHost = new PlayerHost(socketList[i].user);
-                listPlayerHost.push(playerHost);
+            if (i < 2) {
+                // let playerHost = new PlayerHost(socketList[i].user);
+                listPlayerHost.push(socketList[i].user);
             } else {
-            	initPlayer(socketList[i].user);
+                initPlayer(socketList[i].user);
             }
         }
         //console.log(listPlayerHost[0]);
+        const data1 = {
+            "playerList": listPlayer.slice(0, 2),
+            "user": listPlayerHost[0]
+        };
+        //listPlayerHost[0].setList(listPlayer.slice(0,2));
+        // listPlayerHost[1].setList(listPlayer.slice(2,3));
+        const data2 = {
+            "playerList": listPlayer.slice(2, 3),
+            "user": listPlayerHost[1]
+        };
 
-        listPlayerHost[0].setList(listPlayer.slice(0,2));
-        listPlayerHost[1].setList(listPlayer.slice(2,3));
+        listPlayer.forEach(function (playerName) {
+            getSocketByName(playerName).emit("initPlayer", playerName);
+        });
 
-        listPlayer.forEach(function (player) {
-            getSocketByName(player.name).emit("initPlayer", player);
-        });
-        listPlayerHost.forEach(function (playerHost) {
-            getSocketByName(playerHost.name).emit("initPlayerHost", playerHost);
-        });
+        getSocketByName(listPlayerHost[0]).emit("initPlayerHost", JSON.stringify(data1));
+        getSocketByName(listPlayerHost[1]).emit("initPlayerHost", JSON.stringify(data2));
     });
 
     socket.on('disconnect', function () {
@@ -95,19 +102,19 @@ function updateListOfClient() {
 }
 
 function removePlayerOrPlayerHost(username_disconnected) {
-	let i = 0;
-    listPlayerHost.forEach(function (playerHost){
-    	if(username_disconnected == playerHost.name) {
-    		listPlayerHost.splice(i, 1);
-    	}
-    	i++;
+    let i = 0;
+    listPlayerHost.forEach(function (playerHostName) {
+        if (username_disconnected == playerHostName) {
+            listPlayerHost.splice(i, 1);
+        }
+        i++;
     });
     i = 0;
-    listPlayer.forEach(function (player){
-    	if(username_disconnected == player.name) {
-    		listPlayer.splice(i, 1);
-    	}
-    	i++;
+    listPlayer.forEach(function (playerName) {
+        if (username_disconnected == playerName) {
+            listPlayer.splice(i, 1);
+        }
+        i++;
     });
 }
 
@@ -121,11 +128,11 @@ function getSocketByName(name) {
 }
 
 function initPlayer(username) {
-	let player = new Player(username);
-	let ramdomAngle = math.randomInt(0,359);
-	player.angle = ramdomAngle;
-	player.radius = 200000;
-	player.coordonneX = math.multiply(200000,math.cos(ramdomAngle));
-	player.coordonneY = math.multiply(200000,math.sin(ramdomAngle));
-	listPlayer.push(player);
+    /*	let player = new Player(username);
+     let ramdomAngle = math.randomInt(0,359);
+     player.angle = ramdomAngle;
+     player.radius = 200000;
+     player.coordonneX = math.multiply(200000,math.cos(ramdomAngle));
+     player.coordonneY = math.multiply(200000,math.sin(ramdomAngle));*/
+    listPlayer.push(username);
 }
