@@ -1,130 +1,10 @@
 
-<<<<<<< HEAD
-=======
-function PlayerHost(name) {
-    this.name = name;
-    this.nbJoueur = 1;
-    this.indicePremierJoueur = 1;
-    this.indiceDernierJoueur = 1;
-    this.PHLeftB = null;
-    this.PHRightB = null;
-    this.PHFather = null;
-    this.PHSon = null;
-
-    // Coordonnées zones :
-
-    this.point1 = [1,1];
-    this.point2 = [2,2];
-    this.point3 = [3,3];
-    this.point4 = [4,4];
-
-    this.timestamp = new Date().getTime();
-    console.log('Nouvel objet PlayerHost créé : ' + this.name);
-}
->>>>>>> branch 'master' of https://github.com/quentinfau/Brace.git
-
-<<<<<<< HEAD
-=======
- function createConnection(player) {
-     return new Promise(function (resolve, reject) {
-         parent = this;
-         pcLocal = new RTCPeerConnection(cfg, con);
-         pcLocal.onicecandidate = function () {
-             if (pcLocal.iceGatheringState == "complete" && !offerSent) {
-                 console.log("player : " + player + " host : " + parent.name);
-                 offerSent = true;
-                 sendNegotiation("offer", pcLocal.localDescription, myHost.name, player.name);
-             }
-         };
-         dc1 = pcLocal.createDataChannel(createID(player.name, myHost.name), {reliable: true});
-         activedc = dc1;
-         dc1.onopen = function () {
-             console.log('Connected');
-             dataChannels.push(dc1);
-             let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
-             writeMsg(data);
-             offerSent = false;
-             resolve("CONNECTED");
-         };
-         dc1.onmessage = function (e) {
-             if (e.data.charCodeAt(0) == 2) {
-                 return
-             }
-             let data = JSON.parse(e.data);
-             writeMsg(data);
-         };
-         pcLocal.createOffer(function (desc) {
-             pcLocal.setLocalDescription(desc, function () {
-             }, function () {
-             });
-             console.log("------ SEND OFFER ------");
->>>>>>> branch 'master' of https://github.com/quentinfau/Brace.git
-
-<<<<<<< HEAD
- function createConnection(player) {
-     return new Promise(function (resolve, reject) {
-         parent = this;
-         pcLocal = new RTCPeerConnection(cfg, con);
-         pcLocal.onicecandidate = function () {
-             if (pcLocal.iceGatheringState == "complete" && !offerSent) {
-                 console.log("player : " + player + " host : " + parent.name);
-                 offerSent = true;
-                 sendNegotiation("offer", pcLocal.localDescription, myHost.name, player.name);
-             }
-         };
-         dc1 = pcLocal.createDataChannel(createID(player.name, myHost.name), {reliable: true});
-         activedc = dc1;
-         dc1.onopen = function () {
-             console.log('Connected');
-             dataChannels.push(dc1);
-             let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
-             writeMsg(data);
-             offerSent = false;
-             resolve("CONNECTED");
-         };
-         dc1.onmessage = function (e) {
-             if (e.data.charCodeAt(0) == 2) {
-                 return
-             }
-             let data = JSON.parse(e.data);
-             writeMsg(data);
-         };
-         pcLocal.createOffer(function (desc) {
-             pcLocal.setLocalDescription(desc, function () {
-             }, function () {
-             });
-             console.log("------ SEND OFFER ------");
-
-
 let PlayerHost = function (){
 
 	   // console.log('Nouvel objet PlayerHost créé : ' );
 	this.dataChannels = [];
 	this.playerList = {};
 	this.parent;
-=======
-         }, function () {
-         }, sdpConstraints);
-
-         pcLocalList[createID(player.name, myHost.name)] = pcLocal;
-         if (dc1 != null) {
-             dcList[createID(player.name, myHost.name)] = dc1;
-         }
-     });
-}
-
->>>>>>> branch 'master' of https://github.com/quentinfau/Brace.git
-function sendData(data){
-    if (data) {
-        dataChannels.forEach(function (dataChannel) {
-            dataChannel.send(JSON.stringify({message:data, user: parent.name}));
-        });
-        chatlog.innerHTML += '[' + this.name + '] ' + messageTextBox.value + '</p>';
-        messageTextBox.value = "";
-    }
-    return false
-}
-
 	this.name = "bob ";
 	this.nbJoueur = 1;
 	this.indicePremierJoueur = 1;
@@ -143,46 +23,59 @@ function sendData(data){
 		
 	this.timestamp = new Date().getTime();
 
+	 this.sendData = function(data){
+	    if (data) {
+	        dataChannels.forEach(function (dataChannel) {
+	            dataChannel.send(JSON.stringify({message:data, user: parent.name}));
+	        });
+	        chatlog.innerHTML += '[' + this.name + '] ' + messageTextBox.value + '</p>';
+	        messageTextBox.value = "";
+	    }
+	    return false
+	};
 
 	this.createConnection = function(player) {
-	
-	    parent = this;
-	    pcLocal = new RTCPeerConnection(cfg, con);
-	    pcLocal.onicecandidate = function () {
-	        if (pcLocal.iceGatheringState == "complete" && !offerSent) {
-	            offerSent = true;
-	            sendNegotiation("offer", pcLocal.localDescription, parent.name, player.name);
-	        }
-	    };
-	    dc1 = pcLocal.createDataChannel(createID(player.name, name), {reliable: true});
-	    activedc = dc1;
-	    dc1.onopen = function () {
-	        console.log('Connected');
-	        dataChannels.push(dc1);
-	        let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
-	        writeMsg(data);
-	        offerSent = false;
-	    };
-	    dc1.onmessage = function (e) {
-	        if (e.data.charCodeAt(0) == 2) {
-	            return
-	        }
-	        let data = JSON.parse(e.data);
-	        writeMsg(data);
-	    };
-	    pcLocal.createOffer(function (desc) {
-	        pcLocal.setLocalDescription(desc, function () {
-	        }, function () {
-	        });
-	        console.log("------ SEND OFFER ------");
-	
-	    }, function () {
-	    }, sdpConstraints);
-	
-	    pcLocalList[createID(player, this)] = pcLocal;
-	    if (dc1 != null) {
-	        dcList[createID(player, this)] = dc1;
-	    }
+		return new Promise(function (resolve, reject) {
+	         parent = this;
+	         pcLocal = new RTCPeerConnection(cfg, con);
+	         pcLocal.onicecandidate = function () {
+	             if (pcLocal.iceGatheringState == "complete" && !offerSent) {
+	                 console.log("player : " + player + " host : " + parent.name);
+	                 offerSent = true;
+	                 sendNegotiation("offer", pcLocal.localDescription, myHost.name, player.name);
+	             }
+	         };
+	         dc1 = pcLocal.createDataChannel(createID(player.name, myHost.name), {reliable: true});
+	         activedc = dc1;
+	         dc1.onopen = function () {
+	             console.log('Connected');
+	             dataChannels.push(dc1);
+	             let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
+	             writeMsg(data);
+	             offerSent = false;
+	             resolve("CONNECTED");
+	         };
+	         dc1.onmessage = function (e) {
+	             if (e.data.charCodeAt(0) == 2) {
+	                 return
+	             }
+	             let data = JSON.parse(e.data);
+	             writeMsg(data);
+	         };
+	         pcLocal.createOffer(function (desc) {
+	             pcLocal.setLocalDescription(desc, function () {
+	             }, function () {
+	             });
+	             console.log("------ SEND OFFER ------");
+	         }, function () {
+	         }, sdpConstraints);
+
+	         pcLocalList[createID(player.name, myHost.name)] = pcLocal;
+	         if (dc1 != null) {
+	             dcList[createID(player.name, myHost.name)] = dc1;
+	         }
+	     });
+		
 	};
 
 	this.setList = function (playerList) {
