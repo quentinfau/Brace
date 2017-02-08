@@ -121,6 +121,11 @@ function getSocketByName(name) {
 function initPlayer(username) {
 	let player = new Player(username);
 	let ramdomAngle = math.randomInt(0,359);
+	listPlayer.forEach( function(player_angle) {
+		if(player_angle.angle == randomAngle) {
+			ramdomAngle = math.randomInt(0,359);
+		}
+	});
 	player.angle = ramdomAngle;
 	player.radius = 200000;
 	player.coordonneX = math.multiply(200000,math.cos(ramdomAngle));
