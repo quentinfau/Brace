@@ -56,9 +56,9 @@ let Host = function (name) {
                 }
 
                 let data = JSON.parse(e.data);
-                switch (data.type) {
+                switch (data.message.type) {
                     case "position" :
-                        writeMsg(data);
+                        writeMsg(data);console.log("RECEIVED : "+data.message);
                         break;
                     default :
                         break;
