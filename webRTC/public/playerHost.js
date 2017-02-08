@@ -1,30 +1,40 @@
-let dataChannels = [];
-let playerList = {};
-let parent;
-let method = PlayerHost.prototype;
 
-function PlayerHost(name) {
-    this.name = name;
-    this.nbJoueur = 1;
-    this.indicePremierJoueur = 1;
-    this.indiceDernierJoueur = 1;
-    this.PHLeftB = null;
-    this.PHRightB = null;
-    this.PHFather = null;
-    this.PHSon = null;
+let PlayerHost = function (){
 
-    // Coordonnées zones :
+	   // console.log('Nouvel objet PlayerHost créé : ' );
+	this.dataChannels = [];
+	this.playerList = {};
+	this.parent;
+	this.name = "bob ";
+	this.nbJoueur = 1;
+	this.indicePremierJoueur = 1;
+	this.indiceDernierJoueur = 1;
+	this.PHLeftB = null;
+	this.PHRightB = null;
+	this.PHFather = null;
+	this.PHSon = null;
 
-    this.point1 = [1,1];
-    this.point2 = [2,2];
-    this.point3 = [3,3];
-    this.point4 = [4,4];
+	// Coordonnées zones :
 
-    this.timestamp = new Date().getTime();
-    console.log('Nouvel objet PlayerHost créé : ' + this.name);
-}
+	this.point1 = [1,1];
+	this.point2 = [2,2];
+	this.point3 = [3,3];
+	this.point4 = [4,4];
 
- function createConnection(playerName) {
+	this.timestamp = new Date().getTime();
+
+	 this.sendData = function(data){
+	    if (data) {
+	        dataChannels.forEach(function (dataChannel) {
+	            dataChannel.send(JSON.stringify({message:data, user: parent.name}));
+	        });
+	        chatlog.innerHTML += '[' + this.name + '] ' + messageTextBox.value + '</p>';
+	        messageTextBox.value = "";
+	    }
+	    return false
+	};
+
+    this.createConnection = function(playerName) {
      return new Promise(function (resolve, reject) {
          parent = this;
          pcLocal = new RTCPeerConnection(cfg, con);
@@ -66,7 +76,7 @@ function PlayerHost(name) {
              dcList[createID(playerName, player.name)] = dc1;
          }
      });
-}
+};
 
 function sendData(data,){
     if (data) {
@@ -79,59 +89,60 @@ function sendData(data,){
     return false
 }
 
-method.setList = function (playerList) {
-    this.playerList = playerList;
-};
+	this.setList = function (playerList) {
+		playerList = playerList;
+	};
 
-function addConnection(connection) {
-    this.connections[connection.id] = connection;
-}
+	this.addConnection = function (connection){
+		connections[connection.id] = connection;
+	};
 
-function removeConnection(connection) {
-    this.connections.splice(this.connections.indexOf(connection.id), 1);
-}
+	this.removeConnection = function(connection){
+	    connections.splice(connections.indexOf(connection.id), 1);
+	};
 
-function setPHRightB(PHRightB) {
-    this.PHRightB = PHRightB;
-}
+	this.setPHRightB = function(PHRightB) {
+	    PHRightB = PHRightB;
+	};
 
-function setPHLeftB(PHLeftB) {
-    this.PHLeftB = PHLeftB;
-}
+	this.setPHLeftB = function(PHLeftB) {
+	    PHLeftB = PHLeftB;
+	};
 
-function setPHFather(PHFather) {
-    this.PHFather = PHFather;
-}
+	this.setPHFather = function(PHFather){
+	    PHFather = PHFather;
+	};
 
-function setPHSon(PHSon) {
-    this.PHSon = PHSon;
-}
+	this.setPHSon = function(PHSon){
+	    PHSon = PHSon;
+	};
 
-function getPHRightB() {
-    return PHRightB;
-}
+	this.getPHRightB = function(){
+	    return PHRightB;
+	};
 
-function getPHLeftB() {
-	return PHLeftB;
-}
+	this.getPHLeftB = function(){
+		return PHLeftB;
+	};
 
-function getPHFather() {
-	return PHFather;
-}
+	this.getPHFather = function(){
+		return PHFather;
+	};
 
-function getPHSon() {
-	return PHSon;
-}
+	this.getPHSon = function(){
+		return PHSon;
+	};
 
-function setZone(point11,point22,point33,point44) {
-    this.point1 = point11;
-    this.point2 = point22;
-    this.point3 = point33;
-    this.point4 = point44;
-}
+	this.setZone = function(point11,point22,point33,point44){
+	    point1 = point11;
+	    point2 = point22;
+	    point3 = point33;
+	    point4 = point44;
+	};
 
-function getZone() {
-	return null;
+	this.getZone = function() {
+		return null;
+	};
 }
 
 

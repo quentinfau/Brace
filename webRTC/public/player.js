@@ -1,80 +1,85 @@
-let neighborhood = [] ;
 
-let neighbor = {
-	name : "f",
-	coordonneX : "d",
-	coordonneY : "p",
-	radius : "e",
-	angle : "z",
-	speed : "m"
-}
 
-function Player(name) {
-    this.name = name;
-    this.dataChannel = null;
-    this.radius = 0;
-    this.angle = 0;
-    this.speed = 0;
-    this.coordonneX = 0;
-    this.coordonneY = 0;
-    this.rank = 1 ;
-    console.log('Nouvel objet Player créé : ' + this.name );
+let Player = function (){
+
+	
+
+	/*this.neighbor = {
+		namen : "f",
+		coordonneX : "d",
+		coordonneY : "p",
+		radius : "e",
+		angle : "z",
+		speed : "m"
+	};
+	this.neighborhood = [this.neighbor] ;*/
+	this.name = "bob";
+	this.dataChannel = null;
+	this.radius = 0;
+	this.angle = 0;
+	this.speed = 0;
+	this.coordonneX = 0;
+	this.coordonneY = 0;
+	this.rank = 1 ;
+		
+    //console.log('Nouvel objet Player créé : ' + name );
     
-    function setCoordonneX(coordonneX){
-    	this.coordonneX = coordonneX;
-    }
+	this.getCoordonneX = function (coordonneX){
+    	coordonneX = coordonneX;
+    };
 
-    function setCoordonneY(coordonneY){
-    	this.coordonneY = coordonneY;
-    }
+    this.getCoordonneY = function (coordonneY){
+    	coordonneY = coordonneY;
+    };
 
-    function setRadius(radius){
-        this.radius = radius;
-    }
+    this.setRadius = function (radius){
+        radius = radius;
+    };
 
-    function setSpeed(speed){
-        this.speed = speed;
-    }
+    this.setSpeed = function (speed){
+        speed = speed;
+    };
 
-    function setAngle(angle){
-        this.angle = angle;
-    }
+    this.setAngle = function(angle){
+        angle = angle;
+    };
        
-    function setRank(rank1){
-    	this.rank = rank1;
-    }
+    this.setRank = function (rank1){
+    	rank = rank1;
+    }; 
 
-    function setDataChannel(dataChannel){
-        this.dataChannel = dataChannel;
-    }
+    this.setDataChannel = function (dataChannel){
+        dataChannel = dataChannel;
+    };
     
-    function getCoordonneX(){
-    	return this.CoordonneX;
-    }
+    this.getCoordonneX = function(){
+    	return CoordonneX;
+    };
     
-    function getCoordonneY(){
-    	return this.CoordonneY;
-    }
+    this.getCoordonneY = function(){
+    	return CoordonneY;
+    };
     
-    function getAngle(){
-    	return this.angle;
-    }
+    this.getAngle = function(){
+    	return angle;
+    };
     
-    function getRadius(){
-    	return this.radius;
-    }
+    this.getRadius = function(){
+    	return radius;
+    };
 
-    function getSpeed(){
-    	return this.speed;
-    }
+    this.getSpeed = function(){
+    	return speed;
+    };
     
-    function getRank(){
-    	return this.rank;
-    }
-    
-    function addNeighbor(name1,coordonneX1,coordonneY1,radius1,angle1,speed1) {
+    this.getRank = function(){
+    	return rank;
+    };
+
+    /*
+    this.addNeighbor = function(name1,coordonneX1,coordonneY1,radius1,angle1,speed1) {
     	var neighbor1;
-    	neighbor1.name = name1;
+    	neighbor1.namen = name1;
     	neighbor1.coordonneX = coordonneX1;
     	neighbor1.coordonneY = coordonneY1;
     	neighbor1.radius = radius1;
@@ -82,11 +87,11 @@ function Player(name) {
     	neighbor1.speed = speed1;
     	
     	neighborhood.push(neighbor1); 	
-    }
+    };
     
-    function removeNeighbor(name) {
-        this.neighborhood.splice(this.neighborhood.indexOf(name), 1);
-    }
+    this.removeNeighbor = function(name){
+        neighborhood.splice(neighborhood.indexOf(name), 1);
+    };*/
  
 }
 
