@@ -1,45 +1,44 @@
-function connectToWebSocket(user) {
+function connectToWebSocket(name) {
 
     socket = io.connect(location.origin);
     socket.on('welcomeMessage', function (data) {
         console.log("received message from the server : " + data.message);
-        data.user = name;
         writeMsg(data);
     });
     socket.on('listOfClient', function (list) {
         updateList(list);
     });
-    socket.on('initPlayerHost', function (host) {
-        playerHost = host;
-        myHost = host;
-        isHost = true;
-        initHost(playerHost, 0);
+    socket.on('initPlayerHost', function (data) {
+        const msg = JSON.parse(data);
+        player = new PlayerHost(msg.user);
+        player.setList(msg.playerList);
+        initHost(player, 0);
     });
-    socket.on('initPlayer', function (player) {
-        myPlayer = player;
+    socket.on('initPlayer', function (user) {
+        player = new Player(user);
     });
     socket.on('negotiationMessage', function (data) {
         console.log("received message from the server : " + data);
         if (data.action == "offer") {
-            myHost = data.from;
-            // myPlayer = data.to;
+            remote = data.from;
             processOffer(data.data);
         } else if (data.action == "answer") {
-            if (data.to == user) {
+            if (data.to == name) {
                 processAnswer(data.data, data.id);
             }
         }
     });
-    socket.emit('nouveau_client', user);
+    socket.emit('nouveau_client', name);
 }
 
-function initHost(playerHost, i) {
-    let player = playerHost.playerList[i];
-    if (player != null) {
-        myPlayer = player;
-        createConnection.call(playerHost, player).then(state => {
-            console.log("state : " + state + ' pmlayer : ' + player);
-            initHost(playerHost, i + 1);
+function initHost(host, i) {
+    let currentPlayer = host.playerList[i];
+    if (currentPlayer != null) {
+        remote = currentPlayer;
+        host.createConnection(remote)
+        .then(state => {
+            console.log("state : " + state + ' player : ' + remote);
+            initHost(host, i + 1);
         })
     }
 }
