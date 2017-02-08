@@ -62,7 +62,7 @@ function initHostFamily(host, i) {
 
 startGame.onclick = function () {
     socket.emit('startGame');
-    window.location = "index_Brace.html";
+    //window.location = "index_Brace.html";
 };
 
 setid.onclick = function () {
