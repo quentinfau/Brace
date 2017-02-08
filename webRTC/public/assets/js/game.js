@@ -19,7 +19,7 @@ var Game = {
         game.load.image('background', './assets/images/background.png');
         game.load.image('cap', 'assets/images/arrowCap_small.png');
         game.load.image('apple', './assets/images/apple.png');
-        game.load.image('sida', './assets/images/sida.jpeg');
+        game.load.image('sida', './assets/images/sida.png');
 
         playerBK = new Player("F");
         console.log("init "+ playerBK.name);
