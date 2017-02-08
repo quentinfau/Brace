@@ -1,4 +1,4 @@
-var player, speed, cursors, map, cap, apple, mapCenter,obstacles;
+var balloon, speed, cursors, map, cap, apple, mapCenter,obstacles;
 
 const WORLD_WIDTH = 400300, WORLD_HEIGHT = 400300;
 const ROTATE_SPEED=200;
@@ -15,13 +15,14 @@ const NB_OBSTACLES = 1000;
 var Game = {
 
     preload : function () {
-        game.load.spritesheet('player', './assets/images/balloon_animated_small.png', 100, 50);
+        game.load.spritesheet('balloon', './assets/images/balloon_animated_small.png', 100, 50);
         game.load.image('background', './assets/images/background.png');
         game.load.image('cap', 'assets/images/arrowCap_small.png');
         game.load.image('apple', './assets/images/apple.png');
-                game.load.image('sida', './assets/images/sida.png');
+        game.load.image('sida', './assets/images/sida.png');
 
-        player = new Player("f");
+        playerBK = new Player("F");
+        console.log("init "+ playerBK.name);
 
     },
 
@@ -51,11 +52,11 @@ var Game = {
 
         this.generatePlayer();
         game.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
-        game.camera.follow(player);
+        game.camera.follow(balloon);
         apple = game.add.sprite(CENTER_WORLD_X,CENTER_WORLD_Y, 'apple');
 
         this.generateObstacles();
-        game.physics.enable([player,apple], Phaser.Physics.ARCADE);
+        game.physics.enable([balloon,apple], Phaser.Physics.ARCADE);
 
     },
 
@@ -64,9 +65,9 @@ var Game = {
     update: function() {
     	//smartphone control : https://github.com/flogvit/phaser-swipe
 
-    	player.body.velocity.x = 0;
-    	player.body.velocity.y = 0;
-    	player.body.angularVelocity = 0;
+    	balloon.body.velocity.x = 0;
+    	balloon.body.velocity.y = 0;
+    	balloon.body.angularVelocity = 0;
 
 	    if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
 	    {
@@ -79,31 +80,34 @@ var Game = {
 	    else if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && speed <= MAX_PLAYER_SPEED)
 	    {
 	        speed++;
-	        player.animations.currentAnim.speed=ROPE_SPEED*speed;
+	        balloon.animations.currentAnim.speed=ROPE_SPEED*speed;
 	    }
 	    else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN) && speed > MIN_PLAYER_SPEED)
 	    {
 	        speed--;
-	        player.animations.currentAnim.speed=ROPE_SPEED*speed;
+	        balloon.animations.currentAnim.speed=ROPE_SPEED*speed;
 	    }
-	    game.physics.arcade.velocityFromAngle(player.angle, INITIAL_SPEED+SPEED_MULTIPLICATOR*speed, player.body.velocity);
+       // console.log("name : "+playerBK.name);
+        playerBK.sendPosition();
+        console.log("SENT");
+	    game.physics.arcade.velocityFromAngle(balloon.angle, INITIAL_SPEED+SPEED_MULTIPLICATOR*speed, balloon.body.velocity);
 	    this.wallCollision();
 	    cap.rotation = game.physics.arcade.angleBetween(cap, mapCenter);
 
-        this.appleCollision(player,apple);
+        this.appleCollision(balloon,apple);
         this.obstacleCollision();
     },
     moveChecker : function(){
         if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
-            player.body.angularVelocity = -ROTATE_SPEED;
+            balloon.body.angularVelocity = -ROTATE_SPEED;
         }else if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
-            player.body.angularVelocity = ROTATE_SPEED;
+            balloon.body.angularVelocity = ROTATE_SPEED;
         }
 
     },
      wallCollision:function(){
 
-    	    if (Math.sqrt(Math.pow(WORLD_WIDTH/2-player.body.x,2)+Math.pow(WORLD_HEIGHT/2-player.body.y,2)) >= RAYON) {
+    	    if (Math.sqrt(Math.pow(WORLD_WIDTH/2-balloon.body.x,2)+Math.pow(WORLD_HEIGHT/2-balloon.body.y,2)) >= RAYON) {
     	    	game.state.start('Game_Over');
     	    }
     },
@@ -113,31 +117,31 @@ var Game = {
         min_x = CENTER_WORLD_X-RAYON;
         min_y = CENTER_WORLD_Y-RAYON;
         max_y = CENTER_WORLD_Y+RAYON - 1000;
-        console.log(CENTER_WORLD_X);
-        console.log(CENTER_WORLD_Y);
-        console.log(min_x);
+//        console.log(CENTER_WORLD_X);
+//        console.log(CENTER_WORLD_Y);
+//        console.log(min_x);
 
-        player = game.add.sprite(this.getRandomInt(min_x, max_x),this.getRandomInt(min_y,max_y), 'player');
-        player.anchor.setTo(0.5, 0.5);
-        game.physics.enable(player, Phaser.Physics.ARCADE);
-        player.body.collideWorldBounds = true;
-        player.animations.add('move', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], ROPE_SPEED, true);
-        player.animations.play('move');
-        console.log("max x : "+max_x+"Player  x :"+player.x+" y : "+player.y);
+        balloon = game.add.sprite(this.getRandomInt(min_x, max_x),this.getRandomInt(min_y,max_y), 'balloon');
+        balloon.anchor.setTo(0.5, 0.5);
+        game.physics.enable(balloon, Phaser.Physics.ARCADE);
+        balloon.body.collideWorldBounds = true;
+        balloon.animations.add('move', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], ROPE_SPEED, true);
+        balloon.animations.play('move');
+        console.log("max x : "+max_x+"balloon  x :"+balloon.x+" y : "+balloon.y);
     },
 
     getRandomInt:function(min, max) {
         return Math.floor(Math.random() * (max-min+1)) + min;
     },
-     appleCollision:function(player,apple){
-         game.physics.arcade.collide(player, apple,null, function(){
+     appleCollision:function(balloon,apple){
+         game.physics.arcade.collide(balloon, apple,null, function(){
             // Next time the snake moves, a new block will be added to its length.
              //apple.destroy();
             game.state.start('Game_Done');
         },null,this);
     },
     getPlayerX:function() {
-    	return this.game.player;
+    	return this.game.ballon;
     },
      getRandomInt: function(min, max) {
     return Math.floor(Math.random() * (max-min+1)) + min;
@@ -153,7 +157,7 @@ var Game = {
 },
 
  obstacleCollision: function(){
-     game.physics.arcade.collide(player, obstacles,null, function(){
+     game.physics.arcade.collide(balloon, obstacles,null, function(){
         // Next time the snake moves, a new block will be added to its length.
          //apple.destroy();
         game.state.start('Game_Over');

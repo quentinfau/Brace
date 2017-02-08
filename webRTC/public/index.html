@@ -11,9 +11,9 @@
 <body>
 <div>
     <h3>Create or join a room?</h3>
-    <input type="text" name="user" id="user" placeholder="e.g. Alice"
+    <input type="text" name="user" autofocus id="user" placeholder="e.g. Alice"
            onkeydown="if (event.keyCode == 13)
-           document.getElementById('setid').click()">
+           document.getElementById('setid').click()" >
     <button type="submit" id="setid">Connect to WebSocket</button>
     <input type="text" id="user2" placeholder="e.g. Bob"
            onkeydown="if (event.keyCode == 13)
@@ -38,4 +38,13 @@
 <script src="player.js" type="text/javascript"></script>
 <script src="host.js" type="text/javascript"></script>
 <script src="init.js" type="text/javascript"></script>
+        <meta charset="UTF-8" />
+    <title>Sperm</title>
+    <script src="assets/js/phaser.min.js"></script>
+    <script src="assets/js/swipe.js"></script>
+    <script src="assets/js/menu.js"></script>
+    <script src="assets/js/game.js"></script>
+    <script src="assets/js/game_over.js"></script>
+    <script src="assets/js/game_done.js"></script>
+    <script src="assets/js/main.js"></script>
 </html>
