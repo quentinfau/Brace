@@ -14,23 +14,31 @@ let Host = function (name) {
 
     // Coordonnées zones :
 
-    this.point1 = [1, 1];
-    this.point2 = [2, 2];
-    this.point3 = [3, 3];
-    this.point4 = [4, 4];
-
+    this.distanceD = 4000;
+    this.distanceF = 8000;
+    this.angleD    = 0;
+    this.angleF    = 180;
+   	
     this.timestamp = new Date().getTime();
 
     this.sendData = function (data) {
         if (data) {
-            dataChannels.forEach(function (dataChannel) {
-                dataChannel.send(JSON.stringify({message: data, user: parent.name}));
+            host.dataChannels.forEach(function (dataChannel) {
+                dataChannel.send(JSON.stringify({message: data, user: host.name}));
             });
-            chatlog.innerHTML += '[' + this.name + '] ' + messageTextBox.value + '</p>';
+            chatlog.innerHTML += '[' + host.name + '] ' + messageTextBox.value + '</p>';
             messageTextBox.value = "";
         }
         return false
     };
+    
+    this.getDataChannelByName = function (idUserDatachannel) {
+    	host.dataChannels.forEach( function(dataChannel) {
+    		if(dataChannel.label == idUserDatachannel) {
+    			return dataChannel;
+    		}
+    	});
+    }
 
     this.createConnection = function (playerName) {
         return new Promise(function (resolve, reject) {
@@ -54,12 +62,21 @@ let Host = function (name) {
                 if (e.data.charCodeAt(0) == 2) {
                     return
                 }
-
                 let data = JSON.parse(e.data);
-                switch (data.type) {
-                    case "position" :
-                        writeMsg(data);
+                switch (data.message.type) {
+                    case "position":
+                    	let idUserDatachannel = createID(host.name,data.user);
+                    	let userDatachannel = host.getDataChannelByName(idUserDatachannel);
+                    	const data2 = {
+                    		"classement": 0,
+                            "voisinage": "voisinage"
+                    	}
+                    	host.sendData(data2, userDatachannel);
+                    	writeMsg(data2);
                         break;
+                    /*case "position" :
+                    	writeMsg(data);
+                        break;*/
                     default :
                         break;
                 }
@@ -120,14 +137,15 @@ let Host = function (name) {
         return PHSon;
     };
 
-    this.setZone = function (point11, point22, point33, point44) {
-        point1 = point11;
-        point2 = point22;
-        point3 = point33;
-        point4 = point44;
+    this.setZone = function (dist1, dist2, angle1, angle2) {
+        this.distanceD = dist1;
+        this.distanceF = dist2;
+        this.angleD = angle1;
+        this.angleF = angle2;
     };
 
     this.getZone = function () {
         return null;
     };
+    
 };
