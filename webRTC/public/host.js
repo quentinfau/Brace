@@ -82,6 +82,9 @@ let Host = function (name) {
                 }
                 writeMsg(data);
             };
+            dc1.onerror = function (e) {
+                reject(e)
+            };
             pcLocal.createOffer(function (desc) {
                 pcLocal.setLocalDescription(desc, function () {
                 }, function () {

@@ -71,7 +71,22 @@ let Player = function (name){
     	return rank;
     };
 
-    sendPositionBtn.onclick = function () {
+//    sendPositionBtn.onclick = function () {
+//        const data = {
+//            "name": player.name,
+//            "radius": player.radius,
+//            "angle": player.angle,
+//            "x": player.coordonneX,
+//            "y": player.coordonneY,
+//            "speed": player.speed,
+//            "timestamp": player.timestamp,
+//            "type" : "position"
+//        };
+//        sendData(data,player.dataChannel);
+//    };
+
+
+    this.sendPosition = function () {
         const data = {
             "name": player.name,
             "radius": player.radius,
@@ -84,7 +99,6 @@ let Player = function (name){
         };
         sendData(data,player.dataChannel);
     };
-
    this.receiveConnection =  function(offer) {
 
         let pcRemote = new RTCPeerConnection(cfg, con);
