@@ -1,12 +1,12 @@
 let offerSent = false;
 let answerSent = false;
 let player;
+let host;
 let remote;
 let socket = null;
 let pcLocal;
 let dc1 = null;
 let dc2 = null;
-let activedc;
 
 const cfg = {'iceServers': [{'url': "stun:stun.l.google.com:19302"}]},
     con = {'optional': [{'DtlsSrtpKeyAgreement': true}]};

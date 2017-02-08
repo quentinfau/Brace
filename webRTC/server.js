@@ -10,9 +10,6 @@ const server = express()
 
 const io = require('socket.io').listen(server);
 
-const PlayerHost = require("./public/playerHost.js");
-const Player = require("./public/player.js");
-
 const socketList = [];
 let listPlayer = [];
 let listPlayerHost = [];
@@ -56,22 +53,26 @@ io.sockets.on('connection', function (socket) {
         //const msg = JSON.parse(data);
         for (let i = 0; i < socketList.length; i++) {
             if (i < 2) {
-                // let playerHost = new PlayerHost(socketList[i].user);
                 listPlayerHost.push(socketList[i].user);
+                initPlayer(socketList[i].user);
             } else {
                 initPlayer(socketList[i].user);
             }
         }
 
         //console.log(listPlayerHost[0]);
+        playerList1 = listPlayer.slice(2, 4);
+        playerList1.push(listPlayer[0]);
         const data1 = {
-            "playerList": listPlayer.slice(0, 2),
+            "playerList": playerList1,
             "user": listPlayerHost[0]
         };
         //listPlayerHost[0].setList(listPlayer.slice(0,2));
         // listPlayerHost[1].setList(listPlayer.slice(2,3));
+        playerList2 = listPlayer.slice(4, 5);
+        playerList2.push(listPlayer[1]);
         const data2 = {
-            "playerList": listPlayer.slice(2, 3),
+            "playerList": playerList2,
             "user": listPlayerHost[1]
         };
 

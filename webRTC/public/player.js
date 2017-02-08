@@ -40,7 +40,7 @@ let Player = function (name){
     };
        
     this.setRank = function (rank1){
-    	rank = rank1;
+    	this.rank = rank1;
     }; 
 
     this.setDataChannel = function (dataChannel){
@@ -104,7 +104,6 @@ let Player = function (name){
         let pcRemote = new RTCPeerConnection(cfg, con);
         pcRemote.ondatachannel = function (e) {
             dc2 = e.channel || e;
-            activedc = dc2;
             dc2.onopen = function () {
                 console.log('Connected');
                 player.setDataChannel(dc2);
@@ -141,7 +140,7 @@ let Player = function (name){
             function () {
             },
             sdpConstraints)
-    }
+    };
     /*
     this.addNeighbor = function(name1,coordonneX1,coordonneY1,radius1,angle1,speed1) {
     	var neighbor1;
@@ -160,11 +159,3 @@ let Player = function (name){
     };*/
  
 };
-
-if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-    module.exports = Player;
-} else {
-    window.Player = Player;
-}
-
-
