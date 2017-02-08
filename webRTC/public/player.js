@@ -71,7 +71,6 @@ function Player(name) {
     function getRank(){
     	return this.rank;
     }
-
     
     function addNeighbor(name1,coordonneX1,coordonneY1,radius1,angle1,speed1) {
     	var neighbor1;

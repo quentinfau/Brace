@@ -1,7 +1,7 @@
 let offerSent = false;
 let answerSent = false;
-let myPlayer;
-let myHost;
+let player;
+let remote;
 let socket = null;
 let pcLocal;
 let pcLocalList = {};
@@ -24,7 +24,7 @@ function createID(local, remote) {
 
 function processAnswer(answer) {
     let answerDesc = new RTCSessionDescription(answer);
-    pcLocalList[createID(myPlayer.name, myHost.name)].setRemoteDescription(answerDesc);
+    pcLocalList[createID(remote, player.name)].setRemoteDescription(answerDesc);
     console.log("------ PROCESSED ANSWER ------");
     return true;
 }
@@ -37,17 +37,17 @@ function processOffer(offer) {
         activedc = dc2;
         dc2.onopen = function () {
             console.log('Connected');
-            myPlayer.dataChannel = dc2;
+            player.dataChannel = dc2;
             //on écrit dans le chat que le myPlayer s'est connecté
             let data = {user: "system", message: "the datachannel " + dc2.label + " has been opened"};
             writeMsg(data);
             answerSent = false;
-            pcLocalList[createID(myPlayer.name, myHost.name)] = pcLocal;
+            pcLocalList[createID(player.name, remote)] = pcLocal;
             if (dc1 != null) {
-                dcList[createID(myPlayer.name, myHost.name)] = dc1;
+                dcList[createID(player.name, remote)] = dc1;
             }
             if (dc2 != null) {
-                dcList[createID(myPlayer.name, myHost.name)] = dc2;
+                dcList[createID(player.name, remote)] = dc2;
             }
 
             console.log("DONE");
@@ -60,13 +60,13 @@ function processOffer(offer) {
     pcRemote.onicecandidate = function () {
         if (pcRemote.iceGatheringState == "complete" && !answerSent) {
             answerSent = true;
-            sendNegotiation("answer", pcRemote.localDescription, myPlayer.name, myHost);
+            sendNegotiation("answer", pcRemote.localDescription, player.name, remote);
         }
     };
 
-    pcLocalList[createID(myPlayer.name, myHost.name)] = pcRemote;
+    pcLocalList[createID(player.name, remote)] = pcRemote;
     if (dc2 != null) {
-        dcList[createID(myPlayer.name, myHost.name)] = dc2;
+        dcList[createID(player.name, remote)] = dc2;
     }
 
     let offerDesc = new RTCSessionDescription(offer);
@@ -91,16 +91,26 @@ if (navigator.webkitGetUserMedia) {
 }
 
 function sendMessage() {
-    if (isHost){
-        sendData.call(myHost, messageTextBox.value);
-    }/*
-    if (messageTextBox.value) {
-        for (let id in dcList) {
-            dcList[id].send(JSON.stringify({message: messageTextBox.value, user: myPlayer}));
-        }
-        chatlog.innerHTML += '[' + myPlayer + '] ' + messageTextBox.value + '</p>';
+    sendData(messageTextBox.value,player.dataChannel);
+    /*
+     if (messageTextBox.value) {
+     for (let id in dcList) {
+     dcList[id].send(JSON.stringify({message: messageTextBox.value, user: myPlayer}));
+     }
+     chatlog.innerHTML += '[' + myPlayer + '] ' + messageTextBox.value + '</p>';
+     messageTextBox.value = "";
+     }*/
+    return false
+}
+
+
+function sendData(data, dataChannel) {
+    if (data) {
+        dataChannel.send(JSON.stringify({message: data, user: player.name}));
+        chatlog.innerHTML += '[' + player.name + '] ' + data + '</p>';
         messageTextBox.value = "";
-    }*/
+    }
+
     return false
 }
 

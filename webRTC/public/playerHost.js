@@ -24,18 +24,18 @@ function PlayerHost(name) {
     console.log('Nouvel objet PlayerHost créé : ' + this.name);
 }
 
- function createConnection(player) {
+ function createConnection(playerName) {
      return new Promise(function (resolve, reject) {
          parent = this;
          pcLocal = new RTCPeerConnection(cfg, con);
          pcLocal.onicecandidate = function () {
              if (pcLocal.iceGatheringState == "complete" && !offerSent) {
-                 console.log("player : " + player + " host : " + parent.name);
+                 console.log("player : " + playerName + " host : " + parent.name);
                  offerSent = true;
-                 sendNegotiation("offer", pcLocal.localDescription, myHost.name, player.name);
+                 sendNegotiation("offer", pcLocal.localDescription, player.name, playerName);
              }
          };
-         dc1 = pcLocal.createDataChannel(createID(player.name, myHost.name), {reliable: true});
+         dc1 = pcLocal.createDataChannel(createID(playerName, player.name), {reliable: true});
          activedc = dc1;
          dc1.onopen = function () {
              console.log('Connected');
@@ -61,14 +61,14 @@ function PlayerHost(name) {
          }, function () {
          }, sdpConstraints);
 
-         pcLocalList[createID(player.name, myHost.name)] = pcLocal;
+         pcLocalList[createID(playerName, player.name)] = pcLocal;
          if (dc1 != null) {
-             dcList[createID(player.name, myHost.name)] = dc1;
+             dcList[createID(playerName, player.name)] = dc1;
          }
      });
 }
 
-function sendData(data){
+function sendData(data,){
     if (data) {
         dataChannels.forEach(function (dataChannel) {
             dataChannel.send(JSON.stringify({message:data, user: parent.name}));
