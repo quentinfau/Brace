@@ -10,7 +10,8 @@ let Host = function (name) {
     this.PHLeftB = null;
     this.PHRightB = null;
     this.PHFather = null;
-    this.PHSon = null;
+    this.PHSon1 = null;
+    this.PHSon2 = null;
 
     // Coordonnées zones :
 
@@ -44,11 +45,11 @@ let Host = function (name) {
             dc1 = pcLocal.createDataChannel(createID(host.name, playerName), {reliable: true});
             dc1.onopen = function () {
                 console.log('Connected');
-                host.addDataChannel(dc1);
+               // host.addDataChannel(dc1);
                 let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
                 writeMsg(data);
                 offerSent = false;
-                resolve("CONNECTED");
+                resolve(dc1);
             };
             dc1.onmessage = function (e) {
                 if (e.data.charCodeAt(0) == 2) {
@@ -103,8 +104,12 @@ let Host = function (name) {
         this.PHFather = PHFather;
     };
 
-    this.setPHSon = function (PHSon) {
-        this.PHSon = PHSon;
+    this.setPHSon1 = function (PHSon1) {
+        this.PHSon1 = PHSon1;
+    };
+
+    this.setPHSon2 = function (PHSon2) {
+        this.PHSon2 = PHSon2;
     };
 
     this.getPHRightB = function () {
@@ -119,8 +124,11 @@ let Host = function (name) {
         return PHFather;
     };
 
-    this.getPHSon = function () {
-        return PHSon;
+    this.getPHSon1 = function () {
+        return PHSon1;
+    };
+    this.getPHSon2 = function () {
+        return PHSon2;
     };
 
     this.setZone = function (point11, point22, point33, point44) {

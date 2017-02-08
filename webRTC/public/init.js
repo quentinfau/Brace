@@ -14,7 +14,9 @@ function connectToWebSocket(name) {
         player = new Player(msg.user);
         host = new Host(msg.user);
         host.setList(msg.playerList);
+        host.family = msg.family;
         initHost(host, 0);
+        initHostFamily(host, 0);
     });
     socket.on('initPlayer', function (user) {
         player = new Player(user);
@@ -38,10 +40,23 @@ function initHost(host, i) {
     if (currentPlayer != null) {
         remote = currentPlayer;
         host.createConnection(remote)
-        .then(state => {
-            console.log("state : " + state + ' player : ' + remote);
+        .then(dataChannel => {
+            console.log("dataChannel : " + dataChannel + ' player : ' + remote);
+            host.addDataChannel(dataChannel);
             initHost(host, i + 1);
         })
+    }
+}
+function initHostFamily(host, i) {
+    let currentFamilyMember = host.family[i];
+    if (currentFamilyMember != null) {
+        remote = currentFamilyMember;
+        host.createConnection(remote)
+            .then(dataChannel => {
+                console.log("dataChannel : " + dataChannel + ' player : ' + remote);
+                host.addDataChannel(dataChannel);
+                initHost(host, i + 1);
+            })
     }
 }
 
