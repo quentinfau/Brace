@@ -19,6 +19,7 @@ let listPlayerHost = [];
 const listObstacle = [];
 const nbZone = 1;
 const diametre = 400000;
+const nbPlayerByHost = 2;
 
 io.sockets.on('connection', function (socket) {
     console.log('Un client est connecté !');
@@ -53,7 +54,7 @@ io.sockets.on('connection', function (socket) {
     	listPlayer = [];
         //console.log('Got socket message: ' + data);
         //const msg = JSON.parse(data);
-        for (let i = 0; i < socketList.length; i++) {
+    	for (let i = 0; i < socketList.length; i++) {
             if (i < 2 ) {
                 let playerHost = new PlayerHost(socketList[i].user);
                 listPlayerHost.push(playerHost);
@@ -61,8 +62,7 @@ io.sockets.on('connection', function (socket) {
             	initPlayer(socketList[i].user);
             }
         }
-        //console.log(listPlayerHost[0]);
-
+                
         listPlayerHost[0].setList(listPlayer.slice(0,2));
         listPlayerHost[1].setList(listPlayer.slice(2,3));
 
@@ -122,15 +122,16 @@ function getSocketByName(name) {
 
 function initPlayer(username) {
 	let player = new Player(username);
-	let ramdomAngle = math.randomInt(0,359);
+	let randomAngle = math.randomInt(0,359);
 	listPlayer.forEach( function(player_angle) {
 		if(player_angle.angle == randomAngle) {
-			ramdomAngle = math.randomInt(0,359);
+			randomAngle = math.randomInt(0,359);
 		}
 	});
-	player.angle = ramdomAngle;
+	player.angle = randomAngle;
 	player.radius = 200000;
-	player.coordonneX = math.multiply(200000,math.cos(ramdomAngle));
-	player.coordonneY = math.multiply(200000,math.sin(ramdomAngle));
+	player.coordonneX = math.multiply(200000,math.cos(randomAngle));
+	player.coordonneY = math.multiply(200000,math.sin(randomAngle));
 	listPlayer.push(player);
 }
+
