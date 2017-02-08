@@ -1,6 +1,6 @@
-let PlayerHost = function (name) {
+let Host = function (name) {
 
-    console.log('Nouvel objet PlayerHost créé : ' + name);
+    console.log('Nouvel objet Host créé : ' + name);
     this.dataChannels = [];
     this.playerList = {};
     this.name = name;
@@ -38,14 +38,13 @@ let PlayerHost = function (name) {
             pcLocal.onicecandidate = function () {
                 if (pcLocal.iceGatheringState == "complete" && !offerSent) {
                     offerSent = true;
-                    sendNegotiation("offer", pcLocal.localDescription, player.name, playerName);
+                    sendNegotiation("offer", pcLocal.localDescription, host.name, playerName);
                 }
             };
-            dc1 = pcLocal.createDataChannel(createID(player.name, playerName), {reliable: true});
-            activedc = dc1;
+            dc1 = pcLocal.createDataChannel(createID(host.name, playerName), {reliable: true});
             dc1.onopen = function () {
                 console.log('Connected');
-                player.addDataChannel(dc1);
+                host.addDataChannel(dc1);
                 let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
                 writeMsg(data);
                 offerSent = false;
@@ -132,10 +131,3 @@ let PlayerHost = function (name) {
         return null;
     };
 };
-
-
-if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-    module.exports = PlayerHost;
-} else {
-    window.PlayerHost = PlayerHost;
-}

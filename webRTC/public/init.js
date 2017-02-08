@@ -11,9 +11,10 @@ function connectToWebSocket(name) {
     });*/
     socket.on('initPlayerHost', function (data) {
         const msg = JSON.parse(data);
-        player = new PlayerHost(msg.user);
-        player.setList(msg.playerList);
-        initHost(player, 0);
+        player = new Player(msg.user);
+        host = new Host(msg.user);
+        host.setList(msg.playerList);
+        initHost(host, 0);
     });
     socket.on('initPlayer', function (user) {
         player = new Player(user);
