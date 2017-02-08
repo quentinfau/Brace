@@ -26,7 +26,7 @@ create :function(){
         updateDelay = 0;                // A variable for control over update rates.
         direction = 'right';            // The direction of our snake.
         new_direction = null;           // A buffer to store the new direction into.
-        addNew = false; 
+        addNew = false;
         snakeSection = [];
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -37,20 +37,20 @@ create :function(){
     snakeHead = game.add.sprite(200, 200, 'snake');
     snakeHead.anchor.setTo(0.5, 0.5);
     game.camera.follow(snakeHead);
-    
+
     //  Init snakeSection array
     for (var i = 1; i <= numSnakeSections-1; i++)
     {
         snakeSection[i] = game.add.sprite(100, 200, 'snake');
         snakeSection[i].anchor.setTo(0.5, 0.5);
     }
-    
+
     //  Init snakePath array
     for (var i = 0; i <= numSnakeSections * snakeSpacer; i++)
     {
         snakePath[i] = new Phaser.Point(100, 200);
     }
-    
+
     // Genereate the first apple.
         this.generateApple();
 
@@ -73,7 +73,7 @@ update:function() {
 
     // Increase a counter on every update call.
     updateDelay++;
-    
+
     snakeHead.body.velocity.setTo(0, 0);
     snakeHead.body.angularVelocity = 0;
 
@@ -81,7 +81,7 @@ update:function() {
     {
         snakeHead.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(snakeHead.angle, 300));
 
-        // Everytime the snake head moves, insert the new location at the start of the array, 
+        // Everytime the snake head moves, insert the new location at the start of the array,
         // and knock the last position off the end
 
         var part = snakePath.pop();
@@ -96,7 +96,7 @@ console.log("Snake Section "+snakeSection.length);
             snakeSection[i].x = (snakePath[i * snakeSpacer]).x;
             snakeSection[i].y = (snakePath[i * snakeSpacer]).y;
         }
-          
+
 
     if (cursors.left.isDown)
     {
@@ -106,8 +106,8 @@ console.log("Snake Section "+snakeSection.length);
     {
         snakeHead.body.angularVelocity = 900;
     }
-       
-        
+
+
   // in create
   this.swipe = new Swipe(this.game,this.snakeHead);
 
@@ -170,12 +170,12 @@ console.log("Snake Section "+snakeSection.length);
     }
 
 },
-    
+
     appleCollision: function(head) {
 
     // Check if any part of the snake is overlapping the apple.
     // This is needed if the apple spawns inside of the snake.
-    game.physics.arcade.collide(head, apple,null, function(){ 
+    game.physics.arcade.collide(head, apple,null, function(){
         // Next time the snake moves, a new block will be added to its length.
             addNew = true;
 
@@ -199,7 +199,7 @@ console.log("Snake Section "+snakeSection.length);
                             speedTextValue = game.add.text(558, 18, speed.toString(), textStyle_Value);
 
     },null,this);
-    
+
 
 },
      generateApple: function(){
