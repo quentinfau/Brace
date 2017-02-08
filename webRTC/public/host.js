@@ -152,4 +152,19 @@ let Host = function (name) {
         return null;
     };
 
+    this.verifSwitchHost = function (angle1 , distance1) {
+    		if (distance1  < this.distanceD  ) {
+    			// switch PHFather
+    		}
+    		else if (distance1  > this.distanceF ) {
+    			// switch PHSon ( 2 cas )
+    		}
+    		else if (angle1  > this.angleF ) {
+    			// switch PHLeft
+    		}
+    		else if ( angle1 < this.angleD ) {
+    			// switch PHRIght
+    		}
+    } 
+    
 };
