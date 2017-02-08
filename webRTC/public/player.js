@@ -1,9 +1,4 @@
-
-
 let Player = function (name){
-
-	
-
 	/*this.neighbor = {
 		namen : "f",
 		coordonneX : "d",
@@ -25,23 +20,23 @@ let Player = function (name){
     console.log('Nouvel objet Player créé : ' + name );
     
 	this.getCoordonneX = function (coordonneX){
-    	coordonneX = coordonneX;
+    	this.coordonneX = coordonneX;
     };
 
     this.getCoordonneY = function (coordonneY){
-    	coordonneY = coordonneY;
+        this.coordonneY = coordonneY;
     };
 
     this.setRadius = function (radius){
-        radius = radius;
+        this.radius = radius;
     };
 
     this.setSpeed = function (speed){
-        speed = speed;
+        this.speed = speed;
     };
 
     this.setAngle = function(angle){
-        angle = angle;
+        this.angle = angle;
     };
        
     this.setRank = function (rank1){
@@ -49,7 +44,7 @@ let Player = function (name){
     }; 
 
     this.setDataChannel = function (dataChannel){
-        dataChannel = dataChannel;
+        this.dataChannel = dataChannel;
     };
     
     this.getCoordonneX = function(){
@@ -76,6 +71,63 @@ let Player = function (name){
     	return rank;
     };
 
+    sendPositionBtn.onclick = function () {
+        const data = {
+            "name": player.name,
+            "radius": player.radius,
+            "angle": player.angle,
+            "x": player.coordonneX,
+            "y": player.coordonneY,
+            "speed": player.speed,
+            "timestamp": player.timestamp,
+            "type" : "position"
+        };
+        sendData(data,player.dataChannel);
+    };
+
+   this.receiveConnection =  function(offer) {
+
+        let pcRemote = new RTCPeerConnection(cfg, con);
+        pcRemote.ondatachannel = function (e) {
+            dc2 = e.channel || e;
+            activedc = dc2;
+            dc2.onopen = function () {
+                console.log('Connected');
+                player.setDataChannel(dc2);
+                //on écrit dans le chat que le myPlayer s'est connecté
+                let data = {user: "system", message: "the datachannel " + dc2.label + " has been opened"};
+                writeMsg(data);
+                answerSent = false;
+                console.log("DONE");
+            };
+            dc2.onmessage = function (e) {
+                let data = JSON.parse(e.data);
+                writeMsg(data);
+            };
+        };
+        pcRemote.onicecandidate = function () {
+            if (pcRemote.iceGatheringState == "complete" && !answerSent) {
+                answerSent = true;
+                sendNegotiation("answer", pcRemote.localDescription, player.name, remote);
+            }
+        };
+
+        let offerDesc = new RTCSessionDescription(offer);
+        let sdpConstraints = {
+            'mandatory': {
+                'OfferToReceiveAudio': false,
+                'OfferToReceiveVideo': false
+            }
+        };
+        pcRemote.setRemoteDescription(offerDesc);
+        pcRemote.createAnswer(function (answerDesc) {
+                pcRemote.setLocalDescription(answerDesc);
+                console.log("------ SEND ANSWER ------");
+            },
+            function () {
+            },
+            sdpConstraints)
+    }
     /*
     this.addNeighbor = function(name1,coordonneX1,coordonneY1,radius1,angle1,speed1) {
     	var neighbor1;
@@ -93,7 +145,7 @@ let Player = function (name){
         neighborhood.splice(neighborhood.indexOf(name), 1);
     };*/
  
-}
+};
 
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = Player;

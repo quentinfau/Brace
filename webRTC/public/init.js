@@ -1,3 +1,4 @@
+
 function connectToWebSocket(name) {
 
     socket = io.connect(location.origin);
@@ -5,9 +6,9 @@ function connectToWebSocket(name) {
         console.log("received message from the server : " + data.message);
         writeMsg(data);
     });
-    socket.on('listOfClient', function (list) {
+  /*  socket.on('listOfClient', function (list) {
         updateList(list);
-    });
+    });*/
     socket.on('initPlayerHost', function (data) {
         const msg = JSON.parse(data);
         player = new PlayerHost(msg.user);
@@ -21,9 +22,9 @@ function connectToWebSocket(name) {
         console.log("received message from the server : " + data);
         if (data.action == "offer") {
             remote = data.from;
-            processOffer(data.data);
+            player.receiveConnection(data.data);
         } else if (data.action == "answer") {
-            if (data.to == name) {
+            if (data.to == player.name) {
                 processAnswer(data.data, data.id);
             }
         }

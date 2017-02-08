@@ -32,7 +32,7 @@ io.sockets.on('connection', function (socket) {
     socket.on('nouveau_client', function (pseudo) {
         console.log('nouveau client');
         socket.user = pseudo;
-        updateListOfClient();
+     //   updateListOfClient();
     });
 
     socket.on('negotiationMessage', function (data) {
@@ -88,10 +88,10 @@ io.sockets.on('connection', function (socket) {
         removePlayerOrPlayerHost(username_disconnected);
 
         console.log('Client disconnected');
-        updateListOfClient();
+       // updateListOfClient();
     });
 });
-function updateListOfClient() {
+/*function updateListOfClient() {
     const userList = [];
     socketList.forEach(function (socket) {
         userList.push(socket.user);
@@ -99,7 +99,7 @@ function updateListOfClient() {
     socketList.forEach(function (socket) {
         socket.emit('listOfClient', userList);
     })
-}
+}*/
 
 function removePlayerOrPlayerHost(username_disconnected) {
     let i = 0;

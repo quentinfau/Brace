@@ -4,12 +4,9 @@ let player;
 let remote;
 let socket = null;
 let pcLocal;
-let pcLocalList = {};
-let dcList = {};
 let dc1 = null;
 let dc2 = null;
 let activedc;
-let isHost = false;
 
 const cfg = {'iceServers': [{'url': "stun:stun.l.google.com:19302"}]},
     con = {'optional': [{'DtlsSrtpKeyAgreement': true}]};
@@ -24,66 +21,9 @@ function createID(local, remote) {
 
 function processAnswer(answer) {
     let answerDesc = new RTCSessionDescription(answer);
-    pcLocalList[createID(remote, player.name)].setRemoteDescription(answerDesc);
+    pcLocal.setRemoteDescription(answerDesc);
     console.log("------ PROCESSED ANSWER ------");
     return true;
-}
-
-function processOffer(offer) {
-
-    let pcRemote = new RTCPeerConnection(cfg, con);
-    pcRemote.ondatachannel = function (e) {
-        dc2 = e.channel || e;
-        activedc = dc2;
-        dc2.onopen = function () {
-            console.log('Connected');
-            player.dataChannel = dc2;
-            //on écrit dans le chat que le myPlayer s'est connecté
-            let data = {user: "system", message: "the datachannel " + dc2.label + " has been opened"};
-            writeMsg(data);
-            answerSent = false;
-            pcLocalList[createID(player.name, remote)] = pcLocal;
-            if (dc1 != null) {
-                dcList[createID(player.name, remote)] = dc1;
-            }
-            if (dc2 != null) {
-                dcList[createID(player.name, remote)] = dc2;
-            }
-
-            console.log("DONE");
-        };
-        dc2.onmessage = function (e) {
-            let data = JSON.parse(e.data);
-            writeMsg(data);
-        };
-    };
-    pcRemote.onicecandidate = function () {
-        if (pcRemote.iceGatheringState == "complete" && !answerSent) {
-            answerSent = true;
-            sendNegotiation("answer", pcRemote.localDescription, player.name, remote);
-        }
-    };
-
-    pcLocalList[createID(player.name, remote)] = pcRemote;
-    if (dc2 != null) {
-        dcList[createID(player.name, remote)] = dc2;
-    }
-
-    let offerDesc = new RTCSessionDescription(offer);
-    let sdpConstraints = {
-        'mandatory': {
-            'OfferToReceiveAudio': false,
-            'OfferToReceiveVideo': false
-        }
-    };
-    pcRemote.setRemoteDescription(offerDesc);
-    pcRemote.createAnswer(function (answerDesc) {
-            pcRemote.setLocalDescription(answerDesc);
-            console.log("------ SEND ANSWER ------");
-        },
-        function () {
-        },
-        sdpConstraints)
 }
 
 if (navigator.webkitGetUserMedia) {
@@ -91,7 +31,7 @@ if (navigator.webkitGetUserMedia) {
 }
 
 function sendMessage() {
-    sendData(messageTextBox.value,player.dataChannel);
+    sendData(messageTextBox.value, player.dataChannel);
     /*
      if (messageTextBox.value) {
      for (let id in dcList) {
@@ -125,7 +65,7 @@ function writeMsg(data) {
     chatlog.scrollTop = chatlog.scrollHeight;
 }
 
-function updateList(list) {
+/*function updateList(list) {
     let x = document.getElementById("userList");
     x.onchange = function () {
         let selected = x.options[x.selectedIndex].value;
@@ -140,4 +80,4 @@ function updateList(list) {
         c.text = entry;
         x.options.add(c);
     });
-}
+}*/

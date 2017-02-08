@@ -41,11 +41,11 @@ let PlayerHost = function (name) {
                     sendNegotiation("offer", pcLocal.localDescription, player.name, playerName);
                 }
             };
-            dc1 = pcLocal.createDataChannel(createID(playerName, player.name), {reliable: true});
+            dc1 = pcLocal.createDataChannel(createID(player.name, playerName), {reliable: true});
             activedc = dc1;
             dc1.onopen = function () {
                 console.log('Connected');
-                player.dataChannels.push(dc1);
+                player.addDataChannel(dc1);
                 let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
                 writeMsg(data);
                 offerSent = false;
@@ -55,7 +55,15 @@ let PlayerHost = function (name) {
                 if (e.data.charCodeAt(0) == 2) {
                     return
                 }
+
                 let data = JSON.parse(e.data);
+                switch (data.type) {
+                    case "position" :
+                        writeMsg(data);
+                        break;
+                    default :
+                        break;
+                }
                 writeMsg(data);
             };
             pcLocal.createOffer(function (desc) {
@@ -66,11 +74,6 @@ let PlayerHost = function (name) {
 
             }, function () {
             }, sdpConstraints);
-
-            pcLocalList[createID(playerName, player.name)] = pcLocal;
-            if (dc1 != null) {
-                dcList[createID(playerName, player.name)] = dc1;
-            }
         });
     };
 
@@ -78,12 +81,12 @@ let PlayerHost = function (name) {
         this.playerList = playerList;
     };
 
-    this.addConnection = function (connection) {
-        this.connections[connection.id] = connection;
+    this.addDataChannel = function (dataChannel) {
+        this.dataChannels.push(dataChannel);
     };
 
-    this.removeConnection = function (connection) {
-        this.connections.splice(this.connections.indexOf(connection.id), 1);
+    this.removeDataChannel = function (dataChannel) {
+        this.dataChannels.splice(dataChannel);
     };
 
     this.setPHRightB = function (PHRightB) {
