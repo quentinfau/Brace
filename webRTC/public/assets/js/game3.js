@@ -10,7 +10,7 @@ function create() {
 
     //  Note: on iOS as soon as you use 6 fingers you'll active the minimise app gesture - and there's nothing we can do to stop that, sorry
 
-    
+
 
 }
 
@@ -18,7 +18,7 @@ function render() {
 
     //  Just renders out the pointer data when you touch the canvas
     game.debug.pointer(game.input.pointer1);
-    
+
 //    game.debug.pointer(game.input.pointer6);
 
 }

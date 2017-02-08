@@ -46,6 +46,7 @@ function initHost(host, i) {
 
 startGame.onclick = function () {
     socket.emit('startGame');
+    window.location = "index_Brace.html";
 };
 
 setid.onclick = function () {

@@ -34,21 +34,21 @@ var Game = {
         speed = 1;           			// La vitesse du joueur
         mapCenter = new Phaser.Point(WORLD_WIDTH/2, WORLD_HEIGHT/2);
         cursors = game.input.keyboard.createCursorKeys(); // Setup des contrôles PC
-        
+
         map = new Phaser.Circle(CENTER_WORLD_X, CENTER_WORLD_Y, DIAMETER);
         game.add.tileSprite(0, 0, WORLD_WIDTH, WORLD_HEIGHT, 'background');
-        
-        
+
+
 
         var graphics = game.add.graphics(0, 0);
         graphics.lineStyle(20, 0x00ff00, 1);
         graphics.drawCircle(map.x, map.y, map.diameter);
-        
+
         cap = game.add.sprite(35, 40, 'cap');
         cap.anchor.setTo(0.5, 0.5);
         cap.fixedToCamera = true;
         cap.cameraOffset.setTo(35, 40);
-        
+
         this.generatePlayer();
         game.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
         game.camera.follow(player);
@@ -63,7 +63,7 @@ var Game = {
 
     update: function() {
     	//smartphone control : https://github.com/flogvit/phaser-swipe
-    	
+
     	player.body.velocity.x = 0;
     	player.body.velocity.y = 0;
     	player.body.angularVelocity = 0;
