@@ -30,7 +30,7 @@ io.sockets.on('connection', function (socket) {
     socket.on('nouveau_client', function (pseudo) {
         console.log('nouveau client');
         socket.user = pseudo;
-     //   updateListOfClient();
+        //   updateListOfClient();
     });
 
     socket.on('negotiationMessage', function (data) {
@@ -52,36 +52,27 @@ io.sockets.on('connection', function (socket) {
         //console.log('Got socket message: ' + data);
         //const msg = JSON.parse(data);
         for (let i = 0; i < socketList.length; i++) {
-            if (i < 2) {
-                listPlayerHost.push(socketList[i].user);
-                initPlayer(socketList[i].user);
+            name = socketList[i].user;
+            if (i < 7) {
+                listPlayerHost.push(name);
+                initPlayer(name);
             } else {
-                initPlayer(socketList[i].user);
+                initPlayer(name);
             }
         }
-
-        //console.log(listPlayerHost[0]);
-        playerList1 = listPlayer.slice(2, 4);
-        playerList1.push(listPlayer[0]);
-        const data1 = {
-            "playerList": playerList1,
-            "user": listPlayerHost[0]
-        };
-        //listPlayerHost[0].setList(listPlayer.slice(0,2));
-        // listPlayerHost[1].setList(listPlayer.slice(2,3));
-        playerList2 = listPlayer.slice(4, 5);
-        playerList2.push(listPlayer[1]);
-        const data2 = {
-            "playerList": playerList2,
-            "user": listPlayerHost[1]
-        };
-
         listPlayer.forEach(function (playerName) {
             getSocketByName(playerName).emit("initPlayer", playerName);
         });
-
-        getSocketByName(listPlayerHost[0]).emit("initPlayerHost", JSON.stringify(data1));
-        getSocketByName(listPlayerHost[1]).emit("initPlayerHost", JSON.stringify(data2));
+        let j = 0;
+        for (let i = listPlayerHost.length - 1; i >= 0; i--) {
+            if (j<listPlayer.length) {
+                initHostWithPlayer(listPlayerHost[i], listPlayer.slice(j, j + 2));
+            }
+            else {
+                initHost(listPlayerHost[i]);
+            }
+            j=j+2;
+        }
     });
 
     socket.on('disconnect', function () {
@@ -91,18 +82,18 @@ io.sockets.on('connection', function (socket) {
         removePlayerOrPlayerHost(username_disconnected);
 
         console.log('Client disconnected');
-       // updateListOfClient();
+        // updateListOfClient();
     });
 });
 /*function updateListOfClient() {
-    const userList = [];
-    socketList.forEach(function (socket) {
-        userList.push(socket.user);
-    });
-    socketList.forEach(function (socket) {
-        socket.emit('listOfClient', userList);
-    })
-}*/
+ const userList = [];
+ socketList.forEach(function (socket) {
+ userList.push(socket.user);
+ });
+ socketList.forEach(function (socket) {
+ socket.emit('listOfClient', userList);
+ })
+ }*/
 
 function removePlayerOrPlayerHost(username_disconnected) {
     let i = 0;
@@ -121,6 +112,21 @@ function removePlayerOrPlayerHost(username_disconnected) {
     });
 }
 
+function initHostWithPlayer(host,listPlayer) {
+    const data = {
+        "playerList": listPlayer,
+        "user": host
+    };
+    getSocketByName(host).emit("initPlayerHost", JSON.stringify(data));
+}
+
+function initHost(host) {
+    const data = {
+        "playerList": "",
+        "user": host
+    };
+    getSocketByName(host).emit("initPlayerHost", JSON.stringify(data));
+}
 function getSocketByName(name) {
     for (let i = 0; i < socketList.length; i++) {
         // send to everybody on the site

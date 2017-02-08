@@ -11,9 +11,9 @@
 <body>
 <div>
     <h3>Create or join a room?</h3>
-    <input type="text" name="user" id="user" placeholder="e.g. Alice"
+    <input type="text" name="user" autofocus id="user" placeholder="e.g. Alice"
            onkeydown="if (event.keyCode == 13)
-           document.getElementById('setid').click()">
+           document.getElementById('setid').click()" >
     <button type="submit" id="setid">Connect to WebSocket</button>
     <input type="text" id="user2" placeholder="e.g. Bob"
            onkeydown="if (event.keyCode == 13)
