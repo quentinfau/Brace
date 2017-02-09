@@ -1,4 +1,4 @@
-var balloon, speed, cursors, map, cap, apple, mapCenter,obstacles;
+var balloon, speed, cursors, map, cap, apple, mapCenter,obstacles,rayon,angleDegree,updateDelay;
 
 const WORLD_WIDTH = 400300, WORLD_HEIGHT = 400300;
 const ROTATE_SPEED=200;
@@ -11,6 +11,8 @@ const CENTER_WORLD_X = WORLD_WIDTH/2;
 const CENTER_WORLD_Y = WORLD_HEIGHT/2;
 const RAYON = DIAMETER/2;
 const NB_OBSTACLES = 0;
+const UPDATE_DELAY = 20;
+
 
 var Game = {
 
@@ -22,7 +24,7 @@ var Game = {
         game.load.image('sida', './assets/images/sida.png');
 
         //playerBK = new Player("F");
-        console.log("init "+ player.name);
+       // console.log("init "+ player.name);
 
     },
 
@@ -31,7 +33,7 @@ var Game = {
     	//this.scale.pageAlignHorizontally = true;
     	this.scale.pageAlignVertically = true;
     	this.scale.setScreenSize( true );
-
+        updateDelay = 0;
         speed = 1;           			// La vitesse du joueur
         mapCenter = new Phaser.Point(WORLD_WIDTH/2, WORLD_HEIGHT/2);
         cursors = game.input.keyboard.createCursorKeys(); // Setup des contrôles PC
@@ -56,7 +58,8 @@ var Game = {
         apple = game.add.sprite(CENTER_WORLD_X,CENTER_WORLD_Y, 'apple');
 
         this.generateObstacles();
-        game.physics.enable([balloon,apple], Phaser.Physics.ARCADE);
+        game.physics.enable([balloon,apple,mapCenter], Phaser.Physics.ARCADE);
+        console.log("Angle : "+game.physics.arcade.angleBetween(mapCenter,balloon));
 
     },
 
@@ -87,8 +90,7 @@ var Game = {
 	        speed--;
 	        balloon.animations.currentAnim.speed=ROPE_SPEED*speed;
 	    }
-       // console.log("name : "+playerBK.name);
-        this.updatePlayer();
+
 
 	    game.physics.arcade.velocityFromAngle(balloon.angle, INITIAL_SPEED+SPEED_MULTIPLICATOR*speed, balloon.body.velocity);
 	    this.wallCollision();
@@ -96,6 +98,29 @@ var Game = {
 
         this.appleCollision(balloon,apple);
         this.obstacleCollision();
+
+        rayon = Math.sqrt(Math.pow(WORLD_WIDTH/2-balloon.body.x,2)+Math.pow(WORLD_HEIGHT/2-balloon.body.y,2));
+       // console.log("Angle :"+balloon.angle);
+        //Calcul de l'angle de balloon par rapport au vagin
+        var rad = game.physics.arcade.angleBetween(mapCenter,balloon);
+        var angleDegree = rad*(180/Math.PI);
+        if(angleDegree<0){
+            angleDegree = 360 + angleDegree;
+        }
+        console.log("Angle Degree: "+angleDegree);
+
+        //Calcul de rayon entre balloon et l'ovule
+        console.log("Rayon : "+rayon);
+        if(balloon.angle<0){
+            console.log(360+balloon.angle);
+        }else{
+            console.log(balloon.angle);
+        }
+
+        if(updateDelay % UPDATE_DELAY == 0){
+                    this.updatePlayer();
+        }
+        updateDelay++;
     },
     moveChecker : function(){
         if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
@@ -114,6 +139,12 @@ var Game = {
     updatePlayer : function(){
         player.coordonneX = balloon.x;
         player.coordonneY = balloon.y;
+        if(balloon.angle<0){
+            player.angle = 360+balloon.angle;
+        }else{
+            player.angle = balloon.angle;
+        }
+        player.radius = rayon;
         player.sendPosition();
         console.log("SENT");
     },
