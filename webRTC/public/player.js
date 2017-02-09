@@ -62,6 +62,11 @@ let Player = function (name) {
     this.getRadius = function () {
         return radius;
     };
+    
+    this.getName = function(){
+    	return name;
+    };
+
 
     this.getSpeed = function () {
         return speed;
