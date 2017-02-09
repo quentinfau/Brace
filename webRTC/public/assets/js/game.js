@@ -137,6 +137,7 @@ var Game = {
         balloon = game.add.sprite(this.getRandomInt(min_x, max_x),this.getRandomInt(min_y,max_y), 'balloon');
         balloon.anchor.setTo(0.5, 0.5);
         game.physics.enable(balloon, Phaser.Physics.ARCADE);
+        balloon.body.setCircle(50/2,25,0);
         balloon.body.collideWorldBounds = true;
         balloon.animations.add('move', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], ROPE_SPEED, true);
         balloon.animations.play('move');
