@@ -1,7 +1,7 @@
 var game;
 
 // Create a new game instance 600px wide and 450px tall:
-game = new Phaser.Game(1080/4, 1920/4, Phaser.AUTO, '');
+game = new Phaser.Game(768, 1366, Phaser.AUTO, '');
 
 // First parameter is how our state will be called.
 // Second parameter is an object containing the needed methods for state functionality
