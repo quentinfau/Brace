@@ -65,13 +65,13 @@ io.sockets.on('connection', function (socket) {
         });
         let j = 0;
         for (let i = listPlayerHost.length - 1; i >= 0; i--) {
-            if (j<listPlayer.length) {
+            if (j < listPlayer.length) {
                 initHostWithPlayer(listPlayerHost[i], listPlayer.slice(j, j + 2));
             }
             else {
                 initHost(listPlayerHost[i]);
             }
-            j=j+2;
+            j = j + 2;
         }
     });
 
@@ -112,20 +112,92 @@ function removePlayerOrPlayerHost(username_disconnected) {
     });
 }
 
-function initHostWithPlayer(host,listPlayer) {
+function initHostWithPlayer(host, listPlayer) {
+    let family = getFamily(host);
     const data = {
         "playerList": listPlayer,
-        "user": host
+        "user": host,
+        "family": family
     };
     getSocketByName(host).emit("initPlayerHost", JSON.stringify(data));
 }
 
 function initHost(host) {
+    let family = getFamily(host);
     const data = {
         "playerList": "",
-        "user": host
+        "user": host,
+        "family": family
     };
     getSocketByName(host).emit("initPlayerHost", JSON.stringify(data));
+}
+
+function getFamily(host) {
+    switch (host) {
+        case '1' :
+            return {
+                "PHLeftB": "",
+                "PHRightB": "",
+                "PHFather": "",
+                "PHSon1": listPlayer[1],
+                "PHSon2": listPlayer[2]
+            };
+            break;
+        case '2' :
+            return {
+                "PHLeftB":  listPlayer[2],
+                "PHRightB":  listPlayer[2],
+                "PHFather": listPlayer[0],
+                "PHSon1": listPlayer[3],
+                "PHSon2": listPlayer[4]
+            };
+            break;
+        case '3' :
+            return {
+                "PHLeftB":  listPlayer[1],
+                "PHRightB":  listPlayer[1],
+                "PHFather": listPlayer[0],
+                "PHSon1": listPlayer[5],
+                "PHSon2": listPlayer[6]
+            };
+            break;
+        case '4' :
+            return {
+                "PHLeftB": listPlayer[6],
+                "PHRightB": listPlayer[4],
+                "PHFather": listPlayer[1],
+                "PHSon1":"" ,
+                "PHSon2": ""
+            };
+            break;
+        case '5' :
+            return {
+                "PHLeftB": listPlayer[3],
+                "PHRightB": listPlayer[5],
+                "PHFather": listPlayer[1],
+                "PHSon1":"" ,
+                "PHSon2": ""
+            };
+            break;
+        case '6' :
+            return {
+                "PHLeftB": listPlayer[4],
+                "PHRightB": listPlayer[6],
+                "PHFather": listPlayer[2],
+                "PHSon1":"" ,
+                "PHSon2": ""
+            };
+            break;
+        case '7' :
+            return {
+                "PHLeftB": listPlayer[5],
+                "PHRightB": listPlayer[3],
+                "PHFather": listPlayer[2],
+                "PHSon1":"" ,
+                "PHSon2": ""
+            };
+            break;
+    }
 }
 function getSocketByName(name) {
     for (let i = 0; i < socketList.length; i++) {

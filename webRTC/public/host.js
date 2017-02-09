@@ -10,13 +10,16 @@ let Host = function (name) {
     this.PHLeftB = null;
     this.PHRightB = null;
     this.PHFather = null;
-    this.PHSonL = null;
-    this.PHSonR = null;
+
+    this.PHSon1 = null;
+    this.PHSon2 = null;
+
 
     // Coordonnées zones :
 
     this.distanceD = 0;
     this.distanceF = 8000;
+
     this.angleD    = 0;
     this.angleF    = 360;
 
@@ -43,6 +46,7 @@ let Host = function (name) {
 
     this.createConnection = function (playerName) {
         return new Promise(function (resolve, reject) {
+
             pcLocal = new RTCPeerConnection(cfg, con);
             pcLocal.onicecandidate = function () {
                 if (pcLocal.iceGatheringState == "complete" && !offerSent) {
@@ -53,11 +57,11 @@ let Host = function (name) {
             dc1 = pcLocal.createDataChannel(createID(host.name, playerName), {reliable: true});
             dc1.onopen = function () {
                 console.log('Connected');
-                host.addDataChannel(dc1);
+                // host.addDataChannel(dc1);
                 let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
                 writeMsg(data);
                 offerSent = false;
-                resolve("CONNECTED");
+                resolve(dc1);
             };
             dc1.onmessage = function (e) {
                 if (e.data.charCodeAt(0) == 2) {
@@ -67,20 +71,22 @@ let Host = function (name) {
                 let data = JSON.parse(e.data);
                 switch (data.message.type) {
                     case "position" :
-                        writeMsg(data);console.log("RECEIVED : "+data.message);
-                    	let idUserDatachannel = createID(host.name,data.user);
-                    	let userDatachannel = host.getDataChannelByName(idUserDatachannel);
-                    	const data2 = {
-                    		"classement": 0,
+                        writeMsg(data);
+                        console.log("RECEIVED : " + data.message);
+                        let idUserDatachannel = createID(host.name, data.user);
+                        let userDatachannel = host.getDataChannelByName(idUserDatachannel);
+                        const data2 = {
+                            "classement": 0,
                             "voisinage": "voisinage"
                     	}
                     	host.sendData(data2, userDatachannel);
                     	writeMsg(data2);     
                     	host.verifSwitchHost(data.message.radius,data.message.angle,playerName);
                     	break;
+
                     /*case "position" :
-                    	writeMsg(data);
-                        break;*/
+                     writeMsg(data);
+                     break;*/
                     default :
                         break;
                 }
@@ -132,8 +138,12 @@ let Host = function (name) {
         this.PHFather = PHFather;
     };
 
-    this.setPHSon = function (PHSon) {
-        this.PHSon = PHSon;
+    this.setPHSon1 = function (PHSon1) {
+        this.PHSon1 = PHSon1;
+    };
+
+    this.setPHSon2 = function (PHSon2) {
+        this.PHSon2 = PHSon2;
     };
 
     this.getPHRightB = function () {
@@ -148,8 +158,11 @@ let Host = function (name) {
         return PHFather;
     };
 
-    this.getPHSon = function () {
-        return PHSon;
+    this.getPHSon1 = function () {
+        return PHSon1;
+    };
+    this.getPHSon2 = function () {
+        return PHSon2;
     };
 
     this.setZone = function (dist1, dist2, angle1, angle2) {
@@ -186,10 +199,10 @@ let Host = function (name) {
     			let SumAngle = host.angleD + host.angleF ;
     			SumAngle = SumAngle / 2 ;
     			if (SumAngle > angle1) {
-    				host.switchToHost(host.PHSonR,player);
+    				host.switchToHost(host.PHSon1,player);
     			}
     			else if (SumAngle < angle1) {
-    				host.switchToHost(host.PHSonL,player);
+    				host.switchToHost(host.PHSon2,player);
     			}
     		}
     		else if (angle1  > host.angleF ) {
