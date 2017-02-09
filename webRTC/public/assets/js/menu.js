@@ -12,7 +12,7 @@ var Menu = {
     create: function () {
     	this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     	this.scale.pageAlignVertically = true;
-    	this.scale.setScreenSize( true );
+    	this.scale.updateLayout( true );
     	
         // Add a sprite to your game, here the sprite will be the game's logo
         // Parameters are : X , Y , image name (see above)
