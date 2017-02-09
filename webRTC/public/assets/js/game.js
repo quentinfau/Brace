@@ -31,7 +31,7 @@ var Game = {
     	this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     	//this.scale.pageAlignHorizontally = true;
     	this.scale.pageAlignVertically = true;
-    	this.scale.setScreenSize( true );
+    	this.scale.updateLayout( true );
 
         speed = 1;           			// La vitesse du joueur
         mapCenter = new Phaser.Point(WORLD_WIDTH/2, WORLD_HEIGHT/2);
@@ -71,7 +71,7 @@ var Game = {
     	balloon.body.velocity.x = 0;
     	balloon.body.velocity.y = 0;
     	balloon.body.angularVelocity = 0;
-
+    	this.obstacleCollision();
 	    if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
 	    {
 	    	this.moveChecker();
@@ -98,7 +98,6 @@ var Game = {
 	    cap.rotation = game.physics.arcade.angleBetween(cap, mapCenter);
 
         this.appleCollision(balloon,apple);
-        this.obstacleCollision();
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
     },
     
@@ -134,9 +133,6 @@ var Game = {
         min_x = CENTER_WORLD_X-RAYON;
         min_y = CENTER_WORLD_Y-RAYON;
         max_y = CENTER_WORLD_Y+RAYON - 1000;
-//        console.log(CENTER_WORLD_X);
-//        console.log(CENTER_WORLD_Y);
-//        console.log(min_x);
 
         balloon = game.add.sprite(this.getRandomInt(min_x, max_x),this.getRandomInt(min_y,max_y), 'balloon');
         balloon.anchor.setTo(0.5, 0.5);
@@ -165,20 +161,22 @@ var Game = {
 },
 
  generateObstacles: function(){
-            obstacles = game.add.group();
-      obstacles.enableBody = true;
-    for(var i=0;i<NB_OBSTACLES;i++){
-          var obstacle = obstacles.create(this.getRandomInt(CENTER_WORLD_X-RAYON,CENTER_WORLD_X+RAYON), this.getRandomInt(CENTER_WORLD_Y-RAYON,CENTER_WORLD_Y+RAYON), 'sida');
-          obstacle.anchor.setTo(0.5, 0.5);
-    }
-},
+	 obstacles = game.add.group();
+	 obstacles.enableBody = true;
+	 for(var i=0;i<NB_OBSTACLES;i++){
+		 var obstacle = obstacles.create(this.getRandomInt(CENTER_WORLD_X-RAYON,CENTER_WORLD_X+RAYON), this.getRandomInt(CENTER_WORLD_Y-RAYON,CENTER_WORLD_Y+RAYON), 'sida');
+		 obstacle.body.immovable = true;
+		 game.physics.enable([obstacle], Phaser.Physics.ARCADE);
+		 obstacle.body.setCircle(
+				    150/2,
+				    (-150/2 + 0.5 * obstacle.width  / obstacle.scale.x),
+				    (-150/2 + 0.5 * obstacle.height / obstacle.scale.y)
+				);
+		 }
+	 },
 
  obstacleCollision: function(){
-     game.physics.arcade.collide(balloon, obstacles,null, function(){
-        // Next time the snake moves, a new block will be added to its length.
-         //apple.destroy();
-        game.state.start('Game_Over');
-    },null,this);
+     game.physics.arcade.collide(balloon, obstacles);
 },
 
 };
