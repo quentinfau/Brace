@@ -1,29 +1,29 @@
-var balloon, speed, cursors, map, cap, apple, mapCenter,obstacles;
+var balloon, speed, cursors, map, cap, apple, mapCenter,obstacles,worldGroup,graphics,worldGroupCenter;
 
 const WORLD_WIDTH = 400300, WORLD_HEIGHT = 400300;
 const ROTATE_SPEED=200;
 const MAX_PLAYER_SPEED=10,MIN_PLAYER_SPEED=1;
-const INITIAL_SPEED=634, SPEED_MULTIPLICATOR=35;
+const INITIAL_SPEED=634/4, SPEED_MULTIPLICATOR=35;
 const ROPE_SPEED=10;
 const DIAMETER=16000;
 
 const CENTER_WORLD_X = WORLD_WIDTH/2;
 const CENTER_WORLD_Y = WORLD_HEIGHT/2;
 const RAYON = DIAMETER/2;
-const NB_OBSTACLES = 1000;
+const NB_OBSTACLES = 500;
 const DEBUG=true;
 
 var Game = {
 
     preload : function () {
         game.load.spritesheet('balloon', './assets/images/balloon_animated_small.png', 100, 50);
-        game.load.image('background', './assets/images/background.png');
+        game.load.image('background', './assets/images/background3.png');
         game.load.image('cap', 'assets/images/arrowCap_small.png');
         game.load.image('apple', './assets/images/apple.png');
         game.load.image('sida', './assets/images/sida.png');
 
         //playerBK = new Player("F");
-        console.log("init "+ player.name);
+        //console.log("init "+ player.name);
 
     },
 
@@ -42,7 +42,7 @@ var Game = {
 
 
 
-        var graphics = game.add.graphics(0, 0);
+        graphics = game.add.graphics(0, 0);
         graphics.lineStyle(20, 0x00ff00, 1);
         graphics.drawCircle(map.x, map.y, map.diameter);
 
@@ -53,11 +53,13 @@ var Game = {
 
         this.generateBalloon();
         game.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
-        game.camera.follow(balloon);
+        game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
         apple = game.add.sprite(CENTER_WORLD_X,CENTER_WORLD_Y, 'apple');
-
+        
         this.generateObstacles();
         game.physics.enable([balloon,apple], Phaser.Physics.ARCADE);
+        
+        
 
     },
 
@@ -89,7 +91,7 @@ var Game = {
 	        balloon.animations.currentAnim.speed=ROPE_SPEED*speed;
 	    }
        // console.log("name : "+playerBK.name);
-        this.updatePlayer();
+        //this.updatePlayer();
 
 	    game.physics.arcade.velocityFromAngle(balloon.angle, INITIAL_SPEED+SPEED_MULTIPLICATOR*speed, balloon.body.velocity);
 	    this.wallCollision();
@@ -97,6 +99,7 @@ var Game = {
 
         this.appleCollision(balloon,apple);
         this.obstacleCollision();
+        game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
     },
     
     render : function(){
@@ -110,6 +113,7 @@ var Game = {
         }else if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
             balloon.body.angularVelocity = ROTATE_SPEED;
         }
+        //worldGroup.angle = game.physics.arcade.angleBetween(balloon, mapCenter);
 
     },
      wallCollision:function(){
@@ -118,12 +122,12 @@ var Game = {
     	    	game.state.start('Game_Over');
     	    }
     },
-    updatePlayer : function(){
-        player.coordonneX = balloon.x;
-        player.coordonneY = balloon.y;
-        player.sendPosition();
-        console.log("SENT");
-    },
+//    updatePlayer : function(){
+//        player.coordonneX = balloon.x;
+//        player.coordonneYS = balloon.y;
+//        player.sendPosition();
+//        console.log("SENT");
+//    },
  generateBalloon:function(){
         var min_x,max_x,min_y,max_y;
         max_x = CENTER_WORLD_X+RAYON-1000;
@@ -165,7 +169,7 @@ var Game = {
       obstacles.enableBody = true;
     for(var i=0;i<NB_OBSTACLES;i++){
           var obstacle = obstacles.create(this.getRandomInt(CENTER_WORLD_X-RAYON,CENTER_WORLD_X+RAYON), this.getRandomInt(CENTER_WORLD_Y-RAYON,CENTER_WORLD_Y+RAYON), 'sida');
-
+          obstacle.anchor.setTo(0.5, 0.5);
     }
 },
 
