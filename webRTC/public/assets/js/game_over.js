@@ -10,7 +10,7 @@ var Game_Over = {
     create : function() {
     	this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     	this.scale.pageAlignVertically = true;
-    	this.scale.setScreenSize( true );
+    	this.scale.updateLayout( true );
         // Create button to start game like in Menu.
     	restartBtn_gameover = this.add.button(0, 0, 'gameover', this.startGame, this);
     	restartBtn_gameover.width = game.camera.width;
