@@ -11,6 +11,7 @@ const CENTER_WORLD_X = WORLD_WIDTH/2;
 const CENTER_WORLD_Y = WORLD_HEIGHT/2;
 const RAYON = DIAMETER/2;
 const NB_OBSTACLES = 1000;
+const DEBUG=true;
 
 var Game = {
 
@@ -96,6 +97,12 @@ var Game = {
 
         this.appleCollision(balloon,apple);
         this.obstacleCollision();
+    },
+    
+    render : function(){
+    	if (DEBUG == true) {
+    		game.debug.spriteInfo(balloon,32,32);
+    	}
     },
     moveChecker : function(){
         if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
