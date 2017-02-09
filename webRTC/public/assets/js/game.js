@@ -10,7 +10,7 @@ const DIAMETER=16000;
 const CENTER_WORLD_X = WORLD_WIDTH/2;
 const CENTER_WORLD_Y = WORLD_HEIGHT/2;
 const RAYON = DIAMETER/2;
-const NB_OBSTACLES = 1000;
+const NB_OBSTACLES = 0;
 
 var Game = {
 

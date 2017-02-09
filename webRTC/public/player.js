@@ -70,6 +70,11 @@ let Player = function (name){
     this.getRank = function(){
     	return rank;
     };
+    
+    this.getName = function(){
+    	return name;
+    };
+
 
 //    sendPositionBtn.onclick = function () {
 //        const data = {

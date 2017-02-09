@@ -10,14 +10,15 @@ let Host = function (name) {
     this.PHLeftB = null;
     this.PHRightB = null;
     this.PHFather = null;
-    this.PHSon = null;
+    this.PHSonL = null;
+    this.PHSonR = null;
 
     // Coordonnées zones :
 
-    this.distanceD = 4000;
+    this.distanceD = 0;
     this.distanceF = 8000;
     this.angleD    = 0;
-    this.angleF    = 180;
+    this.angleF    = 360;
 
     this.timestamp = new Date().getTime();
 
@@ -32,9 +33,9 @@ let Host = function (name) {
         return false
     };
 
-    this.getDataChannelByName = function (idUserDatachannel) {
+    this.getDataChannelByName = function (nameUserDatachannel) {
     	host.dataChannels.forEach( function(dataChannel) {
-    		if(dataChannel.label == idUserDatachannel) {
+    		if(dataChannel.label == nameUserDatachannel) {
     			return dataChannel;
     		}
     	});
@@ -74,7 +75,9 @@ let Host = function (name) {
                             "voisinage": "voisinage"
                     	}
                     	host.sendData(data2, userDatachannel);
-                    	writeMsg(data2);                        break;
+                    	writeMsg(data2);     
+                    	host.verifSwitchHost(data.message.radius,data.message.angle,playerName);
+                    	break;
                     /*case "position" :
                     	writeMsg(data);
                         break;*/
@@ -107,6 +110,14 @@ let Host = function (name) {
 
     this.removeDataChannel = function (dataChannel) {
         this.dataChannels.splice(dataChannel);
+    };
+    
+    this.addPlayerList = function (player1) {
+        this.playerList.push(player1);
+    };
+
+    this.removePlayerList = function (player1) {
+        this.playerList.splice(player1);
     };
 
     this.setPHRightB = function (PHRightB) {
@@ -152,19 +163,43 @@ let Host = function (name) {
         return null;
     };
 
-    this.verifSwitchHost = function (angle1 , distance1) {
-    		if (distance1  < this.distanceD  ) {
-    			// switch PHFather
+    this.switchToHost = function (host2,player) {
+        	host.dataChannels.forEach(function (dataChannel) {
+            	let dc = host.getDataChannelByName(player);
+            	 if (dc) {
+            		 host.removeDataChannel(dc);
+            		 host.removePlayerList(player);
+            		 host2.createConnection(player);
+            		 host2.addPlayerList(player);
+            	 }
+            });
+            console.log("BlouBlou");     
+        return false
+    };
+    
+    this.verifSwitchHost = function (angle1 , distance1 , player) {
+
+    		if (distance1  < host.distanceD  ) {
+    			host.switchToHost(host.PHFather,player);
     		}
-    		else if (distance1  > this.distanceF ) {
-    			// switch PHSon ( 2 cas )
+    		else if (distance1  > host.distanceF ) {
+    			let SumAngle = host.angleD + host.angleF ;
+    			SumAngle = SumAngle / 2 ;
+    			if (SumAngle > angle1) {
+    				host.switchToHost(host.PHSonR,player);
+    			}
+    			else if (SumAngle < angle1) {
+    				host.switchToHost(host.PHSonL,player);
+    			}
     		}
-    		else if (angle1  > this.angleF ) {
-    			// switch PHLeft
+    		else if (angle1  > host.angleF ) {
+    			host.switchToHost(host.PHLeft,player);
     		}
-    		else if ( angle1 < this.angleD ) {
-    			// switch PHRIght
+    		else if ( angle1 < host.angleD ) {
+    			host.switchToHost(host.PHRight,player);
     		}
+    	 
     } 
+    
     
 };
