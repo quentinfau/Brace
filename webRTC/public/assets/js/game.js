@@ -145,6 +145,7 @@ var Game = {
             player.angle = balloon.angle;
         }
         player.radius = rayon;
+        player.speed = speed;
         player.sendPosition();
         console.log("SENT");
     },
