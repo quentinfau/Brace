@@ -59,7 +59,7 @@ var Game = {
         this.generateObstacles();
         game.physics.enable([balloon,apple], Phaser.Physics.ARCADE);
         
-        
+        this.stage.disableVisibilityChange = true;
 
     },
 
@@ -169,9 +169,9 @@ var Game = {
 		 obstacle.body.immovable = true;
 		 game.physics.enable([obstacle], Phaser.Physics.ARCADE);
 		 obstacle.body.setCircle(
-				    150/2,
-				    (-150/2 + 0.5 * obstacle.width  / obstacle.scale.x),
-				    (-150/2 + 0.5 * obstacle.height / obstacle.scale.y)
+				    200/2,
+				    (-200/2 + 0.5 * obstacle.width  / obstacle.scale.x),
+				    (-200/2 + 0.5 * obstacle.height / obstacle.scale.y)
 				);
 		 }
 	 },
