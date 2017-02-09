@@ -134,7 +134,7 @@ function initHost(host) {
 
 function getFamily(host) {
     switch (host) {
-        case 1 :
+        case '1' :
             return {
                 "PHLeftB": "",
                 "PHRightB": "",
@@ -143,7 +143,7 @@ function getFamily(host) {
                 "PHSon2": listPlayer[2]
             };
             break;
-        case 2 :
+        case '2' :
             return {
                 "PHLeftB":  listPlayer[2],
                 "PHRightB":  listPlayer[2],
@@ -152,7 +152,7 @@ function getFamily(host) {
                 "PHSon2": listPlayer[4]
             };
             break;
-        case 3 :
+        case '3' :
             return {
                 "PHLeftB":  listPlayer[1],
                 "PHRightB":  listPlayer[1],
@@ -161,37 +161,37 @@ function getFamily(host) {
                 "PHSon2": listPlayer[6]
             };
             break;
-        case 4 :
-            return {
-                "PHLeftB": listPlayer[4],
-                "PHRightB": listPlayer[6],
-                "PHFather": listPlayer[1],
-                "PHSon1":"" ,
-                "PHSon2": ""
-            };
-            break;
-        case 5 :
-            return {
-                "PHLeftB": listPlayer[5],
-                "PHRightB": listPlayer[3],
-                "PHFather": listPlayer[1],
-                "PHSon1":"" ,
-                "PHSon2": ""
-            };
-            break;
-        case 6 :
+        case '4' :
             return {
                 "PHLeftB": listPlayer[6],
                 "PHRightB": listPlayer[4],
+                "PHFather": listPlayer[1],
+                "PHSon1":"" ,
+                "PHSon2": ""
+            };
+            break;
+        case '5' :
+            return {
+                "PHLeftB": listPlayer[3],
+                "PHRightB": listPlayer[5],
+                "PHFather": listPlayer[1],
+                "PHSon1":"" ,
+                "PHSon2": ""
+            };
+            break;
+        case '6' :
+            return {
+                "PHLeftB": listPlayer[4],
+                "PHRightB": listPlayer[6],
                 "PHFather": listPlayer[2],
                 "PHSon1":"" ,
                 "PHSon2": ""
             };
             break;
-        case 7 :
+        case '7' :
             return {
-                "PHLeftB": listPlayer[3],
-                "PHRightB": listPlayer[5],
+                "PHLeftB": listPlayer[5],
+                "PHRightB": listPlayer[3],
                 "PHFather": listPlayer[2],
                 "PHSon1":"" ,
                 "PHSon2": ""

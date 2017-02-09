@@ -17,8 +17,8 @@ let Host = function (name) {
 
     this.distanceD = 4000;
     this.distanceF = 8000;
-    this.angleD    = 0;
-    this.angleF    = 180;
+    this.angleD = 0;
+    this.angleF = 180;
 
     this.timestamp = new Date().getTime();
 
@@ -34,15 +34,16 @@ let Host = function (name) {
     };
 
     this.getDataChannelByName = function (idUserDatachannel) {
-    	host.dataChannels.forEach( function(dataChannel) {
-    		if(dataChannel.label == idUserDatachannel) {
-    			return dataChannel;
-    		}
-    	});
-    }
+        host.dataChannels.forEach(function (dataChannel) {
+            if (dataChannel.label == idUserDatachannel) {
+                return dataChannel;
+            }
+        });
+    };
 
     this.createConnection = function (playerName) {
         return new Promise(function (resolve, reject) {
+
             pcLocal = new RTCPeerConnection(cfg, con);
             pcLocal.onicecandidate = function () {
                 if (pcLocal.iceGatheringState == "complete" && !offerSent) {
@@ -53,7 +54,7 @@ let Host = function (name) {
             dc1 = pcLocal.createDataChannel(createID(host.name, playerName), {reliable: true});
             dc1.onopen = function () {
                 console.log('Connected');
-               // host.addDataChannel(dc1);
+                // host.addDataChannel(dc1);
                 let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
                 writeMsg(data);
                 offerSent = false;
@@ -67,18 +68,20 @@ let Host = function (name) {
                 let data = JSON.parse(e.data);
                 switch (data.message.type) {
                     case "position" :
-                        writeMsg(data);console.log("RECEIVED : "+data.message);
-                    	let idUserDatachannel = createID(host.name,data.user);
-                    	let userDatachannel = host.getDataChannelByName(idUserDatachannel);
-                    	const data2 = {
-                    		"classement": 0,
+                        writeMsg(data);
+                        console.log("RECEIVED : " + data.message);
+                        let idUserDatachannel = createID(host.name, data.user);
+                        let userDatachannel = host.getDataChannelByName(idUserDatachannel);
+                        const data2 = {
+                            "classement": 0,
                             "voisinage": "voisinage"
-                    	}
-                    	host.sendData(data2, userDatachannel);
-                    	writeMsg(data2);                        break;
+                        };
+                        host.sendData(data2, userDatachannel);
+                        writeMsg(data2);
+                        break;
                     /*case "position" :
-                    	writeMsg(data);
-                        break;*/
+                     writeMsg(data);
+                     break;*/
                     default :
                         break;
                 }
