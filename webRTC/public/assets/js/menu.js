@@ -1,3 +1,5 @@
+var startBtn_menu;
+
 var Menu = {
 
     preload : function() {
@@ -8,9 +10,15 @@ var Menu = {
     },
 
     create: function () {
+    	this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    	this.scale.pageAlignVertically = true;
+    	this.scale.setScreenSize( true );
+    	
         // Add a sprite to your game, here the sprite will be the game's logo
         // Parameters are : X , Y , image name (see above)
-        this.add.button(0, 0, 'menu', this.startGame,this);
+    	startBtn_menu = this.add.button(0, 0, 'menu', this.startGame,this);
+    	startBtn_menu.width = game.camera.width;
+    	startBtn_menu.height = game.camera.height;
     },
 
     startGame: function () {

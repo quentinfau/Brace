@@ -21,8 +21,8 @@ var Game = {
         game.load.image('apple', './assets/images/apple.png');
         game.load.image('sida', './assets/images/sida.png');
 
-        playerBK = new Player("F");
-        console.log("init "+ playerBK.name);
+        //playerBK = new Player("F");
+        console.log("init "+ player.name);
 
     },
 
@@ -50,7 +50,7 @@ var Game = {
         cap.fixedToCamera = true;
         cap.cameraOffset.setTo(35, 40);
 
-        this.generatePlayer();
+        this.generateBalloon();
         game.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
         game.camera.follow(balloon);
         apple = game.add.sprite(CENTER_WORLD_X,CENTER_WORLD_Y, 'apple');
@@ -88,8 +88,8 @@ var Game = {
 	        balloon.animations.currentAnim.speed=ROPE_SPEED*speed;
 	    }
        // console.log("name : "+playerBK.name);
-        playerBK.sendPosition();
-        console.log("SENT");
+        this.updatePlayer();
+
 	    game.physics.arcade.velocityFromAngle(balloon.angle, INITIAL_SPEED+SPEED_MULTIPLICATOR*speed, balloon.body.velocity);
 	    this.wallCollision();
 	    cap.rotation = game.physics.arcade.angleBetween(cap, mapCenter);
@@ -111,7 +111,13 @@ var Game = {
     	    	game.state.start('Game_Over');
     	    }
     },
- generatePlayer:function(){
+    updatePlayer : function(){
+        player.coordonneX = balloon.x;
+        player.coordonneY = balloon.y;
+        player.sendPosition();
+        console.log("SENT");
+    },
+ generateBalloon:function(){
         var min_x,max_x,min_y,max_y;
         max_x = CENTER_WORLD_X+RAYON-1000;
         min_x = CENTER_WORLD_X-RAYON;
