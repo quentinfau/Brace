@@ -50,7 +50,7 @@ io.sockets.on('connection', function (socket) {
         listPlayerHost = [];
         listPlayer = [];
         for (let i = 0; i < socketList.length; i++) {
-            name = socketList[i].user;
+            const name = socketList[i].user;
             if (i < 7) {
                 listPlayerHost.push(name);
             }
