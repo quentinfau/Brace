@@ -177,7 +177,10 @@ var Game = {
 	 },
 
  obstacleCollision: function(){
-     game.physics.arcade.collide(balloon, obstacles);
+     game.physics.arcade.collide(balloon, obstacles,null, function(){
+    	 game.physics.arcade.collide(balloon, obstacles);
+    	 game.camera.shake(0.02, 100);
+     },null,this);
 },
 
 };
