@@ -41,64 +41,74 @@ let Host = function (name) {
         });
     };
 
-    this.createConnection = function (playerName) {
+    this.createConnection = function (playerName,familyType) {
         return new Promise(function (resolve, reject) {
+            if (playerName != null && playerName != "") {
 
-            pcLocal = new RTCPeerConnection(cfg, con);
-            pcLocal.onicecandidate = function () {
-                if (pcLocal.iceGatheringState == "complete" && !offerSent) {
-                    offerSent = true;
-                    sendNegotiation("offer", pcLocal.localDescription, host.name, playerName);
-                }
-            };
-            dc1 = pcLocal.createDataChannel(createID(host.name, playerName), {reliable: true});
-            dc1.onopen = function () {
-                console.log('Connected');
-                // host.addDataChannel(dc1);
-                let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
-                writeMsg(data);
-                offerSent = false;
-                resolve(dc1);
-            };
-            dc1.onmessage = function (e) {
-                if (e.data.charCodeAt(0) == 2) {
-                    return
-                }
-
-                let data = JSON.parse(e.data);
-                switch (data.message.type) {
-                    case "position" :
-                        writeMsg(data);
-                        console.log("RECEIVED : " + data.message);
-                        let idUserDatachannel = createID(host.name, data.user);
-                        let userDatachannel = host.getDataChannelByName(idUserDatachannel);
-                        const data2 = {
-                            "classement": 0,
-                            "voisinage": "voisinage"
+                pcLocal = new RTCPeerConnection(cfg, con);
+                pcLocal.onicecandidate = function () {
+                    if (pcLocal.iceGatheringState == "complete" && !offerSent) {
+                        offerSent = true;
+                        const type = {
+                            'type': 'offer',
+                            'familyType': familyType
                         };
-                        host.sendData(data2, userDatachannel);
-                        writeMsg(data2);
-                        break;
-                    /*case "position" :
-                     writeMsg(data);
-                     break;*/
-                    default :
-                        break;
-                }
-                writeMsg(data);
-            };
-            dc1.onerror = function (e) {
-                reject(e)
-            };
-            pcLocal.createOffer(function (desc) {
-                pcLocal.setLocalDescription(desc, function () {
-                }, function () {
-                });
-                console.log("------ SEND OFFER ------");
+                        sendNegotiation(type, pcLocal.localDescription, host.name, playerName);
+                    }
+                };
+                dc1 = pcLocal.createDataChannel(createID(host.name, playerName), {reliable: true});
+                dc1.onopen = function () {
+                    console.log('Connected');
+                    // host.addDataChannel(dc1);
+                    let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
+                    writeMsg(data);
+                    offerSent = false;
+                    resolve(dc1);
+                };
+                dc1.onmessage = function (e) {
+                    if (e.data.charCodeAt(0) == 2) {
+                        return
+                    }
 
-            }, function () {
-            }, sdpConstraints);
+                    let data = JSON.parse(e.data);
+                    switch (data.message.type) {
+                        case "position" :
+                            writeMsg(data);
+                            console.log("RECEIVED : " + data.message);
+                            let idUserDatachannel = createID(host.name, data.user);
+                            let userDatachannel = host.getDataChannelByName(idUserDatachannel);
+                            const data2 = {
+                                "classement": 0,
+                                "voisinage": "voisinage"
+                            };
+                            host.sendData(data2, userDatachannel);
+                            writeMsg(data2);
+                            break;
+                        /*case "position" :
+                         writeMsg(data);
+                         break;*/
+                        default :
+                            break;
+                    }
+                    writeMsg(data);
+                };
+                dc1.onerror = function (e) {
+                    reject(e)
+                };
+                pcLocal.createOffer(function (desc) {
+                    pcLocal.setLocalDescription(desc, function () {
+                    }, function () {
+                    });
+                    console.log("------ SEND OFFER ------");
+
+                }, function () {
+                }, sdpConstraints);
+            }
+            else {
+                resolve("player name is empty");
+            }
         });
+
     };
 
     this.setList = function (playerList) {
@@ -163,19 +173,19 @@ let Host = function (name) {
         return null;
     };
 
-    this.verifSwitchHost = function (angle1 , distance1) {
-    		if (distance1  < this.distanceD  ) {
-    			// switch PHFather
-    		}
-    		else if (distance1  > this.distanceF ) {
-    			// switch PHSon ( 2 cas )
-    		}
-    		else if (angle1  > this.angleF ) {
-    			// switch PHLeft
-    		}
-    		else if ( angle1 < this.angleD ) {
-    			// switch PHRIght
-    		}
-    } 
-    
+    this.verifSwitchHost = function (angle1, distance1) {
+        if (distance1 < this.distanceD) {
+            // switch PHFather
+        }
+        else if (distance1 > this.distanceF) {
+            // switch PHSon ( 2 cas )
+        }
+        else if (angle1 > this.angleF) {
+            // switch PHLeft
+        }
+        else if (angle1 < this.angleD) {
+            // switch PHRIght
+        }
+    }
+
 };

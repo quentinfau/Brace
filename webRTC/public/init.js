@@ -1,37 +1,36 @@
 function connectToWebSocket(name) {
 
     socket = io.connect(location.origin);
+    socket.emit('nouveau_client', name);
     socket.on('welcomeMessage', function (data) {
         console.log("received message from the server : " + data.message);
         writeMsg(data);
     });
-    /*  socket.on('listOfClient', function (list) {
-     updateList(list);
-     });*/
+    socket.on('createHost', function (user) {
+        host = new Host(user);
+    });
+    socket.on('createPlayer', function (user) {
+        player = new Player(user);
+    });
     socket.on('initPlayerHost', function (data) {
         const msg = JSON.parse(data);
-        player = new Player(msg.user);
-        host = new Host(msg.user);
         host.setList(msg.playerList);
         host.family = msg.family;
         initHost(host, 0);
-    //    initHostFamily(host);
-    });
-    socket.on('initPlayer', function (user) {
-        player = new Player(user);
     });
     socket.on('negotiationMessage', function (data) {
         console.log("received message from the server : " + data);
-        if (data.action == "offer") {
-            remote = data.from;
-            player.receiveConnection(data.data);
-        } else if (data.action == "answer") {
+        if (data.action.type == "offer") {
             if (data.to == player.name) {
-                processAnswer(data.data, data.id);
+                remote = data.from;
+                player.receiveConnection(data.data, data.action.familyType);
+            }
+        } else if (data.action.type == "answer") {
+            if (data.to == player.name) {
+                processAnswer(data.data);
             }
         }
     });
-    socket.emit('nouveau_client', name);
 }
 
 function initHost(host, i) {
@@ -45,48 +44,39 @@ function initHost(host, i) {
                 initHost(host, i + 1);
             })
     }
+    else {
+        initHostFamily(host);
+    }
 }
 function initHostFamily(host) {
-    host.createConnection(host.family.PHFather)
+    host.createConnection(host.family.PHRightB, "PHRightB")
         .then(dataChannel => {
             console.log("dataChannel : " + dataChannel + ' player : ' + remote);
-
-                host.setPHFather(dataChannel);
-
-            host.createConnection(host.family.PHLeftB)
+            if (dataChannel instanceof RTCDataChannel) {
+                host.setPHRightB(dataChannel);
+            }
+            host.createConnection(host.family.PHSon1, "PHSon1")
                 .then(dataChannel => {
                     console.log("dataChannel : " + dataChannel + ' player : ' + remote);
-
-                        host.setPHLeftB(dataChannel);
-
-                    host.createConnection(host.family.PHRightB)
+                    if (dataChannel instanceof RTCDataChannel) {
+                        host.setPHSon1(dataChannel);
+                    }
+                    host.createConnection(host.family.PHSon2, "PHSon2")
                         .then(dataChannel => {
                             console.log("dataChannel : " + dataChannel + ' player : ' + remote);
-
-                                host.setPHRightB(dataChannel);
-
-                            host.createConnection(host.family.PHSon1)
-                                .then(dataChannel => {
-                                    console.log("dataChannel : " + dataChannel + ' player : ' + remote);
-
-                                        host.setPHSon1(dataChannel);
-
-                                    host.createConnection(host.family.PHSon2)
-                                        .then(dataChannel => {
-                                            console.log("dataChannel : " + dataChannel + ' player : ' + remote);
-
-                                                host.setPHSon2(dataChannel);
-
-                                        })
-                                })
+                            if (dataChannel instanceof RTCDataChannel) {
+                                host.setPHSon2(dataChannel);
+                            }
+                            socket.emit("initHostOver", host.name);
                         })
                 })
-        })
+        });
 }
 startGame.onclick = function () {
     socket.emit('startGame');
     //window.location = "index_Brace.html";
 };
+
 
 setid.onclick = function () {
     let name = $("#user").val();
