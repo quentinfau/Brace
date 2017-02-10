@@ -24,6 +24,9 @@ function connectToWebSocket(name) {
         host.setZone(msg.zone.distanceD,msg.zone.distanceF,msg.zone.angleD,msg.zone.angleF);
         initHost(host, 0);
     });
+    socket.on('initPlayerPosition', function () {
+       host.initPositionPlayer();
+    });
     socket.on('negotiationMessage', function (data) {
         console.log("received message from the server : " + data);
         if (data.action.type == "offer") {

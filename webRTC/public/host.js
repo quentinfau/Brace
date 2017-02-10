@@ -271,4 +271,17 @@ let Host = function (name) {
         	host.neighbours.push(neighbourData);
         }
     };
+    
+    this.initPositionPlayer = function() {
+    	host.playerList.forEach( function(player) {
+    		let dataChannel = host.getDataChannelByName(createID(host.name, player));
+    		const data = {
+                "angleD": host.angleD,
+                "angleF": host.angleF,
+                "type": "initPosition"
+            };
+    		host.sendData(data,dataChannel);
+    	});
+    }
+    
 };

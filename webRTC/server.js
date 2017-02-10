@@ -84,6 +84,9 @@ io.sockets.on('connection', function (socket) {
             initHost(listPlayerHost[hostId], getSubListPlayer(hostId));
         } else {
             console.log("all host have finished their init");
+            listPlayerHost.forEach(function (host) {
+            	getSocketByName(host).emit("initPlayerPosition");
+            });
         }
     });
 

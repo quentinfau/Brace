@@ -1,12 +1,5 @@
 let Player = function (name){
-	/*this.neighbor = {
-		namen : "f",
-		coordonneX : "d",
-		coordonneY : "p",
-		radius : "e",
-		angle : "z",
-		speed : "m"
-	};*/
+	
 	this.neighborhood = [] ;
 	this.name = name;
 	this.dataChannel = null;
@@ -117,6 +110,9 @@ let Player = function (name){
                 switch (data.message.type) {
                 	case "voisinage" :
                 		player.neighborhood = data.message.voisinage;
+                		break;
+                	case "initPosition" :
+                		console.log(data);
                 		break;
                     default :
                         break;
