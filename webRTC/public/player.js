@@ -95,15 +95,7 @@ let Player = function (name){
         pcRemote.ondatachannel = function (e) {
             dc2 = e.channel || e;
             dc2.onopen = function () {
-                if (familyType == "PHRightB") {
-                    host.setPHLeftB(dc2)
-                }
-                else if (familyType == "PHSon1" || familyType == "PHSon2") {
-                    host.setPHFather(dc2)
-                }
-                else {
                     player.setDataChannel(dc2);
-                }
                 console.log('Connected');
 
                 //on écrit dans le chat que le myPlayer s'est connecté
@@ -114,8 +106,16 @@ let Player = function (name){
             };
             dc2.onmessage = function (e) {
                 let data = JSON.parse(e.data);
-                writeMsg(data);
-            };
+                switch (data.message.type) {
+                    case "offer" :
+                        console.log("switching host from " +remote + " to " + data.message.from);
+                        remote = data.message.from;
+                        player.receiveConnection(data.message.data, "switchHost");
+                        break;
+                    default :
+                        writeMsg(data);
+                }
+            }
         };
         pcRemote.onicecandidate = function () {
             if (pcRemote.iceGatheringState == "complete" && !answerSent) {
@@ -124,7 +124,12 @@ let Player = function (name){
                     'type': 'answer',
                     'familyType': familyType
                 };
-                sendNegotiation(type, pcRemote.localDescription, player.name, remote);
+                if (familyType == "switchHost") {
+                    sendNegotiationSwitchHost('answer', pcRemote.localDescription, player.name, remote, player.dataChannel);
+                }
+                else {
+                    sendNegotiation(type, pcRemote.localDescription, player.name, remote);
+                }
             }
         };
 

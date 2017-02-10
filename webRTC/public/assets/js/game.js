@@ -106,14 +106,14 @@ var Game = {
         if(angleDegree<0){
             angleDegree = 360 + angleDegree;
         }
-        console.log("Angle Degree: "+angleDegree);
+        //console.log("Angle Degree: "+angleDegree);
 
         //Calcul de rayon entre balloon et l'ovule
-        console.log("Rayon : "+rayon);
+        //console.log("Rayon : "+rayon);
         if(balloon.angle<0){
-            console.log(360+balloon.angle);
+            //console.log(360+balloon.angle);
         }else{
-            console.log(balloon.angle);
+            //console.log(balloon.angle);
         }
 
         if(updateDelay % UPDATE_DELAY == 0){
