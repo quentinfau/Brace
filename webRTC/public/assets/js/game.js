@@ -2,7 +2,7 @@ var balloon, speed, cursors, map, cap, apple, mapCenter,obstacles,rayon,angleDeg
 
 const WORLD_WIDTH = 400300, WORLD_HEIGHT = 400300;
 const ROTATE_SPEED=200;
-const MAX_PLAYER_SPEED=10,MIN_PLAYER_SPEED=1;
+const MAX_PLAYER_SPEED=1000,MIN_PLAYER_SPEED=1;
 const INITIAL_SPEED=634, SPEED_MULTIPLICATOR=35;
 const ROPE_SPEED=10;
 const DIAMETER=16000;

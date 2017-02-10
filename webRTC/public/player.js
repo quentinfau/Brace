@@ -6,8 +6,8 @@ let Player = function (name){
 		radius : "e",
 		angle : "z",
 		speed : "m"
-	};
-	this.neighborhood = [this.neighbor] ;*/
+	};*/
+	this.neighborhood = [] ;
 	this.name = name;
 	this.dataChannel = null;
 	this.radius = 0;
@@ -162,5 +162,11 @@ let Player = function (name){
     this.removeNeighbor = function(name){
         neighborhood.splice(neighborhood.indexOf(name), 1);
     };*/
- 
+// this.addNeighbor = function(playerN){
+//     neighborhood.push(playerN);
+// };
+//
+//this.removeNeighbor = function(playerN){
+//    neighborhood.splice(neighborhood.indexOf(playerN),1);
+//}
 };
