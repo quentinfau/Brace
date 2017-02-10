@@ -37,11 +37,17 @@ let Host = function (name) {
     };
 
     this.getDataChannelByName = function (nameUserDatachannel) {
+    	trouve = 0;
         host.dataChannels.forEach(function (dataChannel) {
             if (dataChannel.label == nameUserDatachannel) {
-                return dataChannel;
+                trouve = 1;
             }
         });
+        if(trouve == 1) {
+        	return dataChannel;
+        } else {
+        	return 0;
+        }
     };
 
     this.createConnection = function (playerName, familyType) {
@@ -87,10 +93,6 @@ let Host = function (name) {
                             writeMsg(data2);
                             host.verifSwitchHost(data.message.radius, data.message.angle, playerName);
                             break;
-
-                        /*case "position" :
-                         writeMsg(data);
-                         break;*/
                         default :
                             break;
                     }
@@ -117,10 +119,8 @@ let Host = function (name) {
                             };
                             host.sendData(data2, userDatachannel);
                             writeMsg(data2);
+                            host.verifSwitchHost(data.message.radius,data.message.angle,playerName);
                             break;
-                        /*case "position" :
-                         writeMsg(data);
-                         break;*/
                         default :
                             break;
                     }

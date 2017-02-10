@@ -16,6 +16,7 @@ function connectToWebSocket(name) {
         const msg = JSON.parse(data);
         host.setList(msg.playerList);
         host.family = msg.family;
+        host.setZone(msg.zone.distanceD,msg.zone.distanceF,msg.zone.angleD,msg.zone.angleF);
         initHost(host, 0);
     });
     socket.on('negotiationMessage', function (data) {

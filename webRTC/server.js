@@ -106,10 +106,12 @@ function removePlayerOrPlayerHost(username_disconnected) {
 
 function initHost(host, listPlayer) {
     let family = getFamily(host);
+    let zone = getZone(host);
     const data = {
         "playerList": listPlayer,
         "user": host,
-        "family": family
+        "family": family,
+        "zone": zone
     };
     getSocketByName(host).emit("initPlayerHost", JSON.stringify(data));
 }
@@ -174,6 +176,70 @@ function getFamily(host) {
             break;
     }
 }
+
+
+function getZone(host) {
+    switch (host) {
+        case '1' :
+            return {
+        		"distanceD": 0,
+        		"distanceF": 1000,
+        		"angleD"   : 0,
+        		"angleF"   : 360
+            };
+            break;
+        case '2' :
+            return {
+        		"distanceD": 1000,
+        		"distanceF": 3000,
+        		"angleD"   : 0,
+        		"angleF"   : 180
+            };
+            break;
+        case '3' :
+            return {
+        		"distanceD": 1000,
+        		"distanceF": 3000,
+        		"angleD"   : 180,
+        		"angleF"   : 360
+            };
+            break;
+        case '4' :
+            return {
+        		"distanceD": 3000,
+        		"distanceF": 8000,
+    			"angleD"   : 0,
+    			"angleF"   : 90
+            };
+            break;
+        case '5' :
+            return {
+        		"distanceD": 3000,
+        		"distanceF": 8000,
+        		"angleD"   : 90,
+        		"angleF"   : 180
+            };
+            break;
+        case '6' :
+            return {
+        		"distanceD": 3000,
+        		"distanceF": 8000,
+    			"angleD"   : 180,
+    			"angleF"   : 270
+            };
+            break;
+        case '7' :
+            return {
+        		"distanceD": 3000,
+        		"distanceF": 8000,
+        		"angleD"   : 270,
+        		"angleF"   : 360
+            };
+            break;
+    }
+}
+
+
 function getSocketByName(name) {
     for (let i = 0; i < socketList.length; i++) {
         // send to everybody on the site
