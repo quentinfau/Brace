@@ -1,4 +1,4 @@
-var balloon, speed, cursors, map, cap, apple, mapCenter,obstacles,rayon,angleDegree,updateDelay;
+var balloon, speed, cursors, map, cap, apple, mapCenter,obstacles,rayon,angleDegree,updateDelay,neighbors = [],neighborsSprites=[];
 
 const WORLD_WIDTH = 400300, WORLD_HEIGHT = 400300;
 const ROTATE_SPEED=200;
@@ -52,13 +52,17 @@ var Game = {
         cap.fixedToCamera = true;
         cap.cameraOffset.setTo(35, 40);
 
+
+        this.mockNeighborhood();
         this.generateBalloon();
+
         game.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
         apple = game.add.sprite(CENTER_WORLD_X,CENTER_WORLD_Y, 'apple');
 
         this.generateObstacles();
-        game.physics.enable([balloon,apple,mapCenter], Phaser.Physics.ARCADE);
+        game.physics.enable([balloon,apple,mapCenter,neighborsSprites], Phaser.Physics.ARCADE);
+
         console.log("Angle : "+game.physics.arcade.angleBetween(mapCenter,balloon));
 
     },
@@ -97,7 +101,7 @@ var Game = {
 
         this.appleCollision(balloon,apple);
         this.obstacleCollision();
-
+        this.neighborCollision();
         rayon = Math.sqrt(Math.pow(WORLD_WIDTH/2-balloon.body.x,2)+Math.pow(WORLD_HEIGHT/2-balloon.body.y,2));
        // console.log("Angle :"+balloon.angle);
         //Calcul de l'angle de balloon par rapport au vagin
@@ -117,7 +121,7 @@ var Game = {
         }
 
         if(updateDelay % UPDATE_DELAY == 0){
-                    this.updatePlayer();
+                  //  this.updatePlayer();
         }
         updateDelay++;
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
@@ -169,7 +173,7 @@ var Game = {
         balloon.body.collideWorldBounds = true;
         balloon.animations.add('move', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], ROPE_SPEED, true);
         balloon.animations.play('move');
-        console.log("max x : "+max_x+"balloon  x :"+balloon.x+" y : "+balloon.y);
+        //console.log("max x : "+max_x+"balloon  x :"+balloon.x+" y : "+balloon.y);
     },
 
     getRandomInt:function(min, max) {
@@ -183,7 +187,7 @@ var Game = {
         },null,this);
     },
     getPlayerX:function() {
-    	return this.game.ballon;
+    	return this.game.balloon;
     },
      getRandomInt: function(min, max) {
     return Math.floor(Math.random() * (max-min+1)) + min;
@@ -210,5 +214,42 @@ var Game = {
     	 game.camera.shake(0.02, 100);
      },null,this);
 },
+    mockNeighborhood : function(){
+         var min_x,max_x,min_y,max_y;
+        max_x = CENTER_WORLD_X+RAYON-1000;
+        min_x = CENTER_WORLD_X-RAYON;
+        min_y = CENTER_WORLD_Y-RAYON;
+        max_y = CENTER_WORLD_Y+RAYON - 1000;
+
+        balloon = game.add.sprite(this.getRandomInt(min_x, max_x),this.getRandomInt(min_y,max_y), 'balloon');
+        for(var i=0;i<200;i++){
+            var playerN = new Player(i);
+            playerN.coordonneX = this.getRandomInt(min_x,max_x);
+            playerN.coordonneY = this.getRandomInt(min_y,max_y);
+           // player.speed = this.getRandomInt(0,MAX_PLAYER_SPEED);
+            neighbors.push(playerN);
+        }
+        console.log("SIZE NEIGHBORS : " +neighbors.length);
+
+        for(var i=0;i<neighbors.length;i++){
+            var p = neighbors[i];
+            var b = game.add.sprite(p.coordonneX,p.coordonneY, 'balloon');
+            b.anchor.setTo(0.5, 0.5);
+            game.physics.enable(b, Phaser.Physics.ARCADE);
+            b.body.setCircle(50/2,25,0);
+            b.body.collideWorldBounds = true;
+            b.animations.add('moveM', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], ROPE_SPEED, true);
+            b.animations.play('moveM');
+            neighborsSprites.push(b);
+        }
+
+    },
+    neighborCollision : function(){
+     game.physics.arcade.collide(balloon, neighborsSprites,null, function(){
+    	 game.physics.arcade.collide(balloon, neighborsSprites);
+    	 game.camera.shake(0.02, 100);
+     },null,this);
+
+    }
 
 };
