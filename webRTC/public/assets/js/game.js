@@ -126,6 +126,8 @@ var Game = {
         updateDelay++;
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
         this.updateNeighbors();
+
+        console.log("X : "+balloon.x+" Y : "+balloon.y);
     },
 
     render : function(){
@@ -267,9 +269,9 @@ var Game = {
     	    p.body.angularVelocity = 0;
 
             if(random % 5 == 0){
-                            p.body.angularVelocity = -ROTATE_SPEED -100;
+                            p.body.angularVelocity = -ROTATE_SPEED -1000;
             }else if(random % 5 == 1){
-                            p.body.angularVelocity = ROTATE_SPEED+100;
+                            p.body.angularVelocity = ROTATE_SPEED+1000;
 
             }else if(random % 5 ==2){
                 p.speed++;
