@@ -121,10 +121,11 @@ var Game = {
         }
 
         if(updateDelay % UPDATE_DELAY == 0){
-                  //  this.updatePlayer();
+                   this.updatePlayer();
         }
         updateDelay++;
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
+        this.updateNeighbors();
     },
 
     render : function(){
@@ -220,13 +221,16 @@ var Game = {
         min_x = CENTER_WORLD_X-RAYON;
         min_y = CENTER_WORLD_Y-RAYON;
         max_y = CENTER_WORLD_Y+RAYON - 1000;
-
+        neighbors=[];
+        neighborsSprites=[];
         balloon = game.add.sprite(this.getRandomInt(min_x, max_x),this.getRandomInt(min_y,max_y), 'balloon');
         for(var i=0;i<200;i++){
             var playerN = new Player(i);
             playerN.coordonneX = this.getRandomInt(min_x,max_x);
             playerN.coordonneY = this.getRandomInt(min_y,max_y);
-           // player.speed = this.getRandomInt(0,MAX_PLAYER_SPEED);
+            playerN.speed = this.getRandomInt(0,30);
+            playerN.angle = this.getRandomInt(0,360);
+            console.log(playerN.speed);
             neighbors.push(playerN);
         }
         console.log("SIZE NEIGHBORS : " +neighbors.length);
@@ -234,12 +238,14 @@ var Game = {
         for(var i=0;i<neighbors.length;i++){
             var p = neighbors[i];
             var b = game.add.sprite(p.coordonneX,p.coordonneY, 'balloon');
+            b.angle= p.angle;
             b.anchor.setTo(0.5, 0.5);
             game.physics.enable(b, Phaser.Physics.ARCADE);
             b.body.setCircle(50/2,25,0);
             b.body.collideWorldBounds = true;
             b.animations.add('moveM', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], ROPE_SPEED, true);
             b.animations.play('moveM');
+            b.speed = p.speed;
             neighborsSprites.push(b);
         }
 
@@ -250,6 +256,17 @@ var Game = {
     	 game.camera.shake(0.02, 100);
      },null,this);
 
+    },
+    updateNeighbors : function(){
+        for(var i=0;i<neighborsSprites.length;i++){
+            var p = neighborsSprites[i];
+            p.body.velocity.x = 0;
+    	    p.body.velocity.y = 0;
+    	   p.body.angularVelocity = 0;
+console.log(p);
+	    game.physics.arcade.velocityFromAngle(p.angle, INITIAL_SPEED+SPEED_MULTIPLICATOR*p.speed, p.body.velocity);
+
+        }
     }
 
 };
