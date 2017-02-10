@@ -32,14 +32,6 @@ if (navigator.webkitGetUserMedia) {
 
 function sendMessage() {
     sendData(messageTextBox.value, player.dataChannel);
-    /*
-     if (messageTextBox.value) {
-     for (let id in dcList) {
-     dcList[id].send(JSON.stringify({message: messageTextBox.value, user: myPlayer}));
-     }
-     chatlog.innerHTML += '[' + myPlayer + '] ' + messageTextBox.value + '</p>';
-     messageTextBox.value = "";
-     }*/
     return false
 }
 
@@ -64,20 +56,3 @@ function writeMsg(data) {
     chatlog.innerHTML += '[' + data.user + '] ' + data.message + '</p>';
     chatlog.scrollTop = chatlog.scrollHeight;
 }
-
-/*function updateList(list) {
-    let x = document.getElementById("userList");
-    x.onchange = function () {
-        let selected = x.options[x.selectedIndex].value;
-        console.log(selected);
-        $("#myHost").val(selected);
-    };
-    while (x.options.length > 0) {
-        x.remove(0);
-    }
-    list.forEach(function (entry) {
-        let c = document.createElement("option");
-        c.text = entry;
-        x.options.add(c);
-    });
-}*/

@@ -11,7 +11,7 @@ var Game_Done = {
     	this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     	this.scale.pageAlignVertically = true;
     	this.scale.updateLayout( true );
-    	
+
         // Create button to start game like in Menu.
     	restartBtn_gamedone = this.add.button(0, 0, 'gameover', this.startGame, this);
     	restartBtn_gamedone.width = game.camera.width;

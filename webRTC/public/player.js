@@ -1,57 +1,57 @@
-let Player = function (name) {
-    /*this.neighbor = {
-     namen : "f",
-     coordonneX : "d",
-     coordonneY : "p",
-     radius : "e",
-     angle : "z",
-     speed : "m"
-     };
-     this.neighborhood = [this.neighbor] ;*/
-    this.name = name;
-    this.dataChannel = null;
-    this.radius = 0;
-    this.angle = 0;
-    this.speed = 0;
-    this.coordonneX = 0;
-    this.coordonneY = 0;
-    this.rank = 1;
-
-    console.log('Nouvel objet Player créé : ' + name);
-
-    this.getCoordonneX = function (coordonneX) {
-        this.coordonneX = coordonneX;
+let Player = function (name){
+	/*this.neighbor = {
+		namen : "f",
+		coordonneX : "d",
+		coordonneY : "p",
+		radius : "e",
+		angle : "z",
+		speed : "m"
+	};*/
+	this.neighborhood = [] ;
+	this.name = name;
+	this.dataChannel = null;
+	this.radius = 0;
+	this.angle = 0;
+	this.speed = 0;
+	this.coordonneX = 0;
+	this.coordonneY = 0;
+	this.rank = 1 ;
+		
+    console.log('Nouvel objet Player créé : ' + name );
+    
+	this.getCoordonneX = function (coordonneX){
+    	this.coordonneX = coordonneX;
     };
 
-    this.getCoordonneY = function (coordonneY) {
+    this.getCoordonneY = function (coordonneY){
         this.coordonneY = coordonneY;
     };
 
-    this.setRadius = function (radius) {
+    this.setRadius = function (radius){
         this.radius = radius;
     };
 
-    this.setSpeed = function (speed) {
+    this.setSpeed = function (speed){
         this.speed = speed;
     };
 
-    this.setAngle = function (angle) {
+    this.setAngle = function(angle){
         this.angle = angle;
     };
+       
+    this.setRank = function (rank1){
+    	this.rank = rank1;
+    }; 
 
-    this.setRank = function (rank1) {
-        this.rank = rank1;
-    };
-
-    this.setDataChannel = function (dataChannel) {
+    this.setDataChannel = function(dataChannel){
         this.dataChannel = dataChannel;
     };
 
-    this.getCoordonneX = function () {
+    this.getCoordonneX = function(){
         return CoordonneX;
     };
 
-    this.getCoordonneY = function () {
+    this.getCoordonneY = function() {
         return CoordonneY;
     };
 
@@ -105,6 +105,7 @@ let Player = function (name) {
                     player.setDataChannel(dc2);
                 }
                 console.log('Connected');
+
                 //on écrit dans le chat que le myPlayer s'est connecté
                 let data = {user: "system", message: "the datachannel " + dc2.label + " has been opened"};
                 writeMsg(data);
@@ -159,5 +160,6 @@ let Player = function (name) {
      this.removeNeighbor = function(name){
      neighborhood.splice(neighborhood.indexOf(name), 1);
      };*/
+
 
 };

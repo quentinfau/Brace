@@ -68,7 +68,6 @@ let Host = function (name) {
                 dc1 = pcLocal.createDataChannel(createID(host.name, playerName), {reliable: true});
                 dc1.onopen = function () {
                     console.log('Connected');
-                    // host.addDataChannel(dc1);
                     let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
                     writeMsg(data);
                     offerSent = false;
