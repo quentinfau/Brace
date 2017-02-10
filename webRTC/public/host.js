@@ -14,8 +14,10 @@ let Host = function (name) {
 
     this.PHSon1 = null;
     this.PHSon2 = null;
-
-
+    
+    this.neighbours = [];
+    
+       
     // Coordonnées zones :
 
     this.distanceD = 0;
@@ -86,9 +88,11 @@ let Host = function (name) {
                             console.log("RECEIVED : " + data.message);
                             let idUserDatachannel = createID(host.name, data.user);
                             let userDatachannel = host.getDataChannelByName(idUserDatachannel);
+                            host.getNeighbours(data.message);
                             const data2 = {
                                 "classement": 0,
-                                "voisinage": "voisinage"
+                                "voisinage": host.neighbours,
+                                "type": "voisinage"
                             };
                             host.sendData(data2, userDatachannel);
                             writeMsg(data2);
@@ -285,6 +289,7 @@ let Host = function (name) {
     this.getZone = function () {
         return null;
     };
+    
 
     this.getFamilyDataChannelByName = function (name) {
         let dataChannel;
@@ -358,6 +363,44 @@ let Host = function (name) {
             host.switchToHost(host.PHRightB, player, "PHRightB");
         }
     }
+    
+    this.getNeighbours = function (dataMessage) {
+    	let neighbourData = {
+	    	'name': dataMessage.name,
+	    	'radius': dataMessage.radius,
+	    	'angle': dataMessage.angle,
+	    	'x': dataMessage.x,
+	    	'y': dataMessage.y,
+	    	'speed': dataMessage.speed
+        }
+    	trouve = 0;
+    	i=0;
+    	if(host.neighbours.length != 0) {
+	        host.neighbours.forEach(function (neighbour) {
+	            if(neighbour.name == dataMessage.name) {
+	            	host.neighbours[i] = neighbourData;  	
+	            	trouve = 1;
+	            }
+	            i++;
+	        });
+    	}
+        if(trouve == 0) {
+        	host.neighbours.push(neighbourData);
+        }
+    };
+    
+    this.initPositionPlayer = function() {
+    	host.playerList.forEach( function(player) {
+    		let dataChannel = host.getDataChannelByName(createID(host.name, player));
+    		const data = {
+                "angleD": host.angleD,
+                "angleF": host.angleF,
+                "type": "initPosition"
+            };
+    		host.sendData(data,dataChannel);
+    	});
+    }
+    
 };
 connectToRemote.onclick = function () {
     host.switchToHost(host.PHLeftB, "1", "PHLeftB");

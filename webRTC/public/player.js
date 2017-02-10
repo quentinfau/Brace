@@ -1,12 +1,5 @@
 let Player = function (name){
-	/*this.neighbor = {
-		namen : "f",
-		coordonneX : "d",
-		coordonneY : "p",
-		radius : "e",
-		angle : "z",
-		speed : "m"
-	};*/
+
 	this.neighborhood = [] ;
 	this.name = name;
 	this.dataChannel = null;
@@ -107,14 +100,22 @@ let Player = function (name){
             dc2.onmessage = function (e) {
                 let data = JSON.parse(e.data);
                 switch (data.message.type) {
+                    case "voisinage" :
+                        player.neighborhood = data.message.voisinage;
+                        break;
+                    case "initPosition" :
+                        console.log(data);
+                        break;
                     case "offer" :
                         console.log("switching host from " +remote + " to " + data.message.from);
                         remote = data.message.from;
                         player.receiveConnection(data.message.data, "switchHost");
                         break;
                     default :
-                        writeMsg(data);
+                        break;
+
                 }
+                writeMsg(data);
             }
         };
         pcRemote.onicecandidate = function () {
