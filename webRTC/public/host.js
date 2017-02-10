@@ -25,29 +25,24 @@ let Host = function (name) {
 
     this.timestamp = new Date().getTime();
 
-    this.sendData = function (data) {
-        if (data) {
-            host.dataChannels.forEach(function (dataChannel) {
+    this.sendData = function (data, dataChannel) {
+        if (data && dataChannel) {
                 dataChannel.send(JSON.stringify({message: data, user: host.name}));
-            });
+
             chatlog.innerHTML += '[' + host.name + '] ' + messageTextBox.value + '</p>';
             messageTextBox.value = "";
-        }
-        return false
+        };
+        return false;
     };
 
     this.getDataChannelByName = function (nameUserDatachannel) {
-    	trouve = 0;
+        let temp;
         host.dataChannels.forEach(function (dataChannel) {
             if (dataChannel.label == nameUserDatachannel) {
-                trouve = 1;
+                temp =  dataChannel;
             }
         });
-        if(trouve == 1) {
-        	return dataChannel;
-        } else {
-        	return 0;
-        }
+        return temp;
     };
 
     this.createConnection = function (playerName, familyType) {
