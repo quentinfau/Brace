@@ -84,7 +84,8 @@ let Host = function (name) {
                             host.getNeighbours(data.message);
                             const data2 = {
                                 "classement": 0,
-                                "voisinage": host.neighbours // name,x,y,angle,speed
+                                "voisinage": host.neighbours,
+                                "type": "voisinage"
                             };
                             host.sendData(data2, userDatachannel);
                             writeMsg(data2);
