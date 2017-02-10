@@ -1,10 +1,15 @@
 function connectToWebSocket(name) {
 
     socket = io.connect(location.origin);
-    socket.emit('nouveau_client', name);
+    socket.emit('new_player', name);
     socket.on('welcomeMessage', function (data) {
         console.log("received message from the server : " + data.message);
         writeMsg(data);
+    });
+    socket.on('errorMessage', function (data) {
+        console.log("received error message from the server : " + data.message);
+        writeMsg(data);
+
     });
     socket.on('createHost', function (user) {
         host = new Host(user);
@@ -16,6 +21,7 @@ function connectToWebSocket(name) {
         const msg = JSON.parse(data);
         host.setList(msg.playerList);
         host.family = msg.family;
+        host.setZone(msg.zone.distanceD,msg.zone.distanceF,msg.zone.angleD,msg.zone.angleF);
         initHost(host, 0);
     });
     socket.on('negotiationMessage', function (data) {
@@ -67,6 +73,7 @@ function initHostFamily(host) {
                             if (dataChannel instanceof RTCDataChannel) {
                                 host.setPHSon2(dataChannel);
                             }
+                            console.log("host " + host.name + " finished the init method ");
                             socket.emit("initHostOver", host.name);
                         })
                 })
@@ -76,7 +83,6 @@ startGame.onclick = function () {
     socket.emit('startGame');
     //window.location = "index_Brace.html";
 };
-
 
 setid.onclick = function () {
     let name = $("#user").val();

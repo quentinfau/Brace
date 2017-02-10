@@ -25,23 +25,24 @@ let Host = function (name) {
 
     this.timestamp = new Date().getTime();
 
-    this.sendData = function (data) {
-        if (data) {
-            host.dataChannels.forEach(function (dataChannel) {
+    this.sendData = function (data, dataChannel) {
+        if (data && dataChannel) {
                 dataChannel.send(JSON.stringify({message: data, user: host.name}));
-            });
+
             chatlog.innerHTML += '[' + host.name + '] ' + messageTextBox.value + '</p>';
             messageTextBox.value = "";
-        }
-        return false
+        };
+        return false;
     };
 
     this.getDataChannelByName = function (nameUserDatachannel) {
+        let temp;
         host.dataChannels.forEach(function (dataChannel) {
             if (dataChannel.label == nameUserDatachannel) {
-                return dataChannel;
+                temp =  dataChannel;
             }
         });
+        return temp;
     };
 
     this.createConnection = function (playerName, familyType) {
@@ -62,7 +63,6 @@ let Host = function (name) {
                 dc1 = pcLocal.createDataChannel(createID(host.name, playerName), {reliable: true});
                 dc1.onopen = function () {
                     console.log('Connected');
-                    // host.addDataChannel(dc1);
                     let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
                     writeMsg(data);
                     offerSent = false;
@@ -87,10 +87,6 @@ let Host = function (name) {
                             writeMsg(data2);
                             host.verifSwitchHost(data.message.radius, data.message.angle, playerName);
                             break;
-
-                        /*case "position" :
-                         writeMsg(data);
-                         break;*/
                         default :
                             break;
                     }
@@ -117,10 +113,8 @@ let Host = function (name) {
                             };
                             host.sendData(data2, userDatachannel);
                             writeMsg(data2);
+                            host.verifSwitchHost(data.message.radius,data.message.angle,playerName);
                             break;
-                        /*case "position" :
-                         writeMsg(data);
-                         break;*/
                         default :
                             break;
                     }
@@ -227,7 +221,6 @@ let Host = function (name) {
     };
 
     this.verifSwitchHost = function (angle1, distance1, player) {
-
         if (distance1 < host.distanceD) {
             host.switchToHost(host.PHFather, player);
         }

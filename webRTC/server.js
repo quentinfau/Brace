@@ -19,18 +19,29 @@ const diametre = 400000;
 const nbPlayerByHost = 2;
 
 io.sockets.on('connection', function (socket) {
-    console.log('Un client est connecté !');
+    console.log('User connected to server !');
     const welcomeMessage = {
-        'message': 'Vous êtes bien connecté !',
+        'message': 'The server received your connection request!',
         'user': socket.user
     };
     socket.emit('welcomeMessage', welcomeMessage);
 
-    socket.on('nouveau_client', function (pseudo) {
-        console.log('nouveau client');
-        socket.user = pseudo;
-        socketList.push(socket);
-        //   updateListOfClient();
+    socket.on('new_player', function (name) {
+        console.log('new player request with name : ' + name);
+        if (isUnique(name)) {
+            socket.user = name;
+            socketList.push(socket);
+            console.log('player registered : ' + name);
+        }
+        else {
+            const errorMessage = {
+                'message': 'the name is already used',
+                'user': name
+            };
+            console.log('the name is already used  : ' + name);
+            socket.emit('errorMessage', errorMessage);
+        }
+
     });
 
     socket.on('negotiationMessage', function (data) {
@@ -50,7 +61,7 @@ io.sockets.on('connection', function (socket) {
         listPlayerHost = [];
         listPlayer = [];
         for (let i = 0; i < socketList.length; i++) {
-            name = socketList[i].user;
+            const name = socketList[i].user;
             if (i < 7) {
                 listPlayerHost.push(name);
             }
@@ -71,16 +82,30 @@ io.sockets.on('connection', function (socket) {
         const hostId = listPlayerHost.indexOf(name) - 1;
         if (hostId >= 0) {
             initHost(listPlayerHost[hostId], getSubListPlayer(hostId));
+        } else {
+            console.log("all host have finished their init");
         }
     });
 
-    socket.on('disconnect', function () {
-        socketList.splice(socketList.indexOf(this), 1);
-        let username_disconnected = this.user;
-        removePlayerOrPlayerHost(username_disconnected);
-        console.log('Client disconnected');
+    socket.on('disconnect', function (e) {
+        if (socketList.indexOf(this)>-1){
+            socketList.splice(socketList.indexOf(this), 1);
+            let username_disconnected = this.user;
+            removePlayerOrPlayerHost(username_disconnected);
+            console.log('Client disconnected : ' + username_disconnected + ' ' + e);
+        }
     });
 });
+
+function isUnique(name) {
+    let unique = true;
+    socketList.forEach(function (socket) {
+        if (socket.user == name) {
+          unique = false;
+        }
+    });
+    return unique;
+}
 
 function getSubListPlayer(idHost) {
     const reverseId = listPlayerHost.length - idHost - 1;
@@ -106,14 +131,15 @@ function removePlayerOrPlayerHost(username_disconnected) {
 
 function initHost(host, listPlayer) {
     let family = getFamily(host);
+    let zone = getZone(host);
     const data = {
         "playerList": listPlayer,
         "user": host,
-        "family": family
+        "family": family,
+        "zone": zone
     };
     getSocketByName(host).emit("initPlayerHost", JSON.stringify(data));
 }
-
 
 function getFamily(host) {
     switch (host) {
@@ -174,6 +200,70 @@ function getFamily(host) {
             break;
     }
 }
+
+
+function getZone(host) {
+    switch (host) {
+        case '1' :
+            return {
+        		"distanceD": 0,
+        		"distanceF": 1000,
+        		"angleD"   : 0,
+        		"angleF"   : 360
+            };
+            break;
+        case '2' :
+            return {
+        		"distanceD": 1000,
+        		"distanceF": 3000,
+        		"angleD"   : 0,
+        		"angleF"   : 180
+            };
+            break;
+        case '3' :
+            return {
+        		"distanceD": 1000,
+        		"distanceF": 3000,
+        		"angleD"   : 180,
+        		"angleF"   : 360
+            };
+            break;
+        case '4' :
+            return {
+        		"distanceD": 3000,
+        		"distanceF": 8000,
+    			"angleD"   : 0,
+    			"angleF"   : 90
+            };
+            break;
+        case '5' :
+            return {
+        		"distanceD": 3000,
+        		"distanceF": 8000,
+        		"angleD"   : 90,
+        		"angleF"   : 180
+            };
+            break;
+        case '6' :
+            return {
+        		"distanceD": 3000,
+        		"distanceF": 8000,
+    			"angleD"   : 180,
+    			"angleF"   : 270
+            };
+            break;
+        case '7' :
+            return {
+        		"distanceD": 3000,
+        		"distanceF": 8000,
+        		"angleD"   : 270,
+        		"angleF"   : 360
+            };
+            break;
+    }
+}
+
+
 function getSocketByName(name) {
     for (let i = 0; i < socketList.length; i++) {
         // send to everybody on the site
