@@ -72,6 +72,7 @@ function initHostFamily(host) {
                             if (dataChannel instanceof RTCDataChannel) {
                                 host.setPHSon2(dataChannel);
                             }
+                            console.log("host " + host.name + " finished the init method ");
                             socket.emit("initHostOver", host.name);
                         })
                 })

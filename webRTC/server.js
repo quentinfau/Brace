@@ -82,6 +82,8 @@ io.sockets.on('connection', function (socket) {
         const hostId = listPlayerHost.indexOf(name) - 1;
         if (hostId >= 0) {
             initHost(listPlayerHost[hostId], getSubListPlayer(hostId));
+        } else {
+            console.log("all host have finished their init");
         }
     });
 
