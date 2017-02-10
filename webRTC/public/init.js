@@ -1,10 +1,15 @@
 function connectToWebSocket(name) {
 
     socket = io.connect(location.origin);
-    socket.emit('nouveau_client', name);
+    socket.emit('new_player', name);
     socket.on('welcomeMessage', function (data) {
         console.log("received message from the server : " + data.message);
         writeMsg(data);
+    });
+    socket.on('errorMessage', function (data) {
+        console.log("received error message from the server : " + data.message);
+        writeMsg(data);
+
     });
     socket.on('createHost', function (user) {
         host = new Host(user);
@@ -76,7 +81,6 @@ startGame.onclick = function () {
     socket.emit('startGame');
     //window.location = "index_Brace.html";
 };
-
 
 setid.onclick = function () {
     let name = $("#user").val();

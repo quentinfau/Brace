@@ -2,8 +2,9 @@ var balloon, speed, cursors, map, cap, apple, mapCenter,obstacles,rayon,angleDeg
 
 const WORLD_WIDTH = 400300, WORLD_HEIGHT = 400300;
 const ROTATE_SPEED=200;
-const MAX_PLAYER_SPEED=10,MIN_PLAYER_SPEED=1;
-const INITIAL_SPEED=634/4, SPEED_MULTIPLICATOR=35;
+const MAX_PLAYER_SPEED=1000,MIN_PLAYER_SPEED=1;
+const INITIAL_SPEED=634, SPEED_MULTIPLICATOR=35;
+
 const ROPE_SPEED=10;
 const DIAMETER=16000;
 
@@ -55,7 +56,7 @@ var Game = {
         game.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
         apple = game.add.sprite(CENTER_WORLD_X,CENTER_WORLD_Y, 'apple');
-        
+
         this.generateObstacles();
         game.physics.enable([balloon,apple,mapCenter], Phaser.Physics.ARCADE);
         console.log("Angle : "+game.physics.arcade.angleBetween(mapCenter,balloon));
@@ -121,7 +122,7 @@ var Game = {
         updateDelay++;
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
     },
-    
+
     render : function(){
     	if (DEBUG == true) {
     		game.debug.spriteInfo(balloon,32,32);

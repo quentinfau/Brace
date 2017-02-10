@@ -19,18 +19,29 @@ const diametre = 400000;
 const nbPlayerByHost = 2;
 
 io.sockets.on('connection', function (socket) {
-    console.log('Un client est connecté !');
+    console.log('User connected to server !');
     const welcomeMessage = {
-        'message': 'Vous êtes bien connecté !',
+        'message': 'The server received your connection request!',
         'user': socket.user
     };
     socket.emit('welcomeMessage', welcomeMessage);
 
-    socket.on('nouveau_client', function (pseudo) {
-        console.log('nouveau client');
-        socket.user = pseudo;
-        socketList.push(socket);
-        //   updateListOfClient();
+    socket.on('new_player', function (name) {
+        console.log('new player request with name : ' + name);
+        if (isUnique(name)) {
+            socket.user = name;
+            socketList.push(socket);
+            console.log('player registered : ' + name);
+        }
+        else {
+            const errorMessage = {
+                'message': 'the name is already used',
+                'user': name
+            };
+            console.log('the name is already used  : ' + name);
+            socket.emit('errorMessage', errorMessage);
+        }
+
     });
 
     socket.on('negotiationMessage', function (data) {
@@ -50,7 +61,7 @@ io.sockets.on('connection', function (socket) {
         listPlayerHost = [];
         listPlayer = [];
         for (let i = 0; i < socketList.length; i++) {
-            name = socketList[i].user;
+            const name = socketList[i].user;
             if (i < 7) {
                 listPlayerHost.push(name);
             }
@@ -74,13 +85,25 @@ io.sockets.on('connection', function (socket) {
         }
     });
 
-    socket.on('disconnect', function () {
-        socketList.splice(socketList.indexOf(this), 1);
-        let username_disconnected = this.user;
-        removePlayerOrPlayerHost(username_disconnected);
-        console.log('Client disconnected');
+    socket.on('disconnect', function (e) {
+        if (socketList.indexOf(this)>-1){
+            socketList.splice(socketList.indexOf(this), 1);
+            let username_disconnected = this.user;
+            removePlayerOrPlayerHost(username_disconnected);
+            console.log('Client disconnected : ' + username_disconnected + ' ' + e);
+        }
     });
 });
+
+function isUnique(name) {
+    let unique = true;
+    socketList.forEach(function (socket) {
+        if (socket.user == name) {
+          unique = false;
+        }
+    });
+    return unique;
+}
 
 function getSubListPlayer(idHost) {
     const reverseId = listPlayerHost.length - idHost - 1;
@@ -113,7 +136,6 @@ function initHost(host, listPlayer) {
     };
     getSocketByName(host).emit("initPlayerHost", JSON.stringify(data));
 }
-
 
 function getFamily(host) {
     switch (host) {
