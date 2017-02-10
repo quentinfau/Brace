@@ -221,7 +221,6 @@ let Host = function (name) {
     };
 
     this.verifSwitchHost = function (angle1, distance1, player) {
-
         if (distance1 < host.distanceD) {
             host.switchToHost(host.PHFather, player);
         }
