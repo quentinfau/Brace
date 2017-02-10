@@ -116,7 +116,7 @@ var Game = {
         }
 
         if(updateDelay % UPDATE_DELAY == 0){
-                    //this.updatePlayer();
+                    this.updatePlayer();
         }
         updateDelay++;
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
