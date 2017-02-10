@@ -114,6 +114,13 @@ let Player = function (name){
             };
             dc2.onmessage = function (e) {
                 let data = JSON.parse(e.data);
+                switch (data.message.type) {
+                	case "voisinage" :
+                		player.neighborhood = data.message.voisinage;
+                		break;
+                    default :
+                        break;
+                }
                 writeMsg(data);
             };
         };

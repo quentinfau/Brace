@@ -13,8 +13,10 @@ let Host = function (name) {
 
     this.PHSon1 = null;
     this.PHSon2 = null;
-
-
+    
+    this.neighbours = [];
+    
+       
     // Coordonnées zones :
 
     this.distanceD = 0;
@@ -79,9 +81,11 @@ let Host = function (name) {
                             console.log("RECEIVED : " + data.message);
                             let idUserDatachannel = createID(host.name, data.user);
                             let userDatachannel = host.getDataChannelByName(idUserDatachannel);
+                            host.getNeighbours(data.message);
                             const data2 = {
                                 "classement": 0,
-                                "voisinage": "voisinage"
+                                "voisinage": host.neighbours,
+                                "type": "voisinage"
                             };
                             host.sendData(data2, userDatachannel);
                             writeMsg(data2);
@@ -205,6 +209,7 @@ let Host = function (name) {
     this.getZone = function () {
         return null;
     };
+    
 
     this.switchToHost = function (host2, player) {
         host.dataChannels.forEach(function (dataChannel) {
@@ -241,4 +246,29 @@ let Host = function (name) {
             host.switchToHost(host.PHRight, player);
         }
     }
+    
+    this.getNeighbours = function (dataMessage) {
+    	let neighbourData = {
+	    	'name': dataMessage.name,
+	    	'radius': dataMessage.radius,
+	    	'angle': dataMessage.angle,
+	    	'x': dataMessage.x,
+	    	'y': dataMessage.y,
+	    	'speed': dataMessage.speed
+        }
+    	trouve = 0;
+    	i=0;
+    	if(host.neighbours.length != 0) {
+	        host.neighbours.forEach(function (neighbour) {
+	            if(neighbour.name == dataMessage.name) {
+	            	host.neighbours[i] = neighbourData;  	
+	            	trouve = 1;
+	            }
+	            i++;
+	        });
+    	}
+        if(trouve == 0) {
+        	host.neighbours.push(neighbourData);
+        }
+    };
 };
