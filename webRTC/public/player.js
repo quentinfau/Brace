@@ -43,32 +43,24 @@ let Player = function (name){
     	this.rank = rank1;
     }; 
 
-    this.setDataChannel = function (dataChannel){
+    this.setDataChannel = function(dataChannel){
         this.dataChannel = dataChannel;
     };
-    
+
     this.getCoordonneX = function(){
-    	return CoordonneX;
-    };
-    
-    this.getCoordonneY = function(){
-    	return CoordonneY;
-    };
-    
-    this.getAngle = function(){
-    	return angle;
-    };
-    
-    this.getRadius = function(){
-    	return radius;
+        return CoordonneX;
     };
 
-    this.getSpeed = function(){
-    	return speed;
+    this.getCoordonneY = function() {
+        return CoordonneY;
     };
-    
-    this.getRank = function(){
-    	return rank;
+
+    this.getAngle = function () {
+        return angle;
+    };
+
+    this.getRadius = function () {
+        return radius;
     };
     
     this.getName = function(){
@@ -76,20 +68,13 @@ let Player = function (name){
     };
 
 
-//    sendPositionBtn.onclick = function () {
-//        const data = {
-//            "name": player.name,
-//            "radius": player.radius,
-//            "angle": player.angle,
-//            "x": player.coordonneX,
-//            "y": player.coordonneY,
-//            "speed": player.speed,
-//            "timestamp": player.timestamp,
-//            "type" : "position"
-//        };
-//        sendData(data,player.dataChannel);
-//    };
+    this.getSpeed = function () {
+        return speed;
+    };
 
+    this.getRank = function () {
+        return rank;
+    };
 
     this.sendPosition = function () {
         const data = {
@@ -100,18 +85,27 @@ let Player = function (name){
             "y": player.coordonneY,
             "speed": player.speed,
             "timestamp": player.timestamp,
-            "type" : "position"
+            "type": "position"
         };
-        sendData(data,player.dataChannel);
+        sendData(data, player.dataChannel);
     };
-   this.receiveConnection =  function(offer) {
 
+    this.receiveConnection = function (offer, familyType) {
         let pcRemote = new RTCPeerConnection(cfg, con);
         pcRemote.ondatachannel = function (e) {
             dc2 = e.channel || e;
             dc2.onopen = function () {
+                if (familyType == "PHRightB") {
+                    host.setPHLeftB(dc2)
+                }
+                else if (familyType == "PHSon1" || familyType == "PHSon2") {
+                    host.setPHFather(dc2)
+                }
+                else {
+                    player.setDataChannel(dc2);
+                }
                 console.log('Connected');
-                player.setDataChannel(dc2);
+
                 //on écrit dans le chat que le myPlayer s'est connecté
                 let data = {user: "system", message: "the datachannel " + dc2.label + " has been opened"};
                 writeMsg(data);
@@ -126,7 +120,11 @@ let Player = function (name){
         pcRemote.onicecandidate = function () {
             if (pcRemote.iceGatheringState == "complete" && !answerSent) {
                 answerSent = true;
-                sendNegotiation("answer", pcRemote.localDescription, player.name, remote);
+                const type = {
+                    'type': 'answer',
+                    'familyType': familyType
+                };
+                sendNegotiation(type, pcRemote.localDescription, player.name, remote);
             }
         };
 
@@ -147,26 +145,21 @@ let Player = function (name){
             sdpConstraints)
     };
     /*
-    this.addNeighbor = function(name1,coordonneX1,coordonneY1,radius1,angle1,speed1) {
-    	var neighbor1;
-    	neighbor1.namen = name1;
-    	neighbor1.coordonneX = coordonneX1;
-    	neighbor1.coordonneY = coordonneY1;
-    	neighbor1.radius = radius1;
-    	neighbor1.angle = angle1;
-    	neighbor1.speed = speed1;
-    	
-    	neighborhood.push(neighbor1); 	
-    };
-    
-    this.removeNeighbor = function(name){
-        neighborhood.splice(neighborhood.indexOf(name), 1);
-    };*/
-// this.addNeighbor = function(playerN){
-//     neighborhood.push(playerN);
-// };
-//
-//this.removeNeighbor = function(playerN){
-//    neighborhood.splice(neighborhood.indexOf(playerN),1);
-//}
+     this.addNeighbor = function(name1,coordonneX1,coordonneY1,radius1,angle1,speed1) {
+     var neighbor1;
+     neighbor1.namen = name1;
+     neighbor1.coordonneX = coordonneX1;
+     neighbor1.coordonneY = coordonneY1;
+     neighbor1.radius = radius1;
+     neighbor1.angle = angle1;
+     neighbor1.speed = speed1;
+
+     neighborhood.push(neighbor1);
+     };
+
+     this.removeNeighbor = function(name){
+     neighborhood.splice(neighborhood.indexOf(name), 1);
+     };*/
+
+
 };

@@ -20,7 +20,6 @@ const nbPlayerByHost = 2;
 
 io.sockets.on('connection', function (socket) {
     console.log('Un client est connecté !');
-    socketList.push(socket);
     const welcomeMessage = {
         'message': 'Vous êtes bien connecté !',
         'user': socket.user
@@ -30,6 +29,7 @@ io.sockets.on('connection', function (socket) {
     socket.on('nouveau_client', function (pseudo) {
         console.log('nouveau client');
         socket.user = pseudo;
+        socketList.push(socket);
         //   updateListOfClient();
     });
 
@@ -49,51 +49,43 @@ io.sockets.on('connection', function (socket) {
     socket.on('startGame', function () {
         listPlayerHost = [];
         listPlayer = [];
-        //console.log('Got socket message: ' + data);
-        //const msg = JSON.parse(data);
         for (let i = 0; i < socketList.length; i++) {
             name = socketList[i].user;
             if (i < 7) {
                 listPlayerHost.push(name);
-                initPlayer(name);
-            } else {
-                initPlayer(name);
             }
+            initPlayer(name);
         }
         listPlayer.forEach(function (playerName) {
-            getSocketByName(playerName).emit("initPlayer", playerName);
+            getSocketByName(playerName).emit("createPlayer", playerName);
         });
-        let j = 0;
-        for (let i = listPlayerHost.length - 1; i >= 0; i--) {
-            if (j < listPlayer.length) {
-                initHostWithPlayer(listPlayerHost[i], listPlayer.slice(j, j + 2));
-            }
-            else {
-                initHost(listPlayerHost[i]);
-            }
-            j = j + 2;
+        listPlayerHost.forEach(function (playerHostName) {
+            getSocketByName(playerHostName).emit("createHost", playerHostName);
+        });
+
+        const hostId = listPlayerHost.length - 1;
+        initHost(listPlayerHost[hostId], getSubListPlayer(hostId));
+    });
+
+    socket.on("initHostOver", function (name) {
+        const hostId = listPlayerHost.indexOf(name) - 1;
+        if (hostId >= 0) {
+            initHost(listPlayerHost[hostId], getSubListPlayer(hostId));
         }
     });
 
     socket.on('disconnect', function () {
         socketList.splice(socketList.indexOf(this), 1);
         let username_disconnected = this.user;
-
         removePlayerOrPlayerHost(username_disconnected);
-
         console.log('Client disconnected');
-        // updateListOfClient();
     });
 });
-/*function updateListOfClient() {
- const userList = [];
- socketList.forEach(function (socket) {
- userList.push(socket.user);
- });
- socketList.forEach(function (socket) {
- socket.emit('listOfClient', userList);
- })
- }*/
+
+function getSubListPlayer(idHost) {
+    const reverseId = listPlayerHost.length - idHost - 1;
+    return listPlayer.slice(reverseId * 2, reverseId * 2 + 2);
+}
 
 function removePlayerOrPlayerHost(username_disconnected) {
     let i = 0;
@@ -112,7 +104,7 @@ function removePlayerOrPlayerHost(username_disconnected) {
     });
 }
 
-function initHostWithPlayer(host, listPlayer) {
+function initHost(host, listPlayer) {
     let family = getFamily(host);
     const data = {
         "playerList": listPlayer,
@@ -122,15 +114,6 @@ function initHostWithPlayer(host, listPlayer) {
     getSocketByName(host).emit("initPlayerHost", JSON.stringify(data));
 }
 
-function initHost(host) {
-    let family = getFamily(host);
-    const data = {
-        "playerList": "",
-        "user": host,
-        "family": family
-    };
-    getSocketByName(host).emit("initPlayerHost", JSON.stringify(data));
-}
 
 function getFamily(host) {
     switch (host) {
@@ -145,55 +128,47 @@ function getFamily(host) {
             break;
         case '2' :
             return {
-                "PHLeftB":  listPlayer[2],
-                "PHRightB":  listPlayer[2],
-                "PHFather": listPlayer[0],
+                // "PHLeftB": listPlayer[2],
+                "PHRightB": listPlayer[2],
+                // "PHFather": listPlayer[0],
                 "PHSon1": listPlayer[3],
                 "PHSon2": listPlayer[4]
             };
             break;
         case '3' :
             return {
-                "PHLeftB":  listPlayer[1],
-                "PHRightB":  listPlayer[1],
-                "PHFather": listPlayer[0],
+                // "PHLeftB": listPlayer[1],
+                "PHRightB": listPlayer[1],
+                //"PHFather": listPlayer[0],
                 "PHSon1": listPlayer[5],
                 "PHSon2": listPlayer[6]
             };
             break;
         case '4' :
             return {
-                "PHLeftB": listPlayer[6],
                 "PHRightB": listPlayer[4],
-                "PHFather": listPlayer[1],
-                "PHSon1":"" ,
+                "PHSon1": "",
                 "PHSon2": ""
             };
             break;
         case '5' :
             return {
-                "PHLeftB": listPlayer[3],
                 "PHRightB": listPlayer[5],
-                "PHFather": listPlayer[1],
-                "PHSon1":"" ,
+                "PHSon1": "",
                 "PHSon2": ""
             };
             break;
         case '6' :
             return {
-                "PHLeftB": listPlayer[4],
                 "PHRightB": listPlayer[6],
-                "PHFather": listPlayer[2],
-                "PHSon1":"" ,
+                "PHSon1": "",
                 "PHSon2": ""
             };
             break;
         case '7' :
             return {
-                "PHLeftB": listPlayer[5],
                 "PHRightB": listPlayer[3],
-                "PHFather": listPlayer[2],
-                "PHSon1":"" ,
+                "PHSon1": "",
                 "PHSon2": ""
             };
             break;
