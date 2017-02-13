@@ -7,7 +7,7 @@ const MAX_PLAYER_SPEED = 1000
 const INITIAL_SPEED = 634
     , SPEED_MULTIPLICATOR = 35;
 const ROPE_SPEED = 10;
-const DIAMETER = 2000;
+const DIAMETER = 20000;
 const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
@@ -37,8 +37,20 @@ var Game = {
             map = new Phaser.Circle(CENTER_WORLD_X, CENTER_WORLD_Y, DIAMETER);
             game.add.tileSprite(0, 0, WORLD_WIDTH, WORLD_HEIGHT, 'background');
             graphics = game.add.graphics(0, 0);
-            graphics.lineStyle(20, 0x00ff00, 1);
+            graphics.lineStyle(20, 0x00ff00, 30);
             graphics.drawCircle(map.x, map.y, map.diameter);
+            graphics.lineStyle(20, 0xFF3300, 1);
+            graphics.drawCircle(map.x, map.y, map.diameter/2);
+            graphics.drawCircle(map.x, map.y, map.diameter/4);
+            graphics.lineStyle(20, 0xFFFF33, 1);
+            graphics.moveTo(mapCenter.x,mapCenter.y);
+            graphics.lineTo(mapCenter.x,mapCenter.y+DIAMETER/2);
+            graphics.moveTo(mapCenter.x,mapCenter.y);
+            graphics.lineTo(mapCenter.x,mapCenter.y-DIAMETER/2);
+            graphics.moveTo(mapCenter.x,mapCenter.y);
+            graphics.lineTo(mapCenter.x+DIAMETER/2,mapCenter.y);
+            graphics.moveTo(mapCenter.x,mapCenter.y);
+            graphics.lineTo(mapCenter.x-DIAMETER/2,mapCenter.y);
             cap = game.add.sprite(35, 40, 'cap');
             cap.anchor.setTo(0.5, 0.5);
             cap.fixedToCamera = true;
@@ -235,6 +247,8 @@ var Game = {
     , updateNeighbors: function (p) {
        neighborsSprites.forEach(function(s){
            if(s.name==p.name){
+            s.x = p.x;
+            s.y = p.y;
             s.body.velocity.x = 0;
             s.body.velocity.y = 0;
             s.body.angularVelocity = 0;
@@ -248,12 +262,18 @@ var Game = {
         this.exist = false;
         console.log(neighborsSprites);
         console.log(player.neighborhood);
+        player.neighborhood.forEach(function(n){
+            if(n.name==p.name){
+
+            }
+        });
         neighborsSprites.forEach(function (pe) {
             if (pe.name == p.name) {
                 console.log("EXIST");
                 this.exist = true;
             }
         });
+
        // return this.exist;
     }
 };
