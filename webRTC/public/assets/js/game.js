@@ -7,7 +7,7 @@ const MAX_PLAYER_SPEED = 1000
 const INITIAL_SPEED = 634
     , SPEED_MULTIPLICATOR = 35;
 const ROPE_SPEED = 10;
-const DIAMETER = 20000;
+const DIAMETER = 8000;
 const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
@@ -217,7 +217,7 @@ var Game = {
                     if (this.exist) {
                         console.log("UPDATE");
                         this.Game.updateNeighbors(p);
-                    }else if(p.name==player.name){
+                    }else if(p.name==player.getName()){
 
                     }
                     else {

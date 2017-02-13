@@ -12,7 +12,7 @@ let Player = function (name){
 	this.direction = 0;
 		
     console.log('Nouvel objet Player créé : ' + name );
-    
+
 	this.getCoordonneX = function (coordonneX){
     	this.coordonneX = coordonneX;
     };
@@ -61,7 +61,6 @@ let Player = function (name){
     	return name;
     };
 
-
     this.getSpeed = function () {
         return speed;
     };
@@ -72,7 +71,7 @@ let Player = function (name){
 
     this.sendPosition = function () {
         const data = {
-            "name": player.name,
+            "name": player.getName(),
             "radius": player.radius,
             "angle": player.angle,
             "x": player.coordonneX,
@@ -135,10 +134,10 @@ let Player = function (name){
                     'familyType': familyType
                 };
                 if (familyType == "switchHost") {
-                    sendNegotiationSwitchHost('answer', pcRemote.localDescription, player.name, remote, player.dataChannel);
+                    sendNegotiationSwitchHost('answer', pcRemote.localDescription, player.getName(), remote, player.dataChannel);
                 }
                 else {
-                    sendNegotiation(type, pcRemote.localDescription, player.name, remote);
+                    sendNegotiation(type, pcRemote.localDescription, player.getName(), remote);
                 }
             }
         };
