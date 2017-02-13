@@ -103,7 +103,6 @@ let Player = function (name){
                 switch (data.message.type) {
                     case "voisinage" :
                         player.neighborhood = data.message.voisinage;
-                        console.log(player.neighborhood);
                         break;
                     case "initPosition" :
                     	let min = data.message.angleD;
