@@ -7,7 +7,7 @@ const MAX_PLAYER_SPEED = 1000
 const INITIAL_SPEED = 634
     , SPEED_MULTIPLICATOR = 35;
 const ROPE_SPEED = 10;
-const DIAMETER = 20000;
+const DIAMETER = 8000;
 const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
@@ -168,7 +168,7 @@ var Game = {
             min_x = CENTER_WORLD_X - RAYON;
             min_y = CENTER_WORLD_Y - RAYON;
             max_y = CENTER_WORLD_Y + RAYON - 1000;
-            balloon = game.add.sprite(this.getRandomInt(min_x, max_x), this.getRandomInt(min_y, max_y), 'balloon');
+            balloon = game.add.sprite(player.coordonneX, player.coordonneY, 'balloon');
             balloon.anchor.setTo(0.5, 0.5);
             game.physics.enable(balloon, Phaser.Physics.ARCADE);
             balloon.body.setCircle(50 / 2, 25, 0);
