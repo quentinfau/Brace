@@ -96,7 +96,7 @@ let Host = function (name) {
                             host.sendData(data2, userDatachannel);
                             writeMsg(data2);
                             if (!host.waitingChangingHostList.includes(playerName)) {
-                                host.verifSwitchHost(data.message.radius, data.message.angle, playerName);
+                                host.verifSwitchHost(data.message.angle,data.message.radius, playerName);
                             }
                             break;
                         case "connection" :
@@ -386,7 +386,7 @@ let Host = function (name) {
         	host.neighbours.push(neighbourData);
         }
     };
-    
+
     this.initPositionPlayer = function() {
     	host.playerList.forEach( function(player) {
     		let dataChannel = host.getDataChannelByName(createID(host.name, player));
