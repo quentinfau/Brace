@@ -168,7 +168,7 @@ var Game = {
             min_x = CENTER_WORLD_X - RAYON;
             min_y = CENTER_WORLD_Y - RAYON;
             max_y = CENTER_WORLD_Y + RAYON - 1000;
-            balloon = game.add.sprite(player.coordonneX, player.coordonneY, 'balloon');
+            balloon = game.add.sprite(player.coordonneX+200000, player.coordonneY+200000, 'balloon');
             balloon.anchor.setTo(0.5, 0.5);
             game.physics.enable(balloon, Phaser.Physics.ARCADE);
             balloon.body.setCircle(50 / 2, 25, 0);
