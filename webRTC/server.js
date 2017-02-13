@@ -60,6 +60,10 @@ io.sockets.on('connection', function (socket) {
     socket.on('startGame', function () {
         listPlayerHost = [];
         listPlayer = [];
+        console.log("startGame with list of player : ");
+        socketList.forEach(function (socket) {
+            console.log(socket.user);
+        });
         for (let i = 0; i < socketList.length; i++) {
             const name = socketList[i].user;
             if (i < 7) {
