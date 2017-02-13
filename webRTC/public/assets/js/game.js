@@ -87,9 +87,9 @@ var Game = {
             if (angleDegree < 0) {
                 angleDegree = 360 + angleDegree;
             }
-            console.log("Angle Degree: " + angleDegree);
+          //  console.log("Angle Degree: " + angleDegree);
             //Calcul de rayon entre balloon et l'ovule
-            console.log("Rayon : " + rayon);
+           // console.log("Rayon : " + rayon);
             if (balloon.angle < 0) {
                 console.log(360 + balloon.angle);
             }
@@ -199,7 +199,7 @@ var Game = {
                  console.log(playerN.speed);
                  neighbors.push(playerN);
              }*/
-            console.log("SIZE NEIGHBORS : " + player.neighborhood.length);
+           // console.log("SIZE NEIGHBORS : " + player.neighborhood.length);
             player.neighborhood.forEach(function (p) {
                     var exist = this.Game.isNeighbor(p);
                     if (exist || p.name == player.name) {
@@ -249,8 +249,8 @@ var Game = {
            });
     } ,isNeighbor: function(p) {
         var exist = false;
-        console.log(neighborsSprites);
-        console.log(player.neighborhood);
+      //  console.log(neighborsSprites);
+      //  console.log(player.neighborhood);
         neighborsSprites.forEach(function (pe) {
             if (pe.name == p.name) {
                 console.log("EXIST");

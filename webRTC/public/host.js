@@ -167,10 +167,17 @@ let Host = function (name) {
             dc2.onmessage = function (e) {
                 let data = JSON.parse(e.data);
                 switch (data.message.type) {
+                    case "connection" :
+                        host.createConnection(data.message.player, "switchHost", host.getFamilyDataChannelByName(data.message.host))
+                            .then(dataChannel => {
+                                console.log("dataChannel : " + dataChannel + ' player : ' + remote);
+                                host.addDataChannel(dataChannel);
+                            });
+                        break;
                     case "offer" :
                         sendData(data.message, host.getDataChannelByName(createID(host.name, data.message.to)));
                         break;
-                   /* case "answer" :
+                    case "answer" :
                         if (data.message.to != host.name) {
                             sendData(data.message, host.getFamilyDataChannelByName(data.message.to));
                             host.removeDataChannel(host.getDataChannelByName(createID(host.name, data.message.from)));
@@ -179,7 +186,7 @@ let Host = function (name) {
                         else {
                             processAnswer(data.message.data);
                         }
-                        break;*/
+                        break;
                     default :
                         writeMsg(data);
                 }
@@ -227,7 +234,7 @@ let Host = function (name) {
     };
 
     this.removeDataChannel = function (dataChannel) {
-        this.dataChannels.splice(dataChannel);
+        this.dataChannels.splice(this.dataChannels.indexOf(dataChannel),1);
     };
 
     this.addPlayerList = function (player1) {
@@ -401,5 +408,23 @@ let Host = function (name) {
 
 };
 connectToRemote.onclick = function () {
-    host.switchToHost(host.PHLeftB, "1", "PHLeftB");
+    let type = $("#user2").val();
+    switch (type) {
+        case "1" :
+            host.verifSwitchHost(91,4000,"8");
+            break;
+        case "2" :
+            host.verifSwitchHost(359,4000,"8");
+            break;
+        case "3" :
+            host.verifSwitchHost(181,4000,"8");
+            break;
+        case "4" :
+            host.verifSwitchHost(182,2950,"8");
+            break;
+        case "5" :
+            host.verifSwitchHost(185,950,"8");
+            break;
+
+    }
 };
