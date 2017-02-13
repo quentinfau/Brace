@@ -9,6 +9,7 @@ let Player = function (name){
 	this.coordonneX = 0;
 	this.coordonneY = 0;
 	this.rank = 1 ;
+	this.direction = 0;
 		
     console.log('Nouvel objet Player créé : ' + name );
     
@@ -104,7 +105,15 @@ let Player = function (name){
                         player.neighborhood = data.message.voisinage;
                         break;
                     case "initPosition" :
-                        console.log(data);
+                    	let min = data.message.angleD;
+                    	let max = data.message.angleF;
+                    	let angleStart = Math.floor(Math.random() * (max-min+1)) + min;
+                    	player.angle = angleStart;
+                    	player.direction = angleStart - 180;
+                    	player.radius = 7800;
+                    	player.coordonneX = player.radius * Math.cos(angleStart);
+                    	player.coordonneY = player.radius * Math.sin(angleStart);
+                    	console.log(player);
                         break;
                     case "offer" :
                         console.log("switching host from " +remote + " to " + data.message.from);
