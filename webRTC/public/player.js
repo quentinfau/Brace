@@ -103,6 +103,7 @@ let Player = function (name){
                 switch (data.message.type) {
                     case "voisinage" :
                         player.neighborhood = data.message.voisinage;
+                        console.log(player.neighborhood);
                         break;
                     case "initPosition" :
                     	let min = data.message.angleD;
@@ -113,7 +114,6 @@ let Player = function (name){
                     	player.radius = 7800;
                     	player.coordonneX = player.radius * Math.cos(angleStart);
                     	player.coordonneY = player.radius * Math.sin(angleStart);
-                    	console.log(player);
                         break;
                     case "offer" :
                         console.log("switching host from " +remote + " to " + data.message.from);
