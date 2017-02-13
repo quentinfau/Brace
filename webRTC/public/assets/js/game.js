@@ -7,7 +7,7 @@ const MAX_PLAYER_SPEED = 1000
 const INITIAL_SPEED = 634
     , SPEED_MULTIPLICATOR = 35;
 const ROPE_SPEED = 10;
-const DIAMETER = 2000;
+const DIAMETER = 8000;
 const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
@@ -50,7 +50,7 @@ var Game = {
             apple = game.add.sprite(CENTER_WORLD_X, CENTER_WORLD_Y, 'apple');
             this.generateObstacles();
             game.physics.enable([balloon, apple, mapCenter, neighborsSprites], Phaser.Physics.ARCADE);
-            console.log("Angle : " + game.physics.arcade.angleBetween(mapCenter, balloon));
+          //  console.log("Angle : " + game.physics.arcade.angleBetween(mapCenter, balloon));
 
         }
         , update: function () {
@@ -88,14 +88,14 @@ var Game = {
             if (angleDegree < 0) {
                 angleDegree = 360 + angleDegree;
             }
-            console.log("Angle Degree: " + angleDegree);
+            //console.log("Angle Degree: " + angleDegree);
             //Calcul de rayon entre balloon et l'ovule
-            console.log("Rayon : " + rayon);
+           // console.log("Rayon : " + rayon);
             if (balloon.angle < 0) {
-                console.log(360 + balloon.angle);
+            //    console.log(360 + balloon.angle);
             }
             else {
-                console.log(balloon.angle);
+            //    console.log(balloon.angle);
             }
             if (updateDelay % UPDATE_DELAY == 0) {
                 this.updatePlayer();
@@ -134,7 +134,7 @@ var Game = {
             player.radius = rayon;
             player.speed = speed;
             player.sendPosition();
-            console.log("SENT");
+          //  console.log("SENT");
         }
         , generateBalloon: function () {
             var min_x, max_x, min_y, max_y;
@@ -199,7 +199,7 @@ var Game = {
                  console.log(playerN.speed);
                  neighbors.push(playerN);
              }*/
-            console.log("SIZE NEIGHBORS : " + player.neighborhood.length);
+          //  console.log("SIZE NEIGHBORS : " + player.neighborhood.length);
             player.neighborhood.forEach(function (p) {
                     this.Game.isNeighbor(p);
                     if (this.exist) {
@@ -246,8 +246,8 @@ var Game = {
            });
     } ,isNeighbor: function(p) {
         this.exist = false;
-        console.log(neighborsSprites);
-        console.log(player.neighborhood);
+    //    console.log(neighborsSprites);
+     //   console.log(player.neighborhood);
         neighborsSprites.forEach(function (pe) {
             if (pe.name == p.name) {
                 console.log("EXIST");
