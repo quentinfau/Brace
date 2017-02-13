@@ -1,7 +1,7 @@
 var balloon, speed, cursors, map, cap, apple, mapCenter, obstacles, rayon, angleDegree, updateDelay, neighbors = []
     , neighborsSprites = [];
-const WORLD_WIDTH = 4000
-    , WORLD_HEIGHT = 4000;
+const WORLD_WIDTH = 40000
+    , WORLD_HEIGHT = 40000;
 const ROTATE_SPEED = 200;
 const MAX_PLAYER_SPEED = 1000
     , MIN_PLAYER_SPEED = 0;
@@ -50,6 +50,7 @@ var Game = {
             this.generateObstacles();
             game.physics.enable([balloon, apple, mapCenter, neighborsSprites], Phaser.Physics.ARCADE);
             console.log("Angle : " + game.physics.arcade.angleBetween(mapCenter, balloon));
+
         }
         , update: function () {
             //smartphone control : https://github.com/flogvit/phaser-swipe

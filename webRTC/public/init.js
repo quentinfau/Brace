@@ -24,12 +24,20 @@ function connectToWebSocket(name) {
         host.setZone(msg.zone.distanceD,msg.zone.distanceF,msg.zone.angleD,msg.zone.angleF);
         initHost(host, 0);
     });
+    socket.on('initPlayerPosition', function () {
+       host.initPositionPlayer();
+    });
     socket.on('negotiationMessage', function (data) {
         console.log("received message from the server : " + data);
         if (data.action.type == "offer") {
             if (data.to == player.name) {
                 remote = data.from;
-                player.receiveConnection(data.data, data.action.familyType);
+                if (data.action.familyType==null){
+                    player.receiveConnection(data.data, data.action.familyType);
+                }
+                else {
+                    host.receiveConnectionHost(data.data,data.action.familyType)
+                }
             }
         } else if (data.action.type == "answer") {
             if (data.to == player.name) {

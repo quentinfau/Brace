@@ -52,6 +52,14 @@ function sendNegotiation(type, sdp, sender, receiver) {
     socket.emit("negotiationMessage", JSON.stringify(json));
 }
 
+function sendNegotiationSwitchHost(type, sdp, sender, receiver, dataChannel) {
+    let json = {from: sender, to: receiver, type: type, data: sdp};
+    console.log("Sending [" + sender + "] to [" + receiver + "]: " + JSON.stringify(sdp));
+    sendData(json,dataChannel);
+   // socket.emit("negotiationMessage", JSON.stringify(json));
+}
+
+
 function writeMsg(data) {
     chatlog.innerHTML += '[' + data.user + '] ' + data.message + '</p>';
     chatlog.scrollTop = chatlog.scrollHeight;
