@@ -93,14 +93,7 @@ var Game = {
             this.obstacleCollision();
             this.neighborCollision();
             rayon = Math.sqrt(Math.pow(WORLD_WIDTH / 2 - balloon.body.x, 2) + Math.pow(WORLD_HEIGHT / 2 - balloon.body.y, 2));
-            // console.log("Angle :"+balloon.angle);
-            //Calcul de l'angle de balloon par rapport au vagin
-            var rad = game.physics.arcade.angleBetween(mapCenter, balloon);
-            var angleDegree = rad * (180 / Math.PI);
-            if (angleDegree < 0) {
-                angleDegree = 360 + angleDegree;
-            }
-            //console.log("Angle Degree: " + angleDegree);
+
             //Calcul de rayon entre balloon et l'ovule
            // console.log("Rayon : " + rayon);
             if (balloon.angle < 0) {
@@ -131,17 +124,38 @@ var Game = {
         }
         , wallCollision: function () {
             if (Math.sqrt(Math.pow(WORLD_WIDTH / 2 - balloon.body.x, 2) + Math.pow(WORLD_HEIGHT / 2 - balloon.body.y, 2)) >= RAYON) {
+                neighborsSprites.forEach(function(p){
+                    p.destroy();
+                });
                 game.state.start('Game_Over');
             }
         }
         , updatePlayer: function () {
             player.coordonneX = balloon.x;
             player.coordonneY = balloon.y;
-            if (balloon.angle < 0) {
-                player.angle = 360 + balloon.angle;
+
+            // console.log("Angle :"+balloon.angle);
+            //Calcul de l'angle de balloon par rapport au vagin
+//            var rad = game.physics.arcade.angleBetween(mapCenter, balloon);
+//            var angleDegree = rad * (180 / Math.PI);
+//            if (angleDegree < 0) {
+//                angleDegree = 360 + angleDegree;
+//            }
+//            console.log("Angle Degree: " + angleDegree);
+
+            var angleB = game.physics.arcade.angleBetween(mapCenter, balloon) * (180/Math.PI);
+            console.log("Angle Between : "+angleB);
+            if (angleB < 0) {
+                player.angle = 360 + angleB;
             }
             else {
-                player.angle = balloon.angle;
+                player.angle = angleB;
+            }
+            if (balloon.angle < 0) {
+                player.direction = 360 + balloon.angle;
+            }
+            else {
+                player.direction = balloon.angle;
             }
             player.radius = rayon;
             player.speed = speed;
@@ -154,7 +168,7 @@ var Game = {
             min_x = CENTER_WORLD_X - RAYON;
             min_y = CENTER_WORLD_Y - RAYON;
             max_y = CENTER_WORLD_Y + RAYON - 1000;
-            balloon = game.add.sprite(this.getRandomInt(min_x, max_x), this.getRandomInt(min_y, max_y), 'balloon');
+            balloon = game.add.sprite(player.coordonneX, player.coordonneY, 'balloon');
             balloon.anchor.setTo(0.5, 0.5);
             game.physics.enable(balloon, Phaser.Physics.ARCADE);
             balloon.body.setCircle(50 / 2, 25, 0);
@@ -170,6 +184,9 @@ var Game = {
             game.physics.arcade.collide(balloon, apple, null, function () {
                 // Next time the snake moves, a new block will be added to its length.
                 //apple.destroy();
+                neighborsSprites.forEach(function(p){
+                    p.destroy();
+                });
                 game.state.start('Game_Done');
             }, null, this);
         }
@@ -211,7 +228,8 @@ var Game = {
                  console.log(playerN.speed);
                  neighbors.push(playerN);
              }*/
-          //  console.log("SIZE NEIGHBORS : " + player.neighborhood.length);
+            console.log("SIZE NEIGHBORS : " + player.neighborhood.length);
+            console.log("Neighbors : "+player.neighborhood);
             player.neighborhood.forEach(function (p) {
                     this.Game.isNeighbor(p);
                     if (this.exist) {
@@ -237,6 +255,7 @@ var Game = {
                         neighborsSprites.push(b);
                     }
             });
+            console.log("Neighbor sprites : "+neighborsSprites);
     }
     , neighborCollision: function () {
         game.physics.arcade.collide(balloon, neighborsSprites, null, function () {
