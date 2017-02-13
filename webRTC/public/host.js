@@ -70,7 +70,6 @@ let Host = function (name) {
                 };
                 dc1 = pcLocal.createDataChannel(createID(host.name, playerName), {reliable: true});
                 dc1.onopen = function () {
-                    // host.addDataChannel(dc1);
                     console.log('Connected');
                     let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
                     writeMsg(data);
@@ -141,7 +140,6 @@ let Host = function (name) {
                 resolve("player name is empty");
             }
         });
-
     };
 
     this.receiveConnectionHost = function (offer, familyType) {
@@ -400,7 +398,7 @@ let Host = function (name) {
     		host.sendData(data,dataChannel);
     	});
     }
-    
+
 };
 connectToRemote.onclick = function () {
     host.switchToHost(host.PHLeftB, "1", "PHLeftB");
