@@ -62,7 +62,7 @@ var Game = {
             apple = game.add.sprite(CENTER_WORLD_X, CENTER_WORLD_Y, 'apple');
             this.generateObstacles();
             game.physics.enable([balloon, apple, mapCenter, neighborsSprites], Phaser.Physics.ARCADE);
-            console.log("Angle : " + game.physics.arcade.angleBetween(mapCenter, balloon));
+          //  console.log("Angle : " + game.physics.arcade.angleBetween(mapCenter, balloon));
 
         }
         , update: function () {
@@ -95,12 +95,12 @@ var Game = {
             rayon = Math.sqrt(Math.pow(WORLD_WIDTH / 2 - balloon.body.x, 2) + Math.pow(WORLD_HEIGHT / 2 - balloon.body.y, 2));
 
             //Calcul de rayon entre balloon et l'ovule
-            console.log("Rayon : " + rayon);
+           // console.log("Rayon : " + rayon);
             if (balloon.angle < 0) {
-                console.log(360 + balloon.angle);
+            //    console.log(360 + balloon.angle);
             }
             else {
-                console.log(balloon.angle);
+            //    console.log(balloon.angle);
             }
             if (updateDelay % UPDATE_DELAY == 0) {
                 this.updatePlayer();
@@ -160,7 +160,7 @@ var Game = {
             player.radius = rayon;
             player.speed = speed;
             player.sendPosition();
-            console.log("SENT");
+          //  console.log("SENT");
         }
         , generateBalloon: function () {
             var min_x, max_x, min_y, max_y;
@@ -235,7 +235,7 @@ var Game = {
                     if (this.exist) {
                         console.log("UPDATE");
                         this.Game.updateNeighbors(p);
-                    }else if(p.name==player.name){
+                    }else if(p.name==player.getName()){
 
                     }
                     else {
@@ -250,8 +250,8 @@ var Game = {
                         b.animations.play('moveM');
                         b.speed = p.speed;
                         b.name = p.name;
-//                        console.log("VOISIN X = " + b.x);
-//                        console.log("VOISIN Y = " + b.y);
+                        console.log("VOISIN X = " + b.x);
+                        console.log("VOISIN Y = " + b.y);
                         neighborsSprites.push(b);
                     }
             });
@@ -279,8 +279,8 @@ var Game = {
            });
     } ,isNeighbor: function(p) {
         this.exist = false;
-        console.log(neighborsSprites);
-        console.log(player.neighborhood);
+       // console.log(neighborsSprites);
+      //  console.log(player.neighborhood);
         player.neighborhood.forEach(function(n){
             if(n.name==p.name){
 

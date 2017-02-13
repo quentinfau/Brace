@@ -30,7 +30,7 @@ function connectToWebSocket(name) {
     socket.on('negotiationMessage', function (data) {
         console.log("received message from the server : " + data);
         if (data.action.type == "offer") {
-            if (data.to == player.name) {
+            if (data.to == player.getName()) {
                 remote = data.from;
                 if (data.action.familyType==null){
                     player.receiveConnection(data.data, data.action.familyType);
@@ -40,8 +40,8 @@ function connectToWebSocket(name) {
                 }
             }
         } else if (data.action.type == "answer") {
-            if (data.to == player.name) {
-                processAnswer(data.data);
+            if (data.to == player.getName()) {
+                finalizeConnection(data.data);
             }
         }
     });
@@ -81,8 +81,8 @@ function initHostFamily(host) {
                             if (dataChannel instanceof RTCDataChannel) {
                                 host.setPHSon2(dataChannel);
                             }
-                            console.log("host " + host.name + " finished the init method ");
-                            socket.emit("initHostOver", host.name);
+                            console.log("host " + host.getName() + " finished the init method ");
+                            socket.emit("initHostOver", host.getName());
                         })
                 })
         });
