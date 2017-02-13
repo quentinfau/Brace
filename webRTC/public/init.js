@@ -88,6 +88,7 @@ function initHostFamily(host) {
         });
 }
 startGame.onclick = function () {
+    console.log("socket emit startGame");
     socket.emit('startGame');
     //window.location = "index_Brace.html";
 };

@@ -60,6 +60,10 @@ io.sockets.on('connection', function (socket) {
     socket.on('startGame', function () {
         listPlayerHost = [];
         listPlayer = [];
+        console.log("startGame with list of player : ");
+        socketList.forEach(function (socket) {
+            console.log(socket.user);
+        });
         for (let i = 0; i < socketList.length; i++) {
             const name = socketList[i].user;
             if (i < 7) {
@@ -175,28 +179,28 @@ function getFamily(host) {
             break;
         case '4' :
             return {
-                "PHRightB": listPlayer[4],
+                "PHRightB": listPlayer[6],
                 "PHSon1": "",
                 "PHSon2": ""
             };
             break;
         case '5' :
             return {
-                "PHRightB": listPlayer[5],
+                "PHRightB": listPlayer[3],
                 "PHSon1": "",
                 "PHSon2": ""
             };
             break;
         case '6' :
             return {
-                "PHRightB": listPlayer[6],
+                "PHRightB": listPlayer[4],
                 "PHSon1": "",
                 "PHSon2": ""
             };
             break;
         case '7' :
             return {
-                "PHRightB": listPlayer[3],
+                "PHRightB": listPlayer[5],
                 "PHSon1": "",
                 "PHSon2": ""
             };
