@@ -7,7 +7,7 @@ const MAX_PLAYER_SPEED = 1000
 const INITIAL_SPEED = 634
     , SPEED_MULTIPLICATOR = 35;
 const ROPE_SPEED = 10;
-const DIAMETER = 8000;
+const DIAMETER = 16000;
 const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
@@ -175,7 +175,7 @@ var Game = {
             balloon.body.collideWorldBounds = true;
             balloon.animations.add('move', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], ROPE_SPEED, true);
             balloon.animations.play('move');
-            //console.log("max x : "+max_x+"balloon  x :"+balloon.x+" y : "+balloon.y);
+            console.log("balloon  x :"+balloon.x+" y : "+balloon.y);
         }
         , getRandomInt: function (min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
