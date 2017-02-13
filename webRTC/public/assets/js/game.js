@@ -175,7 +175,7 @@ var Game = {
             balloon.body.collideWorldBounds = true;
             balloon.animations.add('move', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], ROPE_SPEED, true);
             balloon.animations.play('move');
-            console.log("balloon  x :"+balloon.x+" y : "+balloon.y);
+          //  console.log("balloon  x :"+balloon.x+" y : "+balloon.y);
         }
         , getRandomInt: function (min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -228,18 +228,18 @@ var Game = {
                  console.log(playerN.speed);
                  neighbors.push(playerN);
              }*/
-            console.log("SIZE NEIGHBORS : " + player.neighborhood.length);
-            console.log("Neighbors : "+player.neighborhood);
+          //  console.log("SIZE NEIGHBORS : " + player.neighborhood.length);
+            //console.log("Neighbors : "+player.neighborhood);
             player.neighborhood.forEach(function (p) {
                     this.Game.isNeighbor(p);
                     if (this.exist) {
-                        console.log("UPDATE");
+                     //   console.log("UPDATE");
                         this.Game.updateNeighbors(p);
                     }else if(p.name==player.getName()){
 
                     }
                     else {
-                        console.log("CREATE ");
+                        //console.log("CREATE ");
                         var b = game.add.sprite(p.x, p.y, 'balloon');
                         b.angle = p.angle;
                         b.anchor.setTo(0.5, 0.5);
@@ -250,12 +250,12 @@ var Game = {
                         b.animations.play('moveM');
                         b.speed = p.speed;
                         b.name = p.name;
-                        console.log("VOISIN X = " + b.x);
-                        console.log("VOISIN Y = " + b.y);
+                      //  console.log("VOISIN X = " + b.x);
+                        //console.log("VOISIN Y = " + b.y);
                         neighborsSprites.push(b);
                     }
             });
-            console.log("Neighbor sprites : "+neighborsSprites);
+           // console.log("Neighbor sprites : "+neighborsSprites);
     }
     , neighborCollision: function () {
         game.physics.arcade.collide(balloon, neighborsSprites, null, function () {
@@ -288,7 +288,7 @@ var Game = {
         });
         neighborsSprites.forEach(function (pe) {
             if (pe.name == p.name) {
-                console.log("EXIST");
+                //console.log("EXIST");
                 this.exist = true;
             }
         });
