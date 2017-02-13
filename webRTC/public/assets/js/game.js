@@ -1,7 +1,6 @@
-var balloon, speed, cursors, map, cap, apple, mapCenter, obstacles, rayon, angleDegree, updateDelay, neighbors = []
-    , neighborsSprites = [];
-const WORLD_WIDTH = 40000
-    , WORLD_HEIGHT = 40000;
+var balloon, speed, cursors, map, cap, apple, mapCenter, obstacles, rayon, angleDegree, updateDelay, neighborsSprites = [];
+const WORLD_WIDTH = 400000
+    , WORLD_HEIGHT = 400000;
 const ROTATE_SPEED = 200;
 const MAX_PLAYER_SPEED = 1000
     , MIN_PLAYER_SPEED = 0;
@@ -15,6 +14,8 @@ const RAYON = DIAMETER / 2;
 const NB_OBSTACLES = 0;
 const DEBUG = true;
 const UPDATE_DELAY = 20;
+
+var exist = false;
 var Game = {
         preload: function () {
             game.load.spritesheet('balloon', './assets/images/balloon_animated_small.png', 100, 50);
@@ -188,7 +189,6 @@ var Game = {
             min_x = CENTER_WORLD_X - RAYON;
             min_y = CENTER_WORLD_Y - RAYON;
             max_y = CENTER_WORLD_Y + RAYON - 1000;
-            neighbors = [];
             //neighborsSprites = [];
             /* for(var i=0;i<200;i++){
                  var playerN = new Player(i);
@@ -201,12 +201,16 @@ var Game = {
              }*/
             console.log("SIZE NEIGHBORS : " + player.neighborhood.length);
             player.neighborhood.forEach(function (p) {
-                    var exist = this.Game.isNeighbor(p);
-                    if (exist || p.name == player.name) {
+                    this.Game.isNeighbor(p);
+                    if (this.exist) {
+                        console.log("UPDATE");
                         this.Game.updateNeighbors(p);
+                    }else if(p.name==player.name){
+
                     }
                     else {
-                        var b = game.add.sprite(p.x, p.y, 'apple');
+                        console.log("CREATE ");
+                        var b = game.add.sprite(p.x, p.y, 'balloon');
                         b.angle = p.angle;
                         b.anchor.setTo(0.5, 0.5);
                         game.physics.enable(b, Phaser.Physics.ARCADE);
@@ -229,34 +233,27 @@ var Game = {
         }, null, this);
     }
     , updateNeighbors: function (p) {
-        var pSprite;
        neighborsSprites.forEach(function(s){
            if(s.name==p.name){
-               pSprite = s;
+            s.body.velocity.x = 0;
+            s.body.velocity.y = 0;
+            s.body.angularVelocity = 0;
 
+//            game.physics.arcade.velocityFromAngle(s.angle, INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed, s.body.velocity);
+               game.physics.arcade.velocityFromAngle(s.angle, INITIAL_SPEED + SPEED_MULTIPLICATOR * 1, s.body.velocity);
 
-            pSprite.x = p.x;
-            pSprite.y = p.y;
-            pSprite.angle = p.angle;
-            pSprite.speed = p.speed;
-            pSprite.body.velocity.x = 0;
-            pSprite.body.velocity.y = 0;
-            var random = this.getRandomInt(0, 588);
-            pSprite.body.angularVelocity = 0;
-
-            game.physics.arcade.velocityFromAngle(pSprite.angle, INITIAL_SPEED + SPEED_MULTIPLICATOR * pSprite.speed, pSprite.body.velocity);
            }
            });
     } ,isNeighbor: function(p) {
-        var exist = false;
+        this.exist = false;
         console.log(neighborsSprites);
         console.log(player.neighborhood);
         neighborsSprites.forEach(function (pe) {
             if (pe.name == p.name) {
                 console.log("EXIST");
-                this.Game.exist = true;
+                this.exist = true;
             }
         });
-        return exist;
+       // return this.exist;
     }
 };
