@@ -108,6 +108,7 @@ let Host = function (name) {
                             break;
                         case "answer" :
                             host.processAnswerMessage(data);
+                            
                             break;
                         default :
                             break;
