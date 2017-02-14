@@ -3,7 +3,7 @@ const WORLD_WIDTH = 400000
     , WORLD_HEIGHT = 400000;
 const ROTATE_SPEED = 200;
 const MAX_PLAYER_SPEED = 1000
-    , MIN_PLAYER_SPEED = 0;
+    , MIN_PLAYER_SPEED = 1;
 const INITIAL_SPEED = 634
     , SPEED_MULTIPLICATOR = 35;
 const ROPE_SPEED = 10;
@@ -249,22 +249,22 @@ var Game = {
     , updateNeighbors: function (p) {
         neighborsSprites.forEach(function (s) {
             if (s.name == p.name) {
-//                s.x = p.x;
-//                s.y = p.y;
-//                s.speed = p.speed;
-//                s.rotation = p.angle;
-//                s.angle = p.direction;
-                game.physics.arcade.moveToXY(s,s.x,s.y);
+                s.x = p.x;
+                s.y = p.y;
+                s.speed = p.speed;
+                s.rotation = p.angle;
+                s.angle = p.direction;
+              //  game.physics.arcade.moveToXY(s,s.x,s.y);
 
                 //this.Game.updateNeighborSprite(s);
 //                var destination = {};
 //                destination.x=s.x;
 //                destination.y = s.y;
 //                game.physics.arcade.moveToObject(s,destination,INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed,2000);
-//                s.body.velocity.x = 0;
-//                s.body.velocity.y = 0;
-//                s.body.angularVelocity = 0;
-//                game.physics.arcade.velocityFromAngle(s.angle, INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed, s.body.velocity);
+               // s.body.velocity.x = 0;
+               // s.body.velocity.y = 0;
+                s.body.angularVelocity = 0;
+                game.physics.arcade.velocityFromAngle(s.angle, INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed, s.body.velocity);
             }
         });
     }, updateNeighborSprite : function(s){
