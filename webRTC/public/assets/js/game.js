@@ -40,8 +40,8 @@ var Game = {
             graphics.lineStyle(20, 0x00ff00, 30);
             graphics.drawCircle(map.x, map.y, map.diameter);
             graphics.lineStyle(20, 0xFF3300, 1);
-            graphics.drawCircle(map.x, map.y, map.diameter/2);
-            graphics.drawCircle(map.x, map.y, map.diameter/4);
+            graphics.drawCircle(map.x, map.y, 6000);
+            graphics.drawCircle(map.x, map.y, 2000);
             graphics.lineStyle(20, 0xFFFF33, 1);
             graphics.moveTo(mapCenter.x,mapCenter.y);
             graphics.lineTo(mapCenter.x,mapCenter.y+DIAMETER/2);
