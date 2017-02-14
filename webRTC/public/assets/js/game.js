@@ -225,7 +225,7 @@ var Game = {
 
             }}
         );
-        console.log("Neighbors : " + player.neighborhood.length);
+       // console.log("Neighbors : " + player.neighborhood.length);
     }
     , createNeighbor: function (p) {
         var b = game.add.sprite(p.x, p.y, 'balloon');
@@ -275,7 +275,7 @@ var Game = {
         this.exist = false;
         neighborsSprites.forEach(function (pe) {
             if (pe.name == p.name) {
-                console.log("EXIST");
+           //     console.log("EXIST");
                 this.exist = true;
             }
         });
