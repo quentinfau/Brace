@@ -109,8 +109,11 @@ let Player = function (name){
                     	let angleStart = Math.floor(Math.random() * (max-min+1)) + min;
                     	player.angle = angleStart;
                     	player.radius = 7800;
-                    	player.coordonneX = player.radius * Math.cos(angleStart);
-                    	player.coordonneY = player.radius * Math.sin(angleStart);
+                    	let angleRadian = angleStart * Math.PI / 180;
+                    	console.log(angleRadian);
+                    	player.coordonneX = player.radius * Math.cos(angleRadian);
+                    	player.coordonneY = player.radius * Math.sin(angleRadian);
+                    	console.log(player);
                         break;
                     case "offer" :
                         console.log("switching host from " +remote + " to " + data.message.from);
