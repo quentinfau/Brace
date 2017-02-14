@@ -21,6 +21,9 @@ function connectToWebSocket(name) {
         const msg = JSON.parse(data);
         host.setList(msg.playerList);
         host.family = msg.family;
+        if(host.family.PHFather=="god"){
+            host.god = true;
+        }
         host.setZone(msg.zone.distanceD,msg.zone.distanceF,msg.zone.angleD,msg.zone.angleF);
         initHost(host, 0);
     });

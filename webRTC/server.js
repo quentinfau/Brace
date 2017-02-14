@@ -154,7 +154,7 @@ function getFamily(host) {
             return {
                 "PHLeftB": "",
                 "PHRightB": "",
-                "PHFather": "",
+                "PHFather": "god",
                 "PHSon1": listPlayer[1],
                 "PHSon2": listPlayer[2]
             };

@@ -11,10 +11,9 @@ let Host = function (name) {
     this.PHLeftB = null;
     this.PHRightB = null;
     this.PHFather = null;
-
     this.PHSon1 = null;
     this.PHSon2 = null;
-
+    this.god = false;
     this.neighbours = [];
 
 
@@ -314,22 +313,11 @@ let Host = function (name) {
             "host": host.getName()
         };
         sendData(data, newHostDataChannel);
-        /*
-         host.dataChannels.forEach(function (dataChannel) {
-         let dc = host.getDataChannelByName(player);
-         if (dc) {
-         host.removeDataChannel(dc);
-         host.removePlayerList(player);
-         newHost.createConnection(player);
-         newHost.addPlayerList(player);
-         }
-         });*/
-        console.log("BlouBlou");
         return false
     };
 
     this.verifSwitchHost = function (angle1, distance1, player) {
-        console.log("angle1 = " + angle1 + " angleF = " +  host.angleF + " angleD = " +  host.angleD);
+        console.log("angle1 = " + angle1 + " angleF = " + host.angleF + " angleD = " + host.angleD);
         if (distance1 < host.distanceD) {
             host.switchToHost(host.PHFather, player, "PHFather");
         }
@@ -343,26 +331,30 @@ let Host = function (name) {
                 host.switchToHost(host.PHSon2, player, "PHSon2");
             }
         }
-        else if (host.angleF == 360 && angle1 < host.angleD && angle1 >= 0) {
+        else if (host.angleF != 360 && angle1 > host.angleF && host.angleD != 0) {
             console.log("left");
             host.switchToHost(host.PHLeftB, player, "PHLeftB");
         }
-        else if (host.angleF != 360 && angle1 > host.angleF) {
-                console.log("right");
-            host.switchToHost(host.PHRightB, player, "PHRightB");
-        }
-        else if (host.angleD == 0 && angle1 > host.angleF) {
-            console.log("right");
-            host.switchToHost(host.PHRightB, player, "PHRightB");
-        }
-        else if (host.angleD != 0 && angle1 < host.angleD) {
+        else if (host.angleF == 360 && angle1 < 90) {
             console.log("left");
             host.switchToHost(host.PHLeftB, player, "PHLeftB");
         }
-      /*  else if (angle1 < host.angleD) {
+        else if (host.angleF != 360 && angle1 < host.angleD) {
             console.log("right");
             host.switchToHost(host.PHRightB, player, "PHRightB");
-        }*/
+        }
+        else if (host.angleD == 0 && angle1 > 270 && angle1 > host.angleF){
+            console.log("right");
+            host.switchToHost(host.PHRightB, player, "PHRightB");
+        }
+        else if (host.angleD == 0 && angle1 < 270 && angle1 > host.angleF){
+            console.log("left");
+            host.switchToHost(host.PHLeftB, player, "PHLeftB");
+        }
+        /*  else if (angle1 < host.angleD) {
+         console.log("right");
+         host.switchToHost(host.PHRightB, player, "PHRightB");
+         }*/
     };
 
     this.getNeighbours = function (dataMessage) {
@@ -416,10 +408,15 @@ let Host = function (name) {
         }
     };
     this.processConnectionMessage = function (data) {
-        host.createConnection(data.message.player, "switchHost", host.getFamilyDataChannelByName(data.message.host))
-            .then(dataChannel => {
-                console.log("dataChannel : " + dataChannel + ' player : ' + remote);
-                host.addDataChannel(dataChannel);
-            });
+        if (!host.god) {
+            host.createConnection(data.message.player, "switchHost", host.getFamilyDataChannelByName(data.message.host))
+                .then(dataChannel => {
+                    console.log("dataChannel : " + dataChannel + ' player : ' + remote);
+                    host.addDataChannel(dataChannel);
+                });
+        }
+        else {
+            //data.message.player won the game
+        }
     }
 };
