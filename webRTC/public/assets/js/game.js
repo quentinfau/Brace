@@ -255,8 +255,8 @@ var Game = {
             if (s.name == p.name && p.x != s.oldX && p.y != s.oldY) {
                 s.x = p.x;
                 s.y = p.y;
-                b.oldX =p.x;
-                b.oldY = p.y;
+                s.oldX =p.x;
+                s.oldY = p.y;
                 s.speed = p.speed;
                 s.rotation = p.angle;
                 s.angle = p.direction;
