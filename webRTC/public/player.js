@@ -9,9 +9,10 @@ let Player = function (name){
 	this.coordonneX = 0;
 	this.coordonneY = 0;
 	this.rank = 1 ;
+	this.direction = 0;
 		
     console.log('Nouvel objet Player créé : ' + name );
-    
+
 	this.getCoordonneX = function (coordonneX){
     	this.coordonneX = coordonneX;
     };
@@ -60,7 +61,6 @@ let Player = function (name){
     	return name;
     };
 
-
     this.getSpeed = function () {
         return speed;
     };
@@ -71,13 +71,14 @@ let Player = function (name){
 
     this.sendPosition = function () {
         const data = {
-            "name": player.name,
+            "name": player.getName(),
             "radius": player.radius,
             "angle": player.angle,
             "x": player.coordonneX,
             "y": player.coordonneY,
             "speed": player.speed,
             "timestamp": player.timestamp,
+            "direction": player.direction,
             "type": "position"
         };
         sendData(data, player.dataChannel);
@@ -104,7 +105,16 @@ let Player = function (name){
                         player.neighborhood = data.message.voisinage;
                         break;
                     case "initPosition" :
-                        console.log(data);
+                    	let min = data.message.angleD;
+                    	let max = data.message.angleF;
+                    	let angleStart = Math.floor(Math.random() * (max-min+1)) + min;
+                    	player.angle = angleStart;
+                    	player.radius = 7800;
+                    	let angleRadian = angleStart * Math.PI / 180;
+                    	console.log(angleRadian);
+                    	player.coordonneX = player.radius * Math.cos(angleRadian);
+                    	player.coordonneY = player.radius * Math.sin(angleRadian);
+                    	console.log(player);
                         break;
                     case "offer" :
                         console.log("switching host from " +remote + " to " + data.message.from);
@@ -126,10 +136,10 @@ let Player = function (name){
                     'familyType': familyType
                 };
                 if (familyType == "switchHost") {
-                    sendNegotiationSwitchHost('answer', pcRemote.localDescription, player.name, remote, player.dataChannel);
+                    sendNegotiationSwitchHost('answer', pcRemote.localDescription, player.getName(), remote, player.dataChannel);
                 }
                 else {
-                    sendNegotiation(type, pcRemote.localDescription, player.name, remote);
+                    sendNegotiation(type, pcRemote.localDescription, player.getName(), remote);
                 }
             }
         };

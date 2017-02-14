@@ -19,15 +19,11 @@ function createID(local, remote) {
     return local + '-' + remote;
 }
 
-function processAnswer(answer) {
+function finalizeConnection(answer) {
     let answerDesc = new RTCSessionDescription(answer);
     pcLocal.setRemoteDescription(answerDesc);
     console.log("------ PROCESSED ANSWER ------");
     return true;
-}
-
-if (navigator.webkitGetUserMedia) {
-    RTCPeerConnection = webkitRTCPeerConnection;
 }
 
 function sendMessage() {
@@ -38,11 +34,10 @@ function sendMessage() {
 
 function sendData(data, dataChannel) {
     if (data) {
-        dataChannel.send(JSON.stringify({message: data, user: player.name}));
-        chatlog.innerHTML += '[' + player.name + '] ' + data + '</p>';
+        dataChannel.send(JSON.stringify({message: data, user: player.getName()}));
+        chatlog.innerHTML += '[' + player.getName() + '] ' + data + '</p>';
         messageTextBox.value = "";
     }
-
     return false
 }
 
@@ -58,7 +53,6 @@ function sendNegotiationSwitchHost(type, sdp, sender, receiver, dataChannel) {
     sendData(json,dataChannel);
    // socket.emit("negotiationMessage", JSON.stringify(json));
 }
-
 
 function writeMsg(data) {
     chatlog.innerHTML += '[' + data.user + '] ' + data.message + '</p>';
