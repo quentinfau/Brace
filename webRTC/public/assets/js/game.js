@@ -22,8 +22,7 @@ var Game = {
         game.load.image('cap', 'assets/images/arrowCap_small.png');
         game.load.image('apple', './assets/images/apple.png');
         game.load.image('sida', './assets/images/sida.png');
-        //playerBK = new Player("F");
-    }
+        neighborsSprites=[];    }
     , create: function () {
         this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         //this.scale.pageAlignHorizontally = true;
@@ -54,7 +53,6 @@ var Game = {
         cap.anchor.setTo(0.5, 0.5);
         cap.fixedToCamera = true;
         cap.cameraOffset.setTo(35, 40);
-        this.mockNeighborhood();
         this.generateBalloon();
         game.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
@@ -102,10 +100,11 @@ var Game = {
         }
         if (updateDelay % UPDATE_DELAY == 0) {
             this.updatePlayer();
-        }
+
+        }else{
         neighborsSprites.forEach(function(p){
             this.Game.updateNeighborSprite(p);
-        });
+        });}
         updateDelay++;
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
     }
@@ -207,11 +206,7 @@ var Game = {
         }, null, this);
     }
     , mockNeighborhood: function () {
-        var min_x, max_x, min_y, max_y;
-        max_x = CENTER_WORLD_X + RAYON - 1000;
-        min_x = CENTER_WORLD_X - RAYON;
-        min_y = CENTER_WORLD_Y - RAYON;
-        max_y = CENTER_WORLD_Y + RAYON - 1000;
+
         player.neighborhood.forEach(function (p) {
             this.Game.isNeighbor(p);
             if(p.name != player.name){
@@ -225,7 +220,7 @@ var Game = {
 
             }}
         );
-        console.log("Neighbors : " + player.neighborhood.length);
+       // console.log("Neighbors : " + player.neighborhood.length);
     }
     , createNeighbor: function (p) {
         var b = game.add.sprite(p.x, p.y, 'balloon');
@@ -254,28 +249,46 @@ var Game = {
     , updateNeighbors: function (p) {
         neighborsSprites.forEach(function (s) {
             if (s.name == p.name) {
-                s.x = p.x;
-                s.y = p.y;
-                s.speed = p.speed;
-                s.rotation = p.angle;
-                s.angle = p.direction;
-                s.body.velocity.x = 0;
-                s.body.velocity.y = 0;
-                s.body.angularVelocity = 0;
-                game.physics.arcade.velocityFromAngle(s.angle, INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed, s.body.velocity);
+//                s.x = p.x;
+//                s.y = p.y;
+//                s.speed = p.speed;
+//                s.rotation = p.angle;
+//                s.angle = p.direction;
+                game.physics.arcade.moveToXY(s,s.x,s.y);
+
+                //this.Game.updateNeighborSprite(s);
+//                var destination = {};
+//                destination.x=s.x;
+//                destination.y = s.y;
+//                game.physics.arcade.moveToObject(s,destination,INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed,2000);
+//                s.body.velocity.x = 0;
+//                s.body.velocity.y = 0;
+//                s.body.angularVelocity = 0;
+//                game.physics.arcade.velocityFromAngle(s.angle, INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed, s.body.velocity);
             }
         });
     }, updateNeighborSprite : function(s){
-        s.body.velocity.x = 0;
-                s.body.velocity.y = 0;
-                s.body.angularVelocity = 0;
-                game.physics.arcade.velocityFromAngle(s.angle, INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed, s.body.velocity);
+//        console.log(s.name+" BEFORE x="+s.x+" y="+s.y);
+//        s.body.velocity.x = 0;
+//        s.body.velocity.y = 0;
+//        s.body.angularVelocity = 0;
+//        game.physics.arcade.velocityFromAngle(s.angle, INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed, s.body.velocity);
+//        console.log(s.name+" After  x="+s.x+" y="+s.y);
+//                console.log(s.name+" BEFORE 2 x="+s.x+" y="+s.y);
+//                game.physics.arcade.moveToXY(s,s.x+1000,s.y+1000,INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed);
+//                        console.log(s.name+" After 2 x="+s.x+" y="+s.y);
+//        var destination = {};
+//                destination.x=s.x+200;
+//                destination.y = s.y+200;
+//
+//                game.physics.arcade.moveToObject(s,destination,INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed,2000);
+//
     }
     , isNeighbor: function (p) {
         this.exist = false;
         neighborsSprites.forEach(function (pe) {
             if (pe.name == p.name) {
-                console.log("EXIST");
+               // console.log("EXIST");
                 this.exist = true;
             }
         });
