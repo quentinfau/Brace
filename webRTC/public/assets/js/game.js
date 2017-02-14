@@ -120,9 +120,9 @@ var Game = {
             //console.log(balloon.angle);
         }
 
-        if(updateDelay % UPDATE_DELAY == 0){
+        //if(updateDelay % UPDATE_DELAY == 0){
               this.updatePlayer();
-        }
+        //}
         updateDelay++;
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
         this.updateNeighbors();
