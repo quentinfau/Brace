@@ -34,7 +34,12 @@ function sendMessage() {
 
 function sendData(data, dataChannel) {
     if (data) {
-        dataChannel.send(JSON.stringify({message: data, user: player.getName()}));
+        if (dataChannel!=null){
+            dataChannel.send(JSON.stringify({message: data, user: player.getName()}));
+        }
+        else {
+            console.error("bug");
+        }
         chatlog.innerHTML += '[' + player.getName() + '] ' + data + '</p>';
         messageTextBox.value = "";
     }

@@ -335,7 +335,7 @@ let Host = function (name) {
             console.log("left");
             host.switchToHost(host.PHLeftB, player, "PHLeftB");
         }
-        else if (host.angleF == 360 && angle1 < 90) {
+        else if (host.angleF == 360 && angle1 < (host.angleF-host.angleD)) {
             console.log("left");
             host.switchToHost(host.PHLeftB, player, "PHLeftB");
         }
@@ -343,11 +343,15 @@ let Host = function (name) {
             console.log("right");
             host.switchToHost(host.PHRightB, player, "PHRightB");
         }
-        else if (host.angleD == 0 && angle1 > 270 && angle1 > host.angleF){
+        else if (host.angleD == 0 && angle1 > (360-host.angleF) && angle1 > host.angleF){
             console.log("right");
             host.switchToHost(host.PHRightB, player, "PHRightB");
         }
-        else if (host.angleD == 0 && angle1 < 270 && angle1 > host.angleF){
+        else if (host.angleF == 360 && angle1 < host.angleD){
+            console.log("right");
+            host.switchToHost(host.PHRightB, player, "PHRightB");
+        }
+        else if (host.angleD == 0 && angle1 < (360-host.angleF) && angle1 > host.angleF){
             console.log("left");
             host.switchToHost(host.PHLeftB, player, "PHLeftB");
         }
@@ -418,6 +422,7 @@ let Host = function (name) {
         }
         else {
             //data.message.player won the game
+            console.log(data.message.player + " won the game");
         }
     }
 };
