@@ -329,6 +329,7 @@ let Host = function (name) {
     };
 
     this.verifSwitchHost = function (angle1, distance1, player) {
+        console.log("angle1 = " + angle1 + " angleF = " +  host.angleF + " angleD = " +  host.angleD);
         if (distance1 < host.distanceD) {
             host.switchToHost(host.PHFather, player, "PHFather");
         }
@@ -342,13 +343,27 @@ let Host = function (name) {
                 host.switchToHost(host.PHSon2, player, "PHSon2");
             }
         }
-        else if (angle1 > host.angleF) {
+        else if (host.angleF == 360 && angle1 < host.angleD && angle1 >= 0) {
+            console.log("left");
             host.switchToHost(host.PHLeftB, player, "PHLeftB");
         }
-        else if (angle1 < host.angleD) {
+        else if (host.angleF != 360 && angle1 > host.angleF) {
+                console.log("right");
             host.switchToHost(host.PHRightB, player, "PHRightB");
         }
-    }
+        else if (host.angleD == 0 && angle1 > host.angleF) {
+            console.log("right");
+            host.switchToHost(host.PHRightB, player, "PHRightB");
+        }
+        else if (host.angleD != 0 && angle1 < host.angleD) {
+            console.log("left");
+            host.switchToHost(host.PHLeftB, player, "PHLeftB");
+        }
+      /*  else if (angle1 < host.angleD) {
+            console.log("right");
+            host.switchToHost(host.PHRightB, player, "PHRightB");
+        }*/
+    };
 
     this.getNeighbours = function (dataMessage) {
         let neighbourData = {
@@ -358,7 +373,7 @@ let Host = function (name) {
             'x': dataMessage.x,
             'y': dataMessage.y,
             'speed': dataMessage.speed
-        }
+        };
         trouve = 0;
         i = 0;
         if (host.neighbours.length != 0) {
