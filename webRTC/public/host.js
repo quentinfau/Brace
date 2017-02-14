@@ -93,6 +93,7 @@ let Host = function (name) {
                                 "voisinage": host.neighbours,
                                 "type": "voisinage"
                             };
+                            console.log(data2);
                             host.sendData(data2, userDatachannel);
                             writeMsg(data2);
                             if (!host.waitingChangingHostList.includes(playerName)) {
@@ -410,6 +411,7 @@ let Host = function (name) {
             sendData(data.message, host.getFamilyDataChannelByName(data.message.to));
             host.removeDataChannel(host.getDataChannelByName(createID(host.getName(), data.message.from)));
             host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(data.message.from));
+            host.neighbours.splice(host.neighbours.indexOf(data.message.from));
         }
         else {
             finalizeConnection(data.message.data);

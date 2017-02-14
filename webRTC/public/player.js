@@ -110,9 +110,9 @@ let Player = function (name){
                     	player.angle = angleStart;
                     	player.radius = 7800;
                     	let angleRadian = angleStart * Math.PI / 180;
-                    	console.log(angleRadian);
                     	player.coordonneX = player.radius * Math.cos(angleRadian);
                     	player.coordonneY = player.radius * Math.sin(angleRadian);
+                    	console.log("Joueur à t0 ");
                     	console.log(player);
                         break;
                     case "offer" :
