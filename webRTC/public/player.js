@@ -108,7 +108,6 @@ let Player = function (name){
                     	let max = data.message.angleF;
                     	let angleStart = Math.floor(Math.random() * (max-min+1)) + min;
                     	player.angle = angleStart;
-                    	player.direction = angleStart - 180;
                     	player.radius = 7800;
                     	player.coordonneX = player.radius * Math.cos(angleStart);
                     	player.coordonneY = player.radius * Math.sin(angleStart);
