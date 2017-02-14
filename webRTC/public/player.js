@@ -78,6 +78,7 @@ let Player = function (name){
             "y": player.coordonneY,
             "speed": player.speed,
             "timestamp": player.timestamp,
+            "direction": player.direction,
             "type": "position"
         };
         sendData(data, player.dataChannel);

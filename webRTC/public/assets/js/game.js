@@ -39,8 +39,8 @@ var Game = {
         graphics.lineStyle(20, 0x00ff00, 30);
         graphics.drawCircle(map.x, map.y, map.diameter);
         graphics.lineStyle(20, 0xFF3300, 1);
-        graphics.drawCircle(map.x, map.y, map.diameter / 2);
-        graphics.drawCircle(map.x, map.y, map.diameter / 4);
+        graphics.drawCircle(map.x, map.y, 6000);
+        graphics.drawCircle(map.x, map.y, 2000);
         graphics.lineStyle(20, 0xFFFF33, 1);
         graphics.moveTo(mapCenter.x, mapCenter.y);
         graphics.lineTo(mapCenter.x, mapCenter.y + DIAMETER / 2);
@@ -75,6 +75,7 @@ var Game = {
         }
         else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
             this.moveChecker();
+
         }
         else if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && speed <= MAX_PLAYER_SPEED) {
             speed++;
@@ -131,20 +132,15 @@ var Game = {
         player.coordonneY = balloon.y;
         // console.log("Angle :"+balloon.angle);
         //Calcul de l'angle de balloon par rapport au vagin
-        //            var rad = game.physics.arcade.angleBetween(mapCenter, balloon);
-        //            var angleDegree = rad * (180 / Math.PI);
-        //            if (angleDegree < 0) {
-        //                angleDegree = 360 + angleDegree;
-        //            }
-        //            console.log("Angle Degree: " + angleDegree);
+
         var angleB = game.physics.arcade.angleBetween(mapCenter, balloon) * (180 / Math.PI);
-        console.log("Angle Between : " + angleB);
         if (angleB < 0) {
             player.angle = 360 + angleB;
         }
         else {
             player.angle = angleB;
         }
+        //Direction
         if (balloon.angle < 0) {
             player.direction = 360 + balloon.angle;
         }
@@ -227,26 +223,10 @@ var Game = {
             }}
         );
         console.log("Neighbors : " + player.neighborhood.length);
-//        neighborsSprites.forEach(function (n) {
-//            player.neighborhood.forEach(function (neigborObject) {
-//                if (neigborObject.name == n.name) {
-//                    this.Game.updateNeighbors(n);
-//                }
-//                else {
-//                    this.Game.isNeighbor(neigborObject);
-//                    if (this.exist) {
-//                        this.Game.createNeighbor(neigborObject);
-//                    }
-//                    else {
-//                        n.destroy();
-//                    }
-//                }
-//            });
-//        });
     }
     , createNeighbor: function (p) {
         var b = game.add.sprite(p.x, p.y, 'balloon');
-        b.rotation = p.direction;
+        b.rotation = p.angle;
         b.anchor.setTo(0.5, 0.5);
         game.physics.enable(b, Phaser.Physics.ARCADE);
         b.body.setCircle(50 / 2, 25, 0);
@@ -255,6 +235,8 @@ var Game = {
         b.animations.play('moveM');
         b.speed = p.speed;
         b.name = p.name;
+        b.angle = p.direction;
+        b.rotation = p.angle;
         //console.log("VOISIN X = " + b.x);
         // console.log("VOISIN Y = " + b.y);
         neighborsSprites.push(b);
@@ -271,6 +253,9 @@ var Game = {
             if (s.name == p.name) {
                 s.x = p.x;
                 s.y = p.y;
+                s.speed = p.speed;
+                s.rotation = p.angle;
+                s.angle = p.direction;
                 s.body.velocity.x = 0;
                 s.body.velocity.y = 0;
                 s.body.angularVelocity = 0;
