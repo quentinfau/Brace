@@ -50,6 +50,7 @@ let Host = function (name) {
 
                 pcLocal = new RTCPeerConnection(cfg, con);
                 pcLocal.onicecandidate = function () {
+                    console.log("offerSent = " + offerSent);
                     if (pcLocal.iceGatheringState == "complete" && !offerSent) {
                         offerSent = true;
                         const type = {
