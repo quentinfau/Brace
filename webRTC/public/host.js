@@ -403,6 +403,7 @@ let Host = function (name) {
             sendData(data.message, host.getFamilyDataChannelByName(data.message.to));
             host.removeDataChannel(host.getDataChannelByName(createID(host.getName(), data.message.from)));
             host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(data.message.from));
+            offerSent = false;
         }
         else {
             finalizeConnection(data.message.data);
