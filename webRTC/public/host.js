@@ -30,9 +30,6 @@ let Host = function (name) {
     this.sendData = function (data, dataChannel) {
         if (data && dataChannel) {
             dataChannel.send(JSON.stringify({message: data, user: host.getName()}));
-
-            chatlog.innerHTML += '[' + host.getName() + '] ' + messageTextBox.value + '</p>';
-            messageTextBox.value = "";
         }
         return false;
     };
@@ -71,7 +68,6 @@ let Host = function (name) {
                 dc1.onopen = function () {
                     console.log('Connected');
                     let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
-                    writeMsg(data);
                     offerSent = false;
                     resolve(dc1);
                 };
@@ -82,7 +78,6 @@ let Host = function (name) {
                     let data = JSON.parse(e.data);
                     switch (data.message.type) {
                         case "position" :
-                            writeMsg(data);
                             console.log("RECEIVED : " + data.message);
                             let idUserDatachannel = createID(host.getName(), data.user);
                             let userDatachannel = host.getDataChannelByName(idUserDatachannel);
@@ -93,7 +88,6 @@ let Host = function (name) {
                                 "type": "voisinage"
                             };
                             host.sendData(data2, userDatachannel);
-                            writeMsg(data2);
                             if (!host.waitingChangingHostList.includes(playerName)) {
                                 host.verifSwitchHost(data.message.angle, data.message.radius, playerName);
                             }
@@ -110,7 +104,6 @@ let Host = function (name) {
                         default :
                             break;
                     }
-                    writeMsg(data);
                 };
                 dc1.onerror = function (e) {
                     reject(e)
@@ -145,10 +138,6 @@ let Host = function (name) {
                     player.setDataChannel(dc2);
                 }
                 console.log('Connected');
-
-                //on écrit dans le chat que le myPlayer s'est connecté
-                let data = {user: "system", message: "the datachannel " + dc2.label + " has been opened"};
-                writeMsg(data);
                 answerSent = false;
                 console.log("DONE");
             };
@@ -165,7 +154,6 @@ let Host = function (name) {
                         host.processAnswerMessage(data);
                         break;
                     default :
-                        writeMsg(data);
                 }
             }
         };

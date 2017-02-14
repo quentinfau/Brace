@@ -4,12 +4,9 @@ function connectToWebSocket(name) {
     socket.emit('new_player', name);
     socket.on('welcomeMessage', function (data) {
         console.log("received message from the server : " + data.message);
-        writeMsg(data);
     });
     socket.on('errorMessage', function (data) {
         console.log("received error message from the server : " + data.message);
-        writeMsg(data);
-
     });
     socket.on('createHost', function (user) {
         host = new Host(user);

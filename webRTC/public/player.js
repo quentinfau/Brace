@@ -91,10 +91,8 @@ let Player = function (name){
             dc2.onopen = function () {
                     player.setDataChannel(dc2);
                 console.log('Connected');
-
                 //on écrit dans le chat que le myPlayer s'est connecté
                 let data = {user: "system", message: "the datachannel " + dc2.label + " has been opened"};
-                writeMsg(data);
                 answerSent = false;
                 console.log("DONE");
             };
@@ -125,7 +123,6 @@ let Player = function (name){
                         break;
 
                 }
-                writeMsg(data);
             }
         };
         pcRemote.onicecandidate = function () {
