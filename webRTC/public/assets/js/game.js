@@ -24,6 +24,9 @@ var Game = {
         game.load.image('sida', './assets/images/sida.png');
         neighborsSprites=[];    }
     , create: function () {
+    	if (!game.device.desktop){
+    		swipe = new Swipe(this.game);
+    	}
         this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         //this.scale.pageAlignHorizontally = true;
         this.scale.pageAlignVertically = true;
@@ -68,6 +71,7 @@ var Game = {
         balloon.body.velocity.y = 0;
         balloon.body.angularVelocity = 0;
         this.obstacleCollision();
+        if (!game.device.desktop){checkSmartphoneControl();}
         if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
             this.moveChecker();
         }
@@ -283,5 +287,39 @@ var Game = {
             }
         });
         // return this.exist;
+    },
+    
+    checkSmartphoneControl: function() {
+    	var direction = this.swipe.check();
+    	if (direction!==null) {
+    	    switch(direction.direction) {
+    	       case this.swipe.DIRECTION_LEFT:
+    	    	   balloon.body.angularVelocity = -ROTATE_SPEED;
+    	    	   break;
+    	       case this.swipe.DIRECTION_RIGHT:
+    	    	   balloon.body.angularVelocity = ROTATE_SPEED;
+    	    	   break;
+    	       case this.swipe.DIRECTION_UP:
+    	    	   speed++;
+    	    	   balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
+    	    	   break;
+    	       case this.swipe.DIRECTION_DOWN:
+    	    	   speed--;
+    	    	   balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
+    	    	   break;
+    	       case this.swipe.DIRECTION_UP_LEFT:
+    	    	   balloon.body.angularVelocity = -ROTATE_SPEED;
+    	    	   break;
+    	       case this.swipe.DIRECTION_UP_RIGHT:
+    	    	   balloon.body.angularVelocity = ROTATE_SPEED;
+    	    	   break;
+    	       case this.swipe.DIRECTION_DOWN_LEFT:
+    	    	   balloon.body.angularVelocity = -ROTATE_SPEED;
+    	    	   break;
+    	       case this.swipe.DIRECTION_DOWN_RIGHT:
+    	    	   balloon.body.angularVelocity = ROTATE_SPEED;
+    	    	   break;
+    	    }
+    	  }
     }
 };
