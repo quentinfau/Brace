@@ -255,19 +255,21 @@ var Game = {
             if (s.name == p.name && p.x != s.oldX && p.y != s.oldY) {
                 s.x = p.x;
                 s.y = p.y;
+                b.oldX =p.x;
+                b.oldY = p.y;
                 s.speed = p.speed;
                 s.rotation = p.angle;
                 s.angle = p.direction;
             }
         });
     }, updateNeighborSprite : function(s){
-        console.log(s.name+" BEFORE x="+s.x+" y="+s.y);
+       // console.log(s.name+" BEFORE x="+s.x+" y="+s.y);
         s.body.velocity.x = 0;
         s.body.velocity.y = 0;
         s.body.angularVelocity = 0;
         var speedSprite = INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed;
         game.physics.arcade.velocityFromAngle(s.angle, speedSprite, s.body.velocity);
-        console.log(s.name+" After  x="+s.x+" y="+s.y);
+       // console.log(s.name+" After  x="+s.x+" y="+s.y);
 //                console.log(s.name+" BEFORE 2 x="+s.x+" y="+s.y);
 //                game.physics.arcade.moveToXY(s,s.x+1000,s.y+1000,INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed);
 //                        console.log(s.name+" After 2 x="+s.x+" y="+s.y);
