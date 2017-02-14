@@ -10,6 +10,7 @@ let Player = function (name){
 	this.coordonneY = 0;
 	this.rank = 1 ;
 	this.direction = 0;
+	this.winner = null;
 		
     console.log('Nouvel objet Player créé : ' + name );
 
@@ -68,6 +69,10 @@ let Player = function (name){
     this.getRank = function () {
         return rank;
     };
+    
+    this.getWinner = function () {
+        return winner;
+    };
 
     this.sendPosition = function () {
         const data = {
@@ -119,6 +124,13 @@ let Player = function (name){
                         remote = data.message.from;
                         player.receiveConnection(data.message.data, "switchHost");
                         break;
+                    case "finishGame":
+                    	if(data.message.winner == player.name) {
+                    		player.winner = "winner";
+                    	} else {
+                    		player.winner = "looser";
+                    	}
+                    	break;
                     default :
                         break;
 

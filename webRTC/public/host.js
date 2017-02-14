@@ -87,7 +87,6 @@ let Host = function (name) {
                                 "voisinage": host.neighbours,
                                 "type": "voisinage"
                             };
-                            console.log(data2);
                             host.sendData(data2, userDatachannel);
                             if (!host.waitingChangingHostList.includes(playerName)) {
                                 host.verifSwitchHost(data.message.angle, data.message.radius, playerName);
@@ -101,7 +100,6 @@ let Host = function (name) {
                             break;
                         case "answer" :
                             host.processAnswerMessage(data);
-                            
                             break;
                         default :
                             break;
@@ -155,6 +153,11 @@ let Host = function (name) {
                     case "answer" :
                         host.processAnswerMessage(data);
                         break;
+                    case "finishGame" :
+                    	host.endGame(host.PHSon1);
+                    	host.endGame(host.PHSon2);
+                    	host.sendToPlayerList(data.message.winner);
+                    	break;
                     default :
                 }
             }
@@ -414,6 +417,28 @@ let Host = function (name) {
         else {
             //data.message.player won the game
             console.log(data.message.player + " won the game");
+            host.endGame(host.PHSon1,data.message.player);
+        	host.endGame(host.PHSon2,data.message.player);
         }
+    }
+    
+    this.endGame = function (PHSon,winner) {
+    	const data = {
+            "winner": winner,
+    		"type": "finishGame"
+    	};
+    	if(PHSon != null) {
+    		host.sendData(data,PHSon);
+    	}
+    }
+    
+    this.sendToPlayerList = function (winner) {
+    	host.dataChannels.forEach( function (dataChannel) {
+    		const data = {
+    	        "winner": winner,
+    			"type": "finishGame"
+    	    };
+    		host.sendData(data,dataChannel);
+    	});
     }
 };

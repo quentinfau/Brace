@@ -108,6 +108,14 @@ var Game = {
         });
         updateDelay++;
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
+        //console.log(player);
+	    if(player.winner != null) {
+        	if(player.winner == "winner") {
+        		game.state.start('Game_Done');
+	        } else {
+	        	game.state.start('Game_Over');
+	        }
+	    }
     }
     , render: function () {
         if (DEBUG == true) {
@@ -154,6 +162,7 @@ var Game = {
         player.speed = speed;
         player.sendPosition();
         //  console.log("SENT");
+        
     }
     , generateBalloon: function () {
         var min_x, max_x, min_y, max_y;
