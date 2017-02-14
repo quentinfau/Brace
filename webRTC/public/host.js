@@ -50,6 +50,7 @@ let Host = function (name) {
 
                 pcLocal = new RTCPeerConnection(cfg, con);
                 pcLocal.onicecandidate = function () {
+                    console.log("offerSent = " + offerSent);
                     if (pcLocal.iceGatheringState == "complete" && !offerSent) {
                         offerSent = true;
                         const type = {
@@ -81,14 +82,21 @@ let Host = function (name) {
                             console.log("RECEIVED : " + data.message);
                             let idUserDatachannel = createID(host.getName(), data.user);
                             let userDatachannel = host.getDataChannelByName(idUserDatachannel);
-                            host.getNeighbours(data.message);
-                            const data2 = {
-                                "classement": 0,
-                                "voisinage": host.neighbours,
-                                "type": "voisinage"
-                            };
-                            host.sendData(data2, userDatachannel);
-                            if (!host.waitingChangingHostList.includes(playerName)) {
+                            if (userDatachannel.readyState == "open") {
+                                host.getNeighbours(data.message);
+                                const data2 = {
+                                    "classement": 0,
+                                    "voisinage": host.neighbours,
+                                    "type": "voisinage"
+                                };
+                                host.sendData(data2, userDatachannel);
+                            }
+                            else {
+                                console.warn("the dataChannel " + userDatachannel.label + "is not in open state");
+                            }
+                            console.log("before if " + playerName);
+                            if (host.waitingChangingHostList.length == 0) {
+                                console.log("in if " + playerName);
                                 host.verifSwitchHost(data.message.angle, data.message.radius, playerName);
                             }
                             break;
@@ -328,7 +336,7 @@ let Host = function (name) {
             console.log("left");
             host.switchToHost(host.PHLeftB, player, "PHLeftB");
         }
-        else if (host.angleF == 360 && angle1 < (host.angleF-host.angleD)) {
+        else if (host.angleF == 360 && angle1 < (host.angleF - host.angleD)) {
             console.log("left");
             host.switchToHost(host.PHLeftB, player, "PHLeftB");
         }
@@ -336,15 +344,15 @@ let Host = function (name) {
             console.log("right");
             host.switchToHost(host.PHRightB, player, "PHRightB");
         }
-        else if (host.angleD == 0 && angle1 > (360-host.angleF) && angle1 > host.angleF){
+        else if (host.angleD == 0 && angle1 > (360 - host.angleF) && angle1 > host.angleF) {
             console.log("right");
             host.switchToHost(host.PHRightB, player, "PHRightB");
         }
-        else if (host.angleF == 360 && angle1 < host.angleD){
+        else if (host.angleF == 360 && angle1 < host.angleD) {
             console.log("right");
             host.switchToHost(host.PHRightB, player, "PHRightB");
         }
-        else if (host.angleD == 0 && angle1 < (360-host.angleF) && angle1 > host.angleF){
+        else if (host.angleD == 0 && angle1 < (360 - host.angleF) && angle1 > host.angleF) {
             console.log("left");
             host.switchToHost(host.PHLeftB, player, "PHLeftB");
         }
@@ -362,7 +370,7 @@ let Host = function (name) {
             'x': dataMessage.x,
             'y': dataMessage.y,
             'speed': dataMessage.speed,
-            'direction' : dataMessage.direction
+            'direction': dataMessage.direction
         };
         trouve = 0;
         i = 0;
