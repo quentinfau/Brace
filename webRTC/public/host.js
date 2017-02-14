@@ -373,7 +373,8 @@ let Host = function (name) {
             'angle': dataMessage.angle,
             'x': dataMessage.x,
             'y': dataMessage.y,
-            'speed': dataMessage.speed
+            'speed': dataMessage.speed,
+            'direction' : dataMessage.direction
         };
         trouve = 0;
         i = 0;
