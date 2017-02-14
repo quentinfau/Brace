@@ -11,13 +11,12 @@ let Host = function (name) {
     this.PHLeftB = null;
     this.PHRightB = null;
     this.PHFather = null;
-
     this.PHSon1 = null;
     this.PHSon2 = null;
-    
+    this.god = false;
     this.neighbours = [];
-    
-       
+
+
     // Coordonnées zones :
 
     this.distanceD = 0;
@@ -30,16 +29,13 @@ let Host = function (name) {
 
     this.sendData = function (data, dataChannel) {
         if (data && dataChannel) {
-            dataChannel.send(JSON.stringify({message: data, user: host.name}));
-
-            chatlog.innerHTML += '[' + host.name + '] ' + messageTextBox.value + '</p>';
-            messageTextBox.value = "";
+            dataChannel.send(JSON.stringify({message: data, user: host.getName()}));
         }
         return false;
     };
 
     this.getDataChannelByName = function (nameUserDatachannel) {
-        let temp;
+        let temp = null;
         host.dataChannels.forEach(function (dataChannel) {
             if (dataChannel.label == nameUserDatachannel) {
                 temp = dataChannel;
@@ -54,6 +50,7 @@ let Host = function (name) {
 
                 pcLocal = new RTCPeerConnection(cfg, con);
                 pcLocal.onicecandidate = function () {
+                    console.log("offerSent = " + offerSent);
                     if (pcLocal.iceGatheringState == "complete" && !offerSent) {
                         offerSent = true;
                         const type = {
@@ -61,19 +58,17 @@ let Host = function (name) {
                             'familyType': familyType
                         };
                         if (familyType == "switchHost") {
-                            sendNegotiationSwitchHost('offer', pcLocal.localDescription, host.name, playerName, dataChannel);
+                            sendNegotiationSwitchHost('offer', pcLocal.localDescription, host.getName(), playerName, dataChannel);
                         }
                         else {
-                            sendNegotiation(type, pcLocal.localDescription, host.name, playerName);
+                            sendNegotiation(type, pcLocal.localDescription, host.getName(), playerName);
                         }
                     }
                 };
-                dc1 = pcLocal.createDataChannel(createID(host.name, playerName), {reliable: true});
+                dc1 = pcLocal.createDataChannel(createID(host.getName(), playerName), {reliable: true});
                 dc1.onopen = function () {
-                    // host.addDataChannel(dc1);
                     console.log('Connected');
                     let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
-                    writeMsg(data);
                     offerSent = false;
                     resolve(dc1);
                 };
@@ -84,46 +79,39 @@ let Host = function (name) {
                     let data = JSON.parse(e.data);
                     switch (data.message.type) {
                         case "position" :
-                            writeMsg(data);
                             console.log("RECEIVED : " + data.message);
-                            let idUserDatachannel = createID(host.name, data.user);
+                            let idUserDatachannel = createID(host.getName(), data.user);
                             let userDatachannel = host.getDataChannelByName(idUserDatachannel);
-                            host.getNeighbours(data.message);
-                            const data2 = {
-                                "classement": 0,
-                                "voisinage": host.neighbours,
-                                "type": "voisinage"
-                            };
-                            host.sendData(data2, userDatachannel);
-                            writeMsg(data2);
-                            if (!host.waitingChangingHostList.includes(playerName)) {
-                                host.verifSwitchHost(data.message.radius, data.message.angle, playerName);
+                            if (userDatachannel.readyState == "open") {
+                                host.getNeighbours(data.message);
+                                const data2 = {
+                                    "classement": 0,
+                                    "voisinage": host.neighbours,
+                                    "type": "voisinage"
+                                };
+                                host.sendData(data2, userDatachannel);
+                            }
+                            else {
+                                console.warn("the dataChannel " + userDatachannel.label + "is not in open state");
+                            }
+                            console.log("before if " + playerName);
+                            if (host.waitingChangingHostList.length == 0) {
+                                console.log("in if " + playerName);
+                                host.verifSwitchHost(data.message.angle, data.message.radius, playerName);
                             }
                             break;
                         case "connection" :
-                            host.createConnection(data.message.player, "switchHost", host.getFamilyDataChannelByName(data.message.host))
-                                .then(dataChannel => {
-                                    console.log("dataChannel : " + dataChannel + ' player : ' + remote);
-                                    host.addDataChannel(dataChannel);
-                                });
+                            host.processConnectionMessage(data);
                             break;
                         case "offer" :
-                            sendData(data.message, host.getDataChannelByName(createID(host.name, data.message.to)));
+                            host.processOfferMessage(data);
                             break;
                         case "answer" :
-                            if (data.message.to != host.name) {
-                                sendData(data.message, host.getFamilyDataChannelByName(data.message.to));
-                                host.removeDataChannel(host.getDataChannelByName(createID(host.name, data.message.from)));
-                                host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(data.message.from));
-                            }
-                            else {
-                                processAnswer(data.message.data);
-                            }
+                            host.processAnswerMessage(data);
                             break;
                         default :
                             break;
                     }
-                    writeMsg(data);
                 };
                 dc1.onerror = function (e) {
                     reject(e)
@@ -141,7 +129,6 @@ let Host = function (name) {
                 resolve("player name is empty");
             }
         });
-
     };
 
     this.receiveConnectionHost = function (offer, familyType) {
@@ -159,31 +146,22 @@ let Host = function (name) {
                     player.setDataChannel(dc2);
                 }
                 console.log('Connected');
-
-                //on écrit dans le chat que le myPlayer s'est connecté
-                let data = {user: "system", message: "the datachannel " + dc2.label + " has been opened"};
-                writeMsg(data);
                 answerSent = false;
                 console.log("DONE");
             };
             dc2.onmessage = function (e) {
                 let data = JSON.parse(e.data);
                 switch (data.message.type) {
-                    case "offer" :
-                        sendData(data.message, host.getDataChannelByName(createID(host.name, data.message.to)));
+                    case "connection" :
+                        host.processConnectionMessage(data);
                         break;
-                   /* case "answer" :
-                        if (data.message.to != host.name) {
-                            sendData(data.message, host.getFamilyDataChannelByName(data.message.to));
-                            host.removeDataChannel(host.getDataChannelByName(createID(host.name, data.message.from)));
-                            host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(data.message.from));
-                        }
-                        else {
-                            processAnswer(data.message.data);
-                        }
-                        break;*/
+                    case "offer" :
+                        host.processOfferMessage(data);
+                        break;
+                    case "answer" :
+                        host.processAnswerMessage(data);
+                        break;
                     default :
-                        writeMsg(data);
                 }
             }
         };
@@ -195,10 +173,10 @@ let Host = function (name) {
                     'familyType': familyType
                 };
                 if (familyType == "switchHost") {
-                    sendNegotiationSwitchHost('answer', pcRemote.localDescription, player.name, remote, player.dataChannel);
+                    sendNegotiationSwitchHost('answer', pcRemote.localDescription, player.getName(), remote, player.dataChannel);
                 }
                 else {
-                    sendNegotiation(type, pcRemote.localDescription, player.name, remote);
+                    sendNegotiation(type, pcRemote.localDescription, player.getName(), remote);
                 }
             }
         };
@@ -229,7 +207,7 @@ let Host = function (name) {
     };
 
     this.removeDataChannel = function (dataChannel) {
-        this.dataChannels.splice(dataChannel);
+        this.dataChannels.splice(this.dataChannels.indexOf(dataChannel), 1);
     };
 
     this.addPlayerList = function (player1) {
@@ -278,6 +256,9 @@ let Host = function (name) {
     this.getPHSon2 = function () {
         return this.PHSon2;
     };
+    this.getName = function () {
+        return this.name;
+    };
 
     this.setZone = function (dist1, dist2, angle1, angle2) {
         this.distanceD = dist1;
@@ -287,9 +268,9 @@ let Host = function (name) {
     };
 
     this.getZone = function () {
-        return null;
+        return this.zone;
     };
-    
+
 
     this.getFamilyDataChannelByName = function (name) {
         let dataChannel;
@@ -313,7 +294,7 @@ let Host = function (name) {
 
     this.getRemote = function (label) {
         res = label.split("-");
-        return res[0] == host.name
+        return res[0] == host.getName()
             ? res[1]
             : res[0]
     };
@@ -325,24 +306,14 @@ let Host = function (name) {
             "type": "connection",
             "player": player,
             "familyType": familyType,
-            "host": host.name
+            "host": host.getName()
         };
         sendData(data, newHostDataChannel);
-        /*
-         host.dataChannels.forEach(function (dataChannel) {
-         let dc = host.getDataChannelByName(player);
-         if (dc) {
-         host.removeDataChannel(dc);
-         host.removePlayerList(player);
-         newHost.createConnection(player);
-         newHost.addPlayerList(player);
-         }
-         });*/
-        console.log("BlouBlou");
         return false
     };
 
     this.verifSwitchHost = function (angle1, distance1, player) {
+        console.log("angle1 = " + angle1 + " angleF = " + host.angleF + " angleD = " + host.angleD);
         if (distance1 < host.distanceD) {
             host.switchToHost(host.PHFather, player, "PHFather");
         }
@@ -356,52 +327,99 @@ let Host = function (name) {
                 host.switchToHost(host.PHSon2, player, "PHSon2");
             }
         }
-        else if (angle1 > host.angleF) {
+        else if (host.angleF != 360 && angle1 > host.angleF && host.angleD != 0) {
+            console.log("left");
             host.switchToHost(host.PHLeftB, player, "PHLeftB");
         }
-        else if (angle1 < host.angleD) {
+        else if (host.angleF == 360 && angle1 < (host.angleF - host.angleD)) {
+            console.log("left");
+            host.switchToHost(host.PHLeftB, player, "PHLeftB");
+        }
+        else if (host.angleF != 360 && angle1 < host.angleD) {
+            console.log("right");
             host.switchToHost(host.PHRightB, player, "PHRightB");
         }
-    }
-    
-    this.getNeighbours = function (dataMessage) {
-    	let neighbourData = {
-	    	'name': dataMessage.name,
-	    	'radius': dataMessage.radius,
-	    	'angle': dataMessage.angle,
-	    	'x': dataMessage.x,
-	    	'y': dataMessage.y,
-	    	'speed': dataMessage.speed
+        else if (host.angleD == 0 && angle1 > (360 - host.angleF) && angle1 > host.angleF) {
+            console.log("right");
+            host.switchToHost(host.PHRightB, player, "PHRightB");
         }
-    	trouve = 0;
-    	i=0;
-    	if(host.neighbours.length != 0) {
-	        host.neighbours.forEach(function (neighbour) {
-	            if(neighbour.name == dataMessage.name) {
-	            	host.neighbours[i] = neighbourData;  	
-	            	trouve = 1;
-	            }
-	            i++;
-	        });
-    	}
-        if(trouve == 0) {
-        	host.neighbours.push(neighbourData);
+        else if (host.angleF == 360 && angle1 < host.angleD) {
+            console.log("right");
+            host.switchToHost(host.PHRightB, player, "PHRightB");
+        }
+        else if (host.angleD == 0 && angle1 < (360 - host.angleF) && angle1 > host.angleF) {
+            console.log("left");
+            host.switchToHost(host.PHLeftB, player, "PHLeftB");
+        }
+        /*  else if (angle1 < host.angleD) {
+         console.log("right");
+         host.switchToHost(host.PHRightB, player, "PHRightB");
+         }*/
+    };
+
+    this.getNeighbours = function (dataMessage) {
+        let neighbourData = {
+            'name': dataMessage.name,
+            'radius': dataMessage.radius,
+            'angle': dataMessage.angle,
+            'x': dataMessage.x,
+            'y': dataMessage.y,
+            'speed': dataMessage.speed,
+            'direction': dataMessage.direction
+        };
+        trouve = 0;
+        i = 0;
+        if (host.neighbours.length != 0) {
+            host.neighbours.forEach(function (neighbour) {
+                if (neighbour.name == dataMessage.name) {
+                    host.neighbours[i] = neighbourData;
+                    trouve = 1;
+                }
+                i++;
+            });
+        }
+        if (trouve == 0) {
+            host.neighbours.push(neighbourData);
         }
     };
-    
-    this.initPositionPlayer = function() {
-    	host.playerList.forEach( function(player) {
-    		let dataChannel = host.getDataChannelByName(createID(host.name, player));
-    		const data = {
+
+    this.initPositionPlayer = function () {
+        host.playerList.forEach(function (player) {
+            let dataChannel = host.getDataChannelByName(createID(host.getName(), player));
+            const data = {
                 "angleD": host.angleD,
                 "angleF": host.angleF,
                 "type": "initPosition"
             };
-    		host.sendData(data,dataChannel);
-    	});
+            host.sendData(data, dataChannel);
+        });
+    };
+
+    this.processOfferMessage = function (data) {
+        sendData(data.message, host.getDataChannelByName(createID(host.getName(), data.message.to)));
+    };
+    this.processAnswerMessage = function (data) {
+        if (data.message.to != host.getName()) {
+            sendData(data.message, host.getFamilyDataChannelByName(data.message.to));
+            host.removeDataChannel(host.getDataChannelByName(createID(host.getName(), data.message.from)));
+            host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(data.message.from));
+            offerSent = false;
+        }
+        else {
+            finalizeConnection(data.message.data);
+        }
+    };
+    this.processConnectionMessage = function (data) {
+        if (!host.god) {
+            host.createConnection(data.message.player, "switchHost", host.getFamilyDataChannelByName(data.message.host))
+                .then(dataChannel => {
+                    console.log("dataChannel : " + dataChannel + ' player : ' + remote);
+                    host.addDataChannel(dataChannel);
+                });
+        }
+        else {
+            //data.message.player won the game
+            console.log(data.message.player + " won the game");
+        }
     }
-    
-};
-connectToRemote.onclick = function () {
-    host.switchToHost(host.PHLeftB, "1", "PHLeftB");
 };

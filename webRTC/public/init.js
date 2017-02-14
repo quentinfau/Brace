@@ -4,12 +4,9 @@ function connectToWebSocket(name) {
     socket.emit('new_player', name);
     socket.on('welcomeMessage', function (data) {
         console.log("received message from the server : " + data.message);
-        writeMsg(data);
     });
     socket.on('errorMessage', function (data) {
         console.log("received error message from the server : " + data.message);
-        writeMsg(data);
-
     });
     socket.on('createHost', function (user) {
         host = new Host(user);
@@ -21,6 +18,9 @@ function connectToWebSocket(name) {
         const msg = JSON.parse(data);
         host.setList(msg.playerList);
         host.family = msg.family;
+        if(host.family.PHFather=="god"){
+            host.god = true;
+        }
         host.setZone(msg.zone.distanceD,msg.zone.distanceF,msg.zone.angleD,msg.zone.angleF);
         initHost(host, 0);
     });
@@ -30,7 +30,7 @@ function connectToWebSocket(name) {
     socket.on('negotiationMessage', function (data) {
         console.log("received message from the server : " + data);
         if (data.action.type == "offer") {
-            if (data.to == player.name) {
+            if (data.to == player.getName()) {
                 remote = data.from;
                 if (data.action.familyType==null){
                     player.receiveConnection(data.data, data.action.familyType);
@@ -40,8 +40,8 @@ function connectToWebSocket(name) {
                 }
             }
         } else if (data.action.type == "answer") {
-            if (data.to == player.name) {
-                processAnswer(data.data);
+            if (data.to == player.getName()) {
+                finalizeConnection(data.data);
             }
         }
     });
@@ -81,13 +81,14 @@ function initHostFamily(host) {
                             if (dataChannel instanceof RTCDataChannel) {
                                 host.setPHSon2(dataChannel);
                             }
-                            console.log("host " + host.name + " finished the init method ");
-                            socket.emit("initHostOver", host.name);
+                            console.log("host " + host.getName() + " finished the init method ");
+                            socket.emit("initHostOver", host.getName());
                         })
                 })
         });
 }
 startGame.onclick = function () {
+    console.log("socket emit startGame");
     socket.emit('startGame');
     //window.location = "index_Brace.html";
 };

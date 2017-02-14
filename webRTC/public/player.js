@@ -1,50 +1,52 @@
-let Player = function (name){
+let Player = function (name) {
 
-	this.neighborhood = [] ;
-	this.name = name;
-	this.dataChannel = null;
-	this.radius = 0;
-	this.angle = 0;
-	this.speed = 0;
-	this.coordonneX = 0;
-	this.coordonneY = 0;
-	this.rank = 1 ;
-		
-    console.log('Nouvel objet Player créé : ' + name );
-    
-	this.getCoordonneX = function (coordonneX){
-    	this.coordonneX = coordonneX;
+    this.neighborhood = [];
+    this.name = name;
+    this.dataChannel = null;
+    this.radius = 0;
+    this.angle = 0;
+    this.speed = 0;
+    this.coordonneX = 0;
+    this.coordonneY = 0;
+    this.rank = 1;
+    this.direction = 0;
+    this.isChangingHost = false;
+
+    console.log('Nouvel objet Player créé : ' + name);
+
+    this.getCoordonneX = function (coordonneX) {
+        this.coordonneX = coordonneX;
     };
 
-    this.getCoordonneY = function (coordonneY){
+    this.getCoordonneY = function (coordonneY) {
         this.coordonneY = coordonneY;
     };
 
-    this.setRadius = function (radius){
+    this.setRadius = function (radius) {
         this.radius = radius;
     };
 
-    this.setSpeed = function (speed){
+    this.setSpeed = function (speed) {
         this.speed = speed;
     };
 
-    this.setAngle = function(angle){
+    this.setAngle = function (angle) {
         this.angle = angle;
     };
-       
-    this.setRank = function (rank1){
-    	this.rank = rank1;
-    }; 
 
-    this.setDataChannel = function(dataChannel){
+    this.setRank = function (rank1) {
+        this.rank = rank1;
+    };
+
+    this.setDataChannel = function (dataChannel) {
         this.dataChannel = dataChannel;
     };
 
-    this.getCoordonneX = function(){
+    this.getCoordonneX = function () {
         return CoordonneX;
     };
 
-    this.getCoordonneY = function() {
+    this.getCoordonneY = function () {
         return CoordonneY;
     };
 
@@ -55,11 +57,10 @@ let Player = function (name){
     this.getRadius = function () {
         return radius;
     };
-    
-    this.getName = function(){
-    	return name;
-    };
 
+    this.getName = function () {
+        return name;
+    };
 
     this.getSpeed = function () {
         return speed;
@@ -70,17 +71,20 @@ let Player = function (name){
     };
 
     this.sendPosition = function () {
-        const data = {
-            "name": player.name,
-            "radius": player.radius,
-            "angle": player.angle,
-            "x": player.coordonneX,
-            "y": player.coordonneY,
-            "speed": player.speed,
-            "timestamp": player.timestamp,
-            "type": "position"
-        };
-        sendData(data, player.dataChannel);
+        if (!player.isChangingHost) {
+            const data = {
+                "name": player.getName(),
+                "radius": player.radius,
+                "angle": player.angle,
+                "x": player.coordonneX,
+                "y": player.coordonneY,
+                "speed": player.speed,
+                "timestamp": player.timestamp,
+                "direction": player.direction,
+                "type": "position"
+            };
+            sendData(data, player.dataChannel);
+        }
     };
 
     this.receiveConnection = function (offer, familyType) {
@@ -88,14 +92,13 @@ let Player = function (name){
         pcRemote.ondatachannel = function (e) {
             dc2 = e.channel || e;
             dc2.onopen = function () {
-                    player.setDataChannel(dc2);
+                player.setDataChannel(dc2);
                 console.log('Connected');
-
                 //on écrit dans le chat que le myPlayer s'est connecté
                 let data = {user: "system", message: "the datachannel " + dc2.label + " has been opened"};
-                writeMsg(data);
                 answerSent = false;
                 console.log("DONE");
+                player.isChangingHost = false;
             };
             dc2.onmessage = function (e) {
                 let data = JSON.parse(e.data);
@@ -104,10 +107,20 @@ let Player = function (name){
                         player.neighborhood = data.message.voisinage;
                         break;
                     case "initPosition" :
-                        console.log(data);
+                        let min = data.message.angleD;
+                        let max = data.message.angleF;
+                        let angleStart = Math.floor(Math.random() * (max - min + 1)) + min;
+                        player.angle = angleStart;
+                        player.radius = 7800;
+                        let angleRadian = angleStart * Math.PI / 180;
+                        console.log(angleRadian);
+                        player.coordonneX = player.radius * Math.cos(angleRadian);
+                        player.coordonneY = player.radius * Math.sin(angleRadian);
+                        console.log(player);
                         break;
                     case "offer" :
-                        console.log("switching host from " +remote + " to " + data.message.from);
+                        console.log("switching host from " + remote + " to " + data.message.from);
+                        player.isChangingHost = true;
                         remote = data.message.from;
                         player.receiveConnection(data.message.data, "switchHost");
                         break;
@@ -115,7 +128,6 @@ let Player = function (name){
                         break;
 
                 }
-                writeMsg(data);
             }
         };
         pcRemote.onicecandidate = function () {
@@ -126,10 +138,10 @@ let Player = function (name){
                     'familyType': familyType
                 };
                 if (familyType == "switchHost") {
-                    sendNegotiationSwitchHost('answer', pcRemote.localDescription, player.name, remote, player.dataChannel);
+                    sendNegotiationSwitchHost('answer', pcRemote.localDescription, player.getName(), remote, player.dataChannel);
                 }
                 else {
-                    sendNegotiation(type, pcRemote.localDescription, player.name, remote);
+                    sendNegotiation(type, pcRemote.localDescription, player.getName(), remote);
                 }
             }
         };

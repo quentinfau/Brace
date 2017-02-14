@@ -60,6 +60,10 @@ io.sockets.on('connection', function (socket) {
     socket.on('startGame', function () {
         listPlayerHost = [];
         listPlayer = [];
+        console.log("startGame with list of player : ");
+        socketList.forEach(function (socket) {
+            console.log(socket.user);
+        });
         for (let i = 0; i < socketList.length; i++) {
             const name = socketList[i].user;
             if (i < 7) {
@@ -85,13 +89,13 @@ io.sockets.on('connection', function (socket) {
         } else {
             console.log("all host have finished their init");
             listPlayerHost.forEach(function (host) {
-            	getSocketByName(host).emit("initPlayerPosition");
+                getSocketByName(host).emit("initPlayerPosition");
             });
         }
     });
 
     socket.on('disconnect', function (e) {
-        if (socketList.indexOf(this)>-1){
+        if (socketList.indexOf(this) > -1) {
             socketList.splice(socketList.indexOf(this), 1);
             let username_disconnected = this.user;
             removePlayerOrPlayerHost(username_disconnected);
@@ -104,7 +108,7 @@ function isUnique(name) {
     let unique = true;
     socketList.forEach(function (socket) {
         if (socket.user == name) {
-          unique = false;
+            unique = false;
         }
     });
     return unique;
@@ -150,7 +154,7 @@ function getFamily(host) {
             return {
                 "PHLeftB": "",
                 "PHRightB": "",
-                "PHFather": "",
+                "PHFather": "god",
                 "PHSon1": listPlayer[1],
                 "PHSon2": listPlayer[2]
             };
@@ -175,28 +179,28 @@ function getFamily(host) {
             break;
         case '4' :
             return {
-                "PHRightB": listPlayer[4],
+                "PHRightB": listPlayer[6],
                 "PHSon1": "",
                 "PHSon2": ""
             };
             break;
         case '5' :
             return {
-                "PHRightB": listPlayer[5],
+                "PHRightB": listPlayer[3],
                 "PHSon1": "",
                 "PHSon2": ""
             };
             break;
         case '6' :
             return {
-                "PHRightB": listPlayer[6],
+                "PHRightB": listPlayer[4],
                 "PHSon1": "",
                 "PHSon2": ""
             };
             break;
         case '7' :
             return {
-                "PHRightB": listPlayer[3],
+                "PHRightB": listPlayer[5],
                 "PHSon1": "",
                 "PHSon2": ""
             };
@@ -209,58 +213,58 @@ function getZone(host) {
     switch (host) {
         case '1' :
             return {
-        		"distanceD": 0,
-        		"distanceF": 1000,
-        		"angleD"   : 0,
-        		"angleF"   : 360
+                "distanceD": 0,
+                "distanceF": 1000,
+                "angleD": 0,
+                "angleF": 360
             };
             break;
         case '2' :
             return {
-        		"distanceD": 1000,
-        		"distanceF": 3000,
-        		"angleD"   : 0,
-        		"angleF"   : 180
+                "distanceD": 1000,
+                "distanceF": 3000,
+                "angleD": 0,
+                "angleF": 180
             };
             break;
         case '3' :
             return {
-        		"distanceD": 1000,
-        		"distanceF": 3000,
-        		"angleD"   : 180,
-        		"angleF"   : 360
+                "distanceD": 1000,
+                "distanceF": 3000,
+                "angleD": 180,
+                "angleF": 360
             };
             break;
         case '4' :
             return {
-        		"distanceD": 3000,
-        		"distanceF": 8000,
-    			"angleD"   : 0,
-    			"angleF"   : 90
+                "distanceD": 3000,
+                "distanceF": 8000,
+                "angleD": 0,
+                "angleF": 90
             };
             break;
         case '5' :
             return {
-        		"distanceD": 3000,
-        		"distanceF": 8000,
-        		"angleD"   : 90,
-        		"angleF"   : 180
+                "distanceD": 3000,
+                "distanceF": 8000,
+                "angleD": 90,
+                "angleF": 180
             };
             break;
         case '6' :
             return {
-        		"distanceD": 3000,
-        		"distanceF": 8000,
-    			"angleD"   : 180,
-    			"angleF"   : 270
+                "distanceD": 3000,
+                "distanceF": 8000,
+                "angleD": 180,
+                "angleF": 270
             };
             break;
         case '7' :
             return {
-        		"distanceD": 3000,
-        		"distanceF": 8000,
-        		"angleD"   : 270,
-        		"angleF"   : 360
+                "distanceD": 3000,
+                "distanceF": 8000,
+                "angleD": 270,
+                "angleF": 360
             };
             break;
     }
