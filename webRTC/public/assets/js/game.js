@@ -288,7 +288,7 @@ var Game = {
         this.exist = false;
         neighborsSprites.forEach(function (pe) {
             if (pe.name == p.name) {
-               // console.log("EXIST");
+
                 this.exist = true;
             }
         });
