@@ -13,7 +13,7 @@ const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
 const NB_OBSTACLES = 0;
 const DEBUG = true;
-const UPDATE_DELAY = 20;
+const UPDATE_DELAY = 50;
 var exist = false;
 var Game = {
     preload: function () {
@@ -24,6 +24,9 @@ var Game = {
         game.load.image('sida', './assets/images/sida.png');
         neighborsSprites=[];    }
     , create: function () {
+    	if (!game.device.desktop){
+    		swipe = new Swipe(this.game);
+    	}
         this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         //this.scale.pageAlignHorizontally = true;
         this.scale.pageAlignVertically = true;
@@ -68,6 +71,7 @@ var Game = {
         balloon.body.velocity.y = 0;
         balloon.body.angularVelocity = 0;
         this.obstacleCollision();
+        if (!game.device.desktop){checkSmartphoneControl();}
         if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
             this.moveChecker();
         }
@@ -100,7 +104,6 @@ var Game = {
         }
         if (updateDelay % UPDATE_DELAY == 0) {
             this.updatePlayer();
-
         }else{
         neighborsSprites.forEach(function(p){
             this.Game.updateNeighborSprite(p);
@@ -235,8 +238,9 @@ var Game = {
         b.name = p.name;
         b.angle = p.direction;
         b.rotation = p.angle;
-        //console.log("VOISIN X = " + b.x);
-        // console.log("VOISIN Y = " + b.y);
+        b.oldX =p.x;
+        b.oldY = p.y;
+
         neighborsSprites.push(b);
        // this.updateNeighbors(p);
     }
@@ -248,32 +252,22 @@ var Game = {
     }
     , updateNeighbors: function (p) {
         neighborsSprites.forEach(function (s) {
-            if (s.name == p.name) {
+            if (s.name == p.name && p.x != s.oldX && p.y != s.oldY) {
                 s.x = p.x;
                 s.y = p.y;
                 s.speed = p.speed;
                 s.rotation = p.angle;
                 s.angle = p.direction;
-              //  game.physics.arcade.moveToXY(s,s.x,s.y);
-
-                //this.Game.updateNeighborSprite(s);
-//                var destination = {};
-//                destination.x=s.x;
-//                destination.y = s.y;
-//                game.physics.arcade.moveToObject(s,destination,INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed,2000);
-               // s.body.velocity.x = 0;
-               // s.body.velocity.y = 0;
-                s.body.angularVelocity = 0;
-                game.physics.arcade.velocityFromAngle(s.angle, INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed, s.body.velocity);
             }
         });
     }, updateNeighborSprite : function(s){
-//        console.log(s.name+" BEFORE x="+s.x+" y="+s.y);
-//        s.body.velocity.x = 0;
-//        s.body.velocity.y = 0;
-//        s.body.angularVelocity = 0;
-//        game.physics.arcade.velocityFromAngle(s.angle, INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed, s.body.velocity);
-//        console.log(s.name+" After  x="+s.x+" y="+s.y);
+        console.log(s.name+" BEFORE x="+s.x+" y="+s.y);
+        s.body.velocity.x = 0;
+        s.body.velocity.y = 0;
+        s.body.angularVelocity = 0;
+        var speedSprite = INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed;
+        game.physics.arcade.velocityFromAngle(s.angle, speedSprite, s.body.velocity);
+        console.log(s.name+" After  x="+s.x+" y="+s.y);
 //                console.log(s.name+" BEFORE 2 x="+s.x+" y="+s.y);
 //                game.physics.arcade.moveToXY(s,s.x+1000,s.y+1000,INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed);
 //                        console.log(s.name+" After 2 x="+s.x+" y="+s.y);
@@ -293,5 +287,39 @@ var Game = {
             }
         });
         // return this.exist;
+    },
+    
+    checkSmartphoneControl: function() {
+    	var direction = this.swipe.check();
+    	if (direction!==null) {
+    	    switch(direction.direction) {
+    	       case this.swipe.DIRECTION_LEFT:
+    	    	   balloon.body.angularVelocity = -ROTATE_SPEED;
+    	    	   break;
+    	       case this.swipe.DIRECTION_RIGHT:
+    	    	   balloon.body.angularVelocity = ROTATE_SPEED;
+    	    	   break;
+    	       case this.swipe.DIRECTION_UP:
+    	    	   speed++;
+    	    	   balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
+    	    	   break;
+    	       case this.swipe.DIRECTION_DOWN:
+    	    	   speed--;
+    	    	   balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
+    	    	   break;
+    	       case this.swipe.DIRECTION_UP_LEFT:
+    	    	   balloon.body.angularVelocity = -ROTATE_SPEED;
+    	    	   break;
+    	       case this.swipe.DIRECTION_UP_RIGHT:
+    	    	   balloon.body.angularVelocity = ROTATE_SPEED;
+    	    	   break;
+    	       case this.swipe.DIRECTION_DOWN_LEFT:
+    	    	   balloon.body.angularVelocity = -ROTATE_SPEED;
+    	    	   break;
+    	       case this.swipe.DIRECTION_DOWN_RIGHT:
+    	    	   balloon.body.angularVelocity = ROTATE_SPEED;
+    	    	   break;
+    	    }
+    	  }
     }
 };
