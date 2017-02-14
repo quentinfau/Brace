@@ -103,6 +103,9 @@ var Game = {
         if (updateDelay % UPDATE_DELAY == 0) {
             this.updatePlayer();
         }
+        neighborsSprites.forEach(function(p){
+            this.Game.updateNeighborSprite(p);
+        });
         updateDelay++;
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
     }
@@ -262,6 +265,11 @@ var Game = {
                 game.physics.arcade.velocityFromAngle(s.angle, INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed, s.body.velocity);
             }
         });
+    }, updateNeighborSprite : function(s){
+        s.body.velocity.x = 0;
+                s.body.velocity.y = 0;
+                s.body.angularVelocity = 0;
+                game.physics.arcade.velocityFromAngle(s.angle, INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed, s.body.velocity);
     }
     , isNeighbor: function (p) {
         this.exist = false;
