@@ -94,9 +94,7 @@ let Host = function (name) {
                             else {
                                 console.warn("the dataChannel " + userDatachannel.label + "is not in open state");
                             }
-                            console.log("before if " + playerName);
                             if (host.waitingChangingHostList.length == 0) {
-                                console.log("in if " + playerName);
                                 host.verifSwitchHost(data.message.angle, data.message.radius, playerName);
                             }
                             break;
