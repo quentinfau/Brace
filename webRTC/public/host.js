@@ -121,6 +121,7 @@ let Host = function (name) {
                     console.log("------ SEND OFFER ------");
 
                 }, function () {
+                    offerSent = false;
                 }, sdpConstraints);
             }
             else {
@@ -415,6 +416,7 @@ let Host = function (name) {
         }
         else {
             finalizeConnection(data.message.data);
+            offerSent = false;
         }
     };
     this.processConnectionMessage = function (data) {
