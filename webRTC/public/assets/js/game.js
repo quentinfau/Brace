@@ -13,7 +13,7 @@ const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
 const NB_OBSTACLES = 0;
 const DEBUG = true;
-const UPDATE_DELAY = 50;
+const UPDATE_DELAY = 20;
 var exist = false;
 var Game = {
     preload: function () {
@@ -278,26 +278,15 @@ var Game = {
         s.body.angularVelocity = 0;
         var speedSprite = INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed;
         game.physics.arcade.velocityFromAngle(s.angle, speedSprite, s.body.velocity);
-        // console.log(s.name+" After  x="+s.x+" y="+s.y);
-//                console.log(s.name+" BEFORE 2 x="+s.x+" y="+s.y);
-//                game.physics.arcade.moveToXY(s,s.x+1000,s.y+1000,INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed);
-//                        console.log(s.name+" After 2 x="+s.x+" y="+s.y);
-//        var destination = {};
-//                destination.x=s.x+200;
-//                destination.y = s.y+200;
-//
-//                game.physics.arcade.moveToObject(s,destination,INITIAL_SPEED + SPEED_MULTIPLICATOR * s.speed,2000);
-//
+
     }
     , isNeighbor: function (p) {
         this.exist = false;
         neighborsSprites.forEach(function (pe) {
             if (pe.name == p.name) {
-
                 this.exist = true;
             }
         });
-        // return this.exist;
     },
 
     checkSmartphoneControl: function () {
