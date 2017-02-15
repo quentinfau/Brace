@@ -8,7 +8,7 @@ let pcLocal;
 let dc1 = null;
 let dc2 = null;
 
-const cfg = {'iceServers': [{'url': "stun:stun.l.google.com:19302"}]},
+const cfg = {'iceServers': [{'url': "stun:stun2.l.google.com:19302"}]},
     con = {'optional': [{'DtlsSrtpKeyAgreement': true}]};
 
 const sdpConstraints = {
@@ -30,7 +30,6 @@ function sendMessage() {
     sendData(messageTextBox.value, player.dataChannel);
     return false
 }
-
 
 function sendData(data, dataChannel) {
     if (data) {
@@ -56,3 +55,6 @@ function sendNegotiationSwitchHost(type, sdp, sender, receiver, dataChannel) {
     sendData(json,dataChannel);
 }
 
+if (navigator.webkitGetUserMedia) {
+    RTCPeerConnection = webkitRTCPeerConnection;
+}

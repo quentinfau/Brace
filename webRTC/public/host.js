@@ -82,7 +82,7 @@ let Host = function (name) {
                             console.log("RECEIVED : " + data.message);
                             let idUserDatachannel = createID(host.getName(), data.user);
                             let userDatachannel = host.getDataChannelByName(idUserDatachannel);
-                            if (userDatachannel.readyState == "open") {
+                            if (userDatachannel!=null && userDatachannel.readyState == "open") {
                                 host.getNeighbours(data.message);
                                 const data2 = {
                                     "classement": 0,
@@ -92,11 +92,9 @@ let Host = function (name) {
                                 host.sendData(data2, userDatachannel);
                             }
                             else {
-                                console.warn("the dataChannel " + userDatachannel.label + "is not in open state");
+                                console.warn("the dataChannel " + idUserDatachannel + "is null or not in open state");
                             }
-                            console.log("before if " + playerName);
                             if (host.waitingChangingHostList.length == 0) {
-                                console.log("in if " + playerName);
                                 host.verifSwitchHost(data.message.angle, data.message.radius, playerName);
                             }
                             break;
@@ -123,6 +121,7 @@ let Host = function (name) {
                     console.log("------ SEND OFFER ------");
 
                 }, function () {
+                    offerSent = false;
                 }, sdpConstraints);
             }
             else {
@@ -162,10 +161,10 @@ let Host = function (name) {
                         host.processAnswerMessage(data);
                         break;
                     case "finishGame" :
-                    	host.endGame(host.PHSon1);
-                    	host.endGame(host.PHSon2);
-                    	host.sendToPlayerList(data.message.winner);
-                    	break;
+                        host.endGame(host.PHSon1);
+                        host.endGame(host.PHSon2);
+                        host.sendToPlayerList(data.message.winner);
+                        break;
                     default :
                 }
             }
@@ -318,7 +317,7 @@ let Host = function (name) {
     };
 
     this.verifSwitchHost = function (angle1, distance1, player) {
-        console.log("angle1 = " + angle1 + " angleF = " + host.angleF + " angleD = " + host.angleD);
+        console.log("angle1 = " + angle1 + " angleF = " + host.angleF + " angleD = " + host.angleD + " distance " + distance1);
         if (distance1 < host.distanceD) {
             host.switchToHost(host.PHFather, player, "PHFather");
         }
@@ -326,10 +325,14 @@ let Host = function (name) {
             let SumAngle = host.angleD + host.angleF;
             SumAngle = SumAngle / 2;
             if (SumAngle > angle1) {
-                host.switchToHost(host.PHSon1, player, "PHSon1");
+                if (host.PHSon1 != null) {
+                    host.switchToHost(host.PHSon1, player, "PHSon1");
+                }
             }
             else if (SumAngle < angle1) {
-                host.switchToHost(host.PHSon2, player, "PHSon2");
+                if (host.PHSon2 != null) {
+                    host.switchToHost(host.PHSon2, player, "PHSon2");
+                }
             }
         }
         else if (host.angleF != 360 && angle1 > host.angleF && host.angleD != 0) {
@@ -413,6 +416,7 @@ let Host = function (name) {
         }
         else {
             finalizeConnection(data.message.data);
+            offerSent = false;
         }
     };
     this.processConnectionMessage = function (data) {
@@ -426,28 +430,28 @@ let Host = function (name) {
         else {
             //data.message.player won the game
             console.log(data.message.player + " won the game");
-            host.endGame(host.PHSon1,data.message.player);
-        	host.endGame(host.PHSon2,data.message.player);
+            host.endGame(host.PHSon1, data.message.player);
+            host.endGame(host.PHSon2, data.message.player);
         }
     }
-    
-    this.endGame = function (PHSon,winner) {
-    	const data = {
+
+    this.endGame = function (PHSon, winner) {
+        const data = {
             "winner": winner,
-    		"type": "finishGame"
-    	};
-    	if(PHSon != null) {
-    		host.sendData(data,PHSon);
-    	}
+            "type": "finishGame"
+        };
+        if (PHSon != null) {
+            host.sendData(data, PHSon);
+        }
     }
-    
+
     this.sendToPlayerList = function (winner) {
-    	host.dataChannels.forEach( function (dataChannel) {
-    		const data = {
-    	        "winner": winner,
-    			"type": "finishGame"
-    	    };
-    		host.sendData(data,dataChannel);
-    	});
+        host.dataChannels.forEach(function (dataChannel) {
+            const data = {
+                "winner": winner,
+                "type": "finishGame"
+            };
+            host.sendData(data, dataChannel);
+        });
     }
 };
