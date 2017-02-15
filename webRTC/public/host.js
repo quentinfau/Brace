@@ -121,6 +121,7 @@ let Host = function (name) {
                     console.log("------ SEND OFFER ------");
 
                 }, function () {
+                    offerSent = false;
                 }, sdpConstraints);
             }
             else {
