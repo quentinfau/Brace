@@ -409,6 +409,7 @@ let Host = function (name) {
             host.removeDataChannel(host.getDataChannelByName(createID(host.getName(), data.message.from)));
             host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(data.message.from));
             host.neighbours.splice(host.neighbours.indexOf(data.message.from));
+            offerSent = false;
         }
         else {
             finalizeConnection(data.message.data);
