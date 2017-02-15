@@ -1,4 +1,4 @@
-var balloon, speed, cursors, map, cap, apple, mapCenter, obstacles, rayon, angleDegree, updateDelay, neighborsSprites = [];
+var balloon, speed, cursors, map, cap, apple, mapCenter, obstacles,malusGroup, switchGroup, rayon, angleDegree, updateDelay, neighborsSprites = [];
 const WORLD_WIDTH = 400000
     , WORLD_HEIGHT = 400000;
 const ROTATE_SPEED = 200;
@@ -13,10 +13,13 @@ const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
 const NB_OBSTACLES = 0;
+const NB_MALUS = 100;
+const NB_SWITCH_MALUS = 200;
 const DEBUG = true;
 const UPDATE_DELAY = 20;
 var exist = false;
 var tileSprite;
+var switchLR = false;
 var Game = {
     preload: function () {
         game.load.spritesheet('balloon', './assets/images/balloon_animated_small.png', 100, 50);
@@ -24,6 +27,10 @@ var Game = {
         game.load.image('cap', 'assets/images/arrowCap_small.png');
         game.load.image('apple', './assets/images/apple.png');
         game.load.image('sida', './assets/images/sida.png');
+                game.load.image('malus', './assets/images/malus.png');
+                        game.load.image('switch', './assets/images/switchLR.png');
+
+
         neighborsSprites = [];
 
 
@@ -76,6 +83,8 @@ var Game = {
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
         apple = game.add.sprite(CENTER_WORLD_X, CENTER_WORLD_Y, 'apple');
         this.generateObstacles();
+        this.generateMalus();
+        this.generateSwitchMalus();
         game.physics.enable([balloon, apple, mapCenter, neighborsSprites], Phaser.Physics.ARCADE);
         //  console.log("Angle : " + game.physics.arcade.angleBetween(mapCenter, balloon));
     }
@@ -89,6 +98,7 @@ var Game = {
         if (!game.device.desktop) {
             this.checkSmartphoneControl();
         }
+        this.switchMalusCollision();
         if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
             this.moveChecker();
         }
@@ -104,6 +114,7 @@ var Game = {
             speed--;
             balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
         }
+        this.malusCollision();
         game.physics.arcade.velocityFromAngle(balloon.angle, INITIAL_SPEED + SPEED_MULTIPLICATOR * speed, balloon.body.velocity);
         this.wallCollision();
         cap.rotation = game.physics.arcade.angleBetween(cap, mapCenter);
@@ -147,10 +158,12 @@ var Game = {
     }
     , moveChecker: function () {
         if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-            balloon.body.angularVelocity = -ROTATE_SPEED;
+            if(switchLR){            balloon.body.angularVelocity = ROTATE_SPEED;
+}else {balloon.body.angularVelocity = -ROTATE_SPEED;}
         }
         else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-            balloon.body.angularVelocity = ROTATE_SPEED;
+            if(switchLR){            balloon.body.angularVelocity = -ROTATE_SPEED;
+}else {balloon.body.angularVelocity = ROTATE_SPEED;}
         }
     }
     , wallCollision: function () {
@@ -185,6 +198,35 @@ var Game = {
         player.speed = speed;
         player.sendPosition();
         //  console.log("SENT");
+    },generateMalus : function(){
+        malusGroup = game.add.group();
+        malusGroup.enableBody = true;
+        for (var i = 0; i < NB_MALUS; i++) {
+            var malus = malusGroup.create(this.getRandomInt(CENTER_WORLD_X - RAYON, CENTER_WORLD_X + RAYON), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'malus');
+            malus.body.immovable = true;
+            game.physics.enable([malus], Phaser.Physics.ARCADE);
+            malus.body.setCircle(200 / 2, (-200 / 2 + 0.5 * malus.width / malus.scale.x), (-200 / 2 + 0.5 * malus.height / malus.scale.y));
+            malus.scale.set(WORLD_SCALE);
+        }
+    },malusCollision : function(){
+         game.physics.arcade.overlap(balloon, malusGroup, function () {
+             speed=speed/2;
+              balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
+        }, null, this);
+    },generateSwitchMalus : function(){
+        switchGroup = game.add.group();
+        switchGroup.enableBody = true;
+        for (var i = 0; i < NB_SWITCH_MALUS; i++) {
+            var switchLR = switchGroup.create(this.getRandomInt(CENTER_WORLD_X - RAYON, CENTER_WORLD_X + RAYON), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'switch');
+            switchLR.body.immovable = true;
+            game.physics.enable([switchLR], Phaser.Physics.ARCADE);
+            switchLR.body.setCircle(200 / 2, (-200 / 2 + 0.5 * switchLR.width / switchLR.scale.x), (-200 / 2 + 0.5 * switchLR.height / switchLR.scale.y));
+            switchLR.scale.set(WORLD_SCALE);
+        }
+    }, switchMalusCollision : function(){
+       game.physics.arcade.overlap(balloon, switchGroup, function () {
+                switchLR = !switchLR;
+        }, null, this);
     }
     , generateBalloon: function () {
         var min_x, max_x, min_y, max_y;
