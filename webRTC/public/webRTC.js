@@ -31,7 +31,6 @@ function sendMessage() {
     return false
 }
 
-
 function sendData(data, dataChannel) {
     if (data) {
         if (dataChannel!=null){
@@ -56,3 +55,6 @@ function sendNegotiationSwitchHost(type, sdp, sender, receiver, dataChannel) {
     sendData(json,dataChannel);
 }
 
+if (navigator.webkitGetUserMedia) {
+    RTCPeerConnection = webkitRTCPeerConnection;
+}
