@@ -82,7 +82,7 @@ let Host = function (name) {
                             console.log("RECEIVED : " + data.message);
                             let idUserDatachannel = createID(host.getName(), data.user);
                             let userDatachannel = host.getDataChannelByName(idUserDatachannel);
-                            if (userDatachannel.readyState == "open") {
+                            if (userDatachannel!=null && userDatachannel.readyState == "open") {
                                 host.getNeighbours(data.message);
                                 const data2 = {
                                     "classement": 0,
@@ -92,7 +92,7 @@ let Host = function (name) {
                                 host.sendData(data2, userDatachannel);
                             }
                             else {
-                                console.warn("the dataChannel " + userDatachannel.label + "is not in open state");
+                                console.warn("the dataChannel " + idUserDatachannel + "is null or not in open state");
                             }
                             if (host.waitingChangingHostList.length == 0) {
                                 host.verifSwitchHost(data.message.angle, data.message.radius, playerName);
