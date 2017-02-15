@@ -13,7 +13,7 @@ const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
 const NB_OBSTACLES = 0;
 const DEBUG = true;
-const UPDATE_DELAY = 50;
+const UPDATE_DELAY = 20;
 var exist = false;
 var Game = {
     preload: function () {
