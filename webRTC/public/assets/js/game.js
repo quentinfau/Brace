@@ -7,6 +7,7 @@ const MAX_PLAYER_SPEED = 1000
 const INITIAL_SPEED = 634
     , SPEED_MULTIPLICATOR = 35;
 const ROPE_SPEED = 10;
+const  WORLD_SCALE = 0.50;
 const DIAMETER = 16000;
 const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
@@ -15,6 +16,7 @@ const NB_OBSTACLES = 0;
 const DEBUG = true;
 const UPDATE_DELAY = 20;
 var exist = false;
+var tileSprite;
 var Game = {
     preload: function () {
         game.load.spritesheet('balloon', './assets/images/balloon_animated_small.png', 100, 50);
@@ -23,8 +25,18 @@ var Game = {
         game.load.image('apple', './assets/images/apple.png');
         game.load.image('sida', './assets/images/sida.png');
         neighborsSprites = [];
+
+
+         game.scale.maxWidth = 800;
+        game.scale.maxHeight = 600;
+        game.scale.width = 800;
+        game.scale.height = 600;
+
+    //  Then we tell Phaser that we want it to scale up to whatever the browser can handle, but to do it proportionally
+    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     }
     , create: function () {
+
         if (!game.device.desktop) {
             swipe = new Swipe(this.game);
         }
@@ -37,7 +49,7 @@ var Game = {
         mapCenter = new Phaser.Point(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
         cursors = game.input.keyboard.createCursorKeys(); // Setup des contrôles PC
         map = new Phaser.Circle(CENTER_WORLD_X, CENTER_WORLD_Y, DIAMETER);
-        game.add.tileSprite(0, 0, WORLD_WIDTH, WORLD_HEIGHT, 'background');
+        tileSprite = game.add.tileSprite(0, 0, WORLD_WIDTH, WORLD_HEIGHT, 'background');
         graphics = game.add.graphics(0, 0);
         graphics.lineStyle(20, 0x00ff00, 30);
         graphics.drawCircle(map.x, map.y, map.diameter);
@@ -59,6 +71,8 @@ var Game = {
         cap.cameraOffset.setTo(35, 40);
         this.generateBalloon();
         game.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+//        game.camera.width = 1000;
+//        game.camera.height = 1000;
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
         apple = game.add.sprite(CENTER_WORLD_X, CENTER_WORLD_Y, 'apple');
         this.generateObstacles();
@@ -111,6 +125,13 @@ var Game = {
         });
         updateDelay++;
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
+
+
+    // set our world scale as needed
+    balloon.scale.set(WORLD_SCALE);
+    apple.scale.set(WORLD_SCALE);
+    tileSprite.tileScale.set(WORLD_SCALE);
+
 	    if(player.winner != null) {
         	if(player.winner == "winner") {
         		game.state.start('Game_Done');
@@ -208,6 +229,7 @@ var Game = {
             obstacle.body.immovable = true;
             game.physics.enable([obstacle], Phaser.Physics.ARCADE);
             obstacle.body.setCircle(200 / 2, (-200 / 2 + 0.5 * obstacle.width / obstacle.scale.x), (-200 / 2 + 0.5 * obstacle.height / obstacle.scale.y));
+            obstacle.scale.set(WORLD_SCALE);
         }
     }
     , obstacleCollision: function () {
