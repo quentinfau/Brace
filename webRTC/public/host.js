@@ -415,6 +415,7 @@ let Host = function (name) {
         }
         else {
             finalizeConnection(data.message.data);
+            offerSent = false;
         }
     };
     this.processConnectionMessage = function (data) {
