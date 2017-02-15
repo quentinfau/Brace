@@ -161,6 +161,11 @@ let Host = function (name) {
                     case "answer" :
                         host.processAnswerMessage(data);
                         break;
+                    case "finishGame" :
+                    	host.endGame(host.PHSon1);
+                    	host.endGame(host.PHSon2);
+                    	host.sendToPlayerList(data.message.winner);
+                    	break;
                     default :
                 }
             }
@@ -403,6 +408,7 @@ let Host = function (name) {
             sendData(data.message, host.getFamilyDataChannelByName(data.message.to));
             host.removeDataChannel(host.getDataChannelByName(createID(host.getName(), data.message.from)));
             host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(data.message.from));
+            host.neighbours.splice(host.neighbours.indexOf(data.message.from));
             offerSent = false;
         }
         else {
@@ -420,6 +426,28 @@ let Host = function (name) {
         else {
             //data.message.player won the game
             console.log(data.message.player + " won the game");
+            host.endGame(host.PHSon1,data.message.player);
+        	host.endGame(host.PHSon2,data.message.player);
         }
+    }
+    
+    this.endGame = function (PHSon,winner) {
+    	const data = {
+            "winner": winner,
+    		"type": "finishGame"
+    	};
+    	if(PHSon != null) {
+    		host.sendData(data,PHSon);
+    	}
+    }
+    
+    this.sendToPlayerList = function (winner) {
+    	host.dataChannels.forEach( function (dataChannel) {
+    		const data = {
+    	        "winner": winner,
+    			"type": "finishGame"
+    	    };
+    		host.sendData(data,dataChannel);
+    	});
     }
 };

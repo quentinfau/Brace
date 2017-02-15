@@ -1,15 +1,16 @@
 let Player = function (name) {
 
-    this.neighborhood = [];
-    this.name = name;
-    this.dataChannel = null;
-    this.radius = 0;
-    this.angle = 0;
-    this.speed = 0;
-    this.coordonneX = 0;
-    this.coordonneY = 0;
-    this.rank = 1;
-    this.direction = 0;
+	this.neighborhood = [] ;
+	this.name = name;
+	this.dataChannel = null;
+	this.radius = 0;
+	this.angle = 0;
+	this.speed = 0;
+	this.coordonneX = 0;
+	this.coordonneY = 0;
+	this.rank = 1 ;
+	this.direction = 0;
+	this.winner = null;
     this.isChangingHost = false;
 
     console.log('Nouvel objet Player créé : ' + name);
@@ -69,6 +70,10 @@ let Player = function (name) {
     this.getRank = function () {
         return rank;
     };
+    
+    this.getWinner = function () {
+        return winner;
+    };
 
     this.sendPosition = function () {
         if (!player.isChangingHost) {
@@ -107,16 +112,16 @@ let Player = function (name) {
                         player.neighborhood = data.message.voisinage;
                         break;
                     case "initPosition" :
-                        let min = data.message.angleD;
-                        let max = data.message.angleF;
-                        let angleStart = Math.floor(Math.random() * (max - min + 1)) + min;
-                        player.angle = angleStart;
-                        player.radius = 7800;
-                        let angleRadian = angleStart * Math.PI / 180;
-                        console.log(angleRadian);
-                        player.coordonneX = player.radius * Math.cos(angleRadian);
-                        player.coordonneY = player.radius * Math.sin(angleRadian);
-                        console.log(player);
+                    	let min = data.message.angleD;
+                    	let max = data.message.angleF;
+                    	let angleStart = Math.floor(Math.random() * (max-min+1)) + min;
+                    	player.angle = angleStart;
+                    	player.radius = 7800;
+                    	let angleRadian = angleStart * Math.PI / 180;
+                    	player.coordonneX = player.radius * Math.cos(angleRadian);
+                    	player.coordonneY = player.radius * Math.sin(angleRadian);
+                    	console.log("Joueur à t0 ");
+                    	console.log(player);
                         break;
                     case "offer" :
                         console.log("switching host from " + remote + " to " + data.message.from);
@@ -124,9 +129,15 @@ let Player = function (name) {
                         remote = data.message.from;
                         player.receiveConnection(data.message.data, "switchHost");
                         break;
+                    case "finishGame":
+                    	if(data.message.winner == player.name) {
+                    		player.winner = "winner";
+                    	} else {
+                    		player.winner = "looser";
+                    	}
+                    	break;
                     default :
                         break;
-
                 }
             }
         };
