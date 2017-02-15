@@ -8,7 +8,7 @@ let pcLocal;
 let dc1 = null;
 let dc2 = null;
 
-const cfg = {'iceServers': [{'url': "stun:stun2.l.google.com:19302"}]},
+const cfg = {'iceServers': [{'url': "stun:stun3.l.google.com:19302"}]},
     con = {'optional': [{'DtlsSrtpKeyAgreement': true}]};
 
 const sdpConstraints = {
