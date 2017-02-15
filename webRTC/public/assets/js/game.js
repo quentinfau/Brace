@@ -73,7 +73,7 @@ var Game = {
         balloon.body.angularVelocity = 0;
         this.obstacleCollision();
         if (!game.device.desktop) {
-            checkSmartphoneControl();
+            this.checkSmartphoneControl();
         }
         if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
             this.moveChecker();
