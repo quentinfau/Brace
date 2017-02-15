@@ -138,7 +138,6 @@ let Player = function (name) {
                     	break;
                     default :
                         break;
-
                 }
             }
         };
