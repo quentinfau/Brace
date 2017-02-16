@@ -5,6 +5,7 @@ let Host = function (name) {
     this.playerList = {};
     this.waitingChangingHostList = [];
     this.name = name;
+    this.myTimeout = null;
     this.nbJoueur = 1;
     this.indicePremierJoueur = 1;
     this.indiceDernierJoueur = 1;
@@ -133,6 +134,9 @@ let Host = function (name) {
                 };
                 pcLocal.onerror = function (e) {
                     console.error("ERROR " + e);
+                };
+                pcLocal.onchange = function (e) {
+                    console.error("CHANGE " + e);
                 };
                 pcLocal.createOffer(function (desc) {
                     pcLocal.setLocalDescription(desc, function () {
@@ -328,6 +332,7 @@ let Host = function (name) {
     this.switchToHost = function (newHostDataChannel, player, familyType) {
         console.log("switching host of " + player + " to " + familyType);
         host.waitingChangingHostList.push(player);
+        host.myTimeout = setTimeout(host.functiontest(player),10000);
         const data = {
             "type": "connection",
             "player": player,
@@ -482,5 +487,12 @@ let Host = function (name) {
             };
             host.sendData(data, dataChannel);
         });
+    };
+
+    this.functiontest = function (player) {
+        console.log("functpnYest set timeout " + player);
+        if (host.waitingChangingHostList[0] == player){
+            host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(player));
+        }
     }
 };
