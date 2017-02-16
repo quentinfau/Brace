@@ -134,6 +134,9 @@ let Host = function (name) {
                 pcLocal.onerror = function (e) {
                     console.error("ERROR " + e);
                 };
+                pcLocal.onchange = function (e) {
+                    console.error("CHANGE " + e);
+                };
                 pcLocal.createOffer(function (desc) {
                     pcLocal.setLocalDescription(desc, function () {
                     }, function () {
