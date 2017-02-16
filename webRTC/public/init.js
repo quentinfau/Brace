@@ -41,6 +41,7 @@ function connectToWebSocket(name) {
         fileref.setAttribute("src",'counter.js');
         document.getElementsByTagName("footer")[0].appendChild(fileref);
     	document.getElementById("compte_a_rebours").setAttribute("style","display:block");
+    	//document.getElementById("brace").setAttribute("style","display:block");
     });
     socket.on('negotiationMessage', function (data) {
         console.log("received message from the server : " + data);
