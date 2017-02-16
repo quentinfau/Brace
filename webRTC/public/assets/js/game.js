@@ -10,7 +10,7 @@ const INITIAL_SPEED = 634
     , SPEED_MULTIPLICATOR = 35;
 const ROPE_SPEED = 10;
 const  WORLD_SCALE = 0.50;
-const DIAMETER = 400000;
+const DIAMETER = 16000;
 const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
@@ -27,10 +27,9 @@ var skin ;
 console.log("Skin : " + skin);
 var Game = {
     preload: function () {
-    	
-    	skin = $( "#skin option:selected" ).text();;;
-    	
-    	game.load.spritesheet('Bleu', './assets/images/balloon_animated_small.png', 100, 50);
+
+skin = $("#skin option:selected").text();
+        game.load.spritesheet('Bleu', './assets/images/balloon_animated_small.png', 100, 50);
     	game.load.spritesheet('Rouge', './assets/images/balloon_animated_small_Rouge.png', 100, 50);
     	game.load.spritesheet('Rose', './assets/images/balloon_animated_small_Rose.png', 100, 50);
     	game.load.spritesheet('Vert', './assets/images/balloon_animated_small_Vert.png', 100, 50);

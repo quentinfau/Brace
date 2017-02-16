@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const math = require('mathjs');
 
 const PORT = process.env.PORT || 3000;
 
@@ -8,16 +7,11 @@ const server = express()
     .use(express.static(__dirname + '/public'))
     .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
-
 const io = require('socket.io').listen(server);
 
 const socketList = [];
 let listPlayer = [];
 let listPlayerHost = [];
-const listObstacle = [];
-const nbZone = 1;
-const diametre = 400000;
-const nbPlayerByHost = 2;
 
 io.sockets.on('connection', function (socket) {
     console.log('User connected to server !');
@@ -49,7 +43,6 @@ io.sockets.on('connection', function (socket) {
         console.log('Got socket message: ' + data);
         const msg = JSON.parse(data);
         for (let i = 0; i < socketList.length; i++) {
-            // send to everybody on the site
             if (socketList[i].user == msg.to) {
                 msg.id = socket.id;
                 socketList[i].emit('negotiationMessage', msg);
@@ -70,7 +63,7 @@ io.sockets.on('connection', function (socket) {
             if (i < 7) {
                 listPlayerHost.push(name);
             }
-            initPlayer(name);
+            listPlayer.push(name);
         }
         listPlayer.forEach(function (playerName) {
             getSocketByName(playerName).emit("createPlayer", playerName);
@@ -80,8 +73,8 @@ io.sockets.on('connection', function (socket) {
         });
 
         const hostId = listPlayerHost.length - 1;
-        initHost(listPlayerHost[hostId], getSubListPlayer(hostId));
-        
+        initHost(hostId, getSubListPlayer(hostId));
+
         listPlayer.forEach(function (player) {
             getSocketByName(player).emit("removeStart");
         });
@@ -90,7 +83,7 @@ io.sockets.on('connection', function (socket) {
     socket.on("initHostOver", function (name) {
         const hostId = listPlayerHost.indexOf(name) - 1;
         if (hostId >= 0) {
-            initHost(listPlayerHost[hostId], getSubListPlayer(hostId));
+            initHost(hostId, getSubListPlayer(hostId));
         } else {
             console.log("all host have finished their init");
             listPlayerHost.forEach(function (host) {
@@ -145,81 +138,65 @@ function removePlayerOrPlayerHost(username_disconnected) {
 }
 
 function initHost(host, listPlayer) {
-    let family = getFamily(host);
-    let zone = getZone(host);
+    let family = getFamily(host + 1);
+    let zone = getZone(host + 1);
     const data = {
         "playerList": listPlayer,
-        "user": host,
         "family": family,
         "zone": zone
     };
-    getSocketByName(host).emit("initPlayerHost", JSON.stringify(data));
+    getSocketByName(listPlayerHost[host]).emit("initPlayerHost", JSON.stringify(data));
 }
 
 function getFamily(host) {
     switch (host) {
-        case '1' :
+        case 1 :
             return {
-                "PHLeftB": "",
-                "PHRightB": "",
                 "PHFather": "god",
                 "PHSon1": listPlayer[1],
                 "PHSon2": listPlayer[2]
             };
             break;
-        case '2' :
+        case 2 :
             return {
-                // "PHLeftB": listPlayer[2],
                 "PHRightB": listPlayer[2],
-                // "PHFather": listPlayer[0],
                 "PHSon1": listPlayer[3],
                 "PHSon2": listPlayer[4]
             };
             break;
-        case '3' :
+        case 3 :
             return {
-                // "PHLeftB": listPlayer[1],
                 "PHRightB": listPlayer[1],
-                //"PHFather": listPlayer[0],
                 "PHSon1": listPlayer[5],
                 "PHSon2": listPlayer[6]
             };
             break;
-        case '4' :
+        case 4 :
             return {
-                "PHRightB": listPlayer[6],
-                "PHSon1": "",
-                "PHSon2": ""
+                "PHRightB": listPlayer[6]
             };
             break;
-        case '5' :
+        case 5 :
             return {
-                "PHRightB": listPlayer[3],
-                "PHSon1": "",
-                "PHSon2": ""
+                "PHRightB": listPlayer[3]
             };
             break;
-        case '6' :
+        case 6 :
             return {
-                "PHRightB": listPlayer[4],
-                "PHSon1": "",
-                "PHSon2": ""
+                "PHRightB": listPlayer[4]
             };
             break;
-        case '7' :
+        case 7 :
             return {
-                "PHRightB": listPlayer[5],
-                "PHSon1": "",
-                "PHSon2": ""
+                "PHRightB": listPlayer[5]
             };
             break;
     }
 }
 
-
 function getZone(host) {
     switch (host) {
-        case '1' :
+        case 1 :
             return {
                 "distanceD": 0,
                 "distanceF": 1000,
@@ -227,7 +204,7 @@ function getZone(host) {
                 "angleF": 360
             };
             break;
-        case '2' :
+        case 2 :
             return {
                 "distanceD": 1000,
                 "distanceF": 50000,
@@ -235,7 +212,7 @@ function getZone(host) {
                 "angleF": 180
             };
             break;
-        case '3' :
+        case 3 :
             return {
                 "distanceD": 1000,
                 "distanceF": 50000,
@@ -243,7 +220,7 @@ function getZone(host) {
                 "angleF": 360
             };
             break;
-        case '4' :
+        case 4 :
             return {
                 "distanceD": 50000,
                 "distanceF": 200000,
@@ -251,7 +228,7 @@ function getZone(host) {
                 "angleF": 90
             };
             break;
-        case '5' :
+        case 5 :
             return {
                 "distanceD": 50000,
                 "distanceF": 200000,
@@ -259,7 +236,7 @@ function getZone(host) {
                 "angleF": 180
             };
             break;
-        case '6' :
+        case 6 :
             return {
                 "distanceD": 50000,
                 "distanceF": 200000,
@@ -267,7 +244,7 @@ function getZone(host) {
                 "angleF": 270
             };
             break;
-        case '7' :
+        case 7 :
             return {
                 "distanceD": 50000,
                 "distanceF": 200000,
@@ -278,23 +255,11 @@ function getZone(host) {
     }
 }
 
-
 function getSocketByName(name) {
     for (let i = 0; i < socketList.length; i++) {
-        // send to everybody on the site
         if (socketList[i].user == name) {
             return socketList[i];
         }
     }
-}
-
-function initPlayer(username) {
-    /*	let player = new Player(username);
-     let ramdomAngle = math.randomInt(0,359);
-     player.angle = ramdomAngle;
-     player.radius = 200000;
-     player.coordonneX = math.multiply(200000,math.cos(ramdomAngle));
-     player.coordonneY = math.multiply(200000,math.sin(ramdomAngle));*/
-    listPlayer.push(username);
 }
 
