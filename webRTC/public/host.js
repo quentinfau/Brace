@@ -490,6 +490,7 @@ let Host = function (name) {
     };
 
     this.functiontest = function (player) {
+        console.log("functpnYest set timeout " + player);
         if (host.waitingChangingHostList[0] == player){
             host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(player));
         }
