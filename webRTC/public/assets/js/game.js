@@ -14,10 +14,12 @@ const DIAMETER = 16000;
 const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
+
 const NB_OBSTACLES = 100;
 const NB_MALUS = 100;
 const NB_SWITCH_MALUS = 100;
-const DEBUG = true;
+const DEBUG = false;
+
 const UPDATE_DELAY = 20;
 var exist = false;
 var tileSprite;
@@ -28,8 +30,9 @@ console.log("Skin : " + skin);
 var Game = {
     preload: function () {
 
-skin = $("#skin option:selected").text();
-        game.load.spritesheet('Bleu', './assets/images/balloon_animated_small.png', 100, 50);
+    	skin = $( "#skin option:selected" ).text();;;
+
+    	game.load.spritesheet('Bleu', './assets/images/balloon_animated_small.png', 100, 50);
     	game.load.spritesheet('Rouge', './assets/images/balloon_animated_small_Rouge.png', 100, 50);
     	game.load.spritesheet('Rose', './assets/images/balloon_animated_small_Rose.png', 100, 50);
     	game.load.spritesheet('Vert', './assets/images/balloon_animated_small_Vert.png', 100, 50);
@@ -65,6 +68,8 @@ skin = $("#skin option:selected").text();
         this.scale.pageAlignVertically = true;
         this.scale.updateLayout(true);
         
+        player.skin = skin;
+
         updateDelay = 0;
         speed = 1; // La vitesse du joueur
         mapCenter = new Phaser.Point(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
@@ -237,7 +242,9 @@ skin = $("#skin option:selected").text();
         player.radius = rayon;
         player.speed = speed;
         player.sendPosition();
-    },generateMalus : function(){
+    },
+
+    generateMalus : function(){
         malusGroup = game.add.group();
         malusGroup.enableBody = true;
         for (var i = 0; i < NB_MALUS; i++) {
@@ -247,7 +254,9 @@ skin = $("#skin option:selected").text();
             malus.body.setCircle(200 / 2, (-200 / 2 + 0.5 * malus.width / malus.scale.x), (-200 / 2 + 0.5 * malus.height / malus.scale.y));
             malus.scale.set(WORLD_SCALE);
         }
-    },malusCollision : function(){
+    },
+
+    malusCollision : function(){
          game.physics.arcade.overlap(balloon, malusGroup, function () {
               if(this.getRandomInt(1,2)%2 == 0){
               speed=speed/2;}else{
@@ -255,7 +264,9 @@ skin = $("#skin option:selected").text();
               }
               balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
         }, null, this);
-    },generateSwitchMalus : function(){
+    },
+
+    generateSwitchMalus : function(){
         switchGroup = game.add.group();
         switchGroup.enableBody = true;
         for (var i = 0; i < NB_SWITCH_MALUS; i++) {
@@ -265,13 +276,18 @@ skin = $("#skin option:selected").text();
             switchLR.body.setCircle(200 / 2, (-200 / 2 + 0.5 * switchLR.width / switchLR.scale.x), (-200 / 2 + 0.5 * switchLR.height / switchLR.scale.y));
             switchLR.scale.set(WORLD_SCALE);
         }
-    }, switchMalusCollision : function(){
+    },
+
+    switchMalusCollision : function(){
        game.physics.arcade.overlap(balloon, switchGroup, function () {
                 switchLR = !switchLR;
         }, null, this);
-    }
-    , generateBalloon: function () {
-        balloon = game.add.sprite(player.coordonneX + 200000, player.coordonneY + 200000,skin);
+    },
+
+    generateBalloon: function () {
+
+        balloon = game.add.sprite(player.coordonneX + RAYON, player.coordonneY + RAYON,player.skin);
+
         balloon.anchor.setTo(0.5, 0.5);
         game.physics.enable(balloon, Phaser.Physics.ARCADE);
         balloon.body.setCircle(50 / 2, 25, 0);
@@ -279,10 +295,10 @@ skin = $("#skin option:selected").text();
         balloon.animations.add('move', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], ROPE_SPEED, true);
         balloon.animations.play('move');
         balloon.rotation = game.physics.arcade.angleBetween(balloon, mapCenter);
-        var style = { font: "30px Arial", fill: "#000000" };
-        var nameSprite = this.game.add.text(0, 0, player.name, style);
-        nameSprite.rotation=0;
-        balloon.addChild(nameSprite);
+//        var style = { font: "30px Arial", fill: "#000000" };
+//        var nameSprite = this.game.add.text(0, 0, player.name, style);
+//        nameSprite.rotation=0;
+//        balloon.addChild(nameSprite);
     }
     , getRandomInt: function (min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -351,10 +367,10 @@ skin = $("#skin option:selected").text();
         b.scale.set(WORLD_SCALE);
         b.oldX = p.x;
         b.oldY = p.y;
-        var style = { font: "30px Arial", fill: "#000000" };
-        var nameSprite = this.game.add.text(0, 0, p.name, style);
-        nameSprite.rotation=0;
-        b.addChild(nameSprite);
+//        var style = { font: "30px Arial", fill: "#000000" };
+//        var nameSprite = this.game.add.text(0, 0, p.name, style);
+//        nameSprite.rotation=0;
+//        b.addChild(nameSprite);
 
         neighborsSprites.push(b);
         // this.updateNeighbors(p);
