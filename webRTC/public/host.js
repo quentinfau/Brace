@@ -67,11 +67,18 @@ let Host = function (name) {
                 };
                 dc1 = pcLocal.createDataChannel(createID(host.getName(), playerName), {reliable: true});
                 dc1.onopen = function () {
-                    if (pcLocal.iceConnectionState == "completed") {
-                        console.log("sending to " + remote + " that the connection was successful");
-                    }
-                    else if (pcLocal.iceConnectionState == "failed"){
-                        console.log("sending to " + remote + " that the connection failed");
+                    if (familyType == "switchHost") {
+                        if (pcLocal.iceConnectionState == "completed") {
+                            console.log("sending to " + remote + " that the connection was successful");
+                            const data = {
+                                "type": "connectionSuccessful",
+                                "from": host.getRemote(dc1.label)
+                            };
+                            sendData(data, host.getFamilyDataChannelByName(remote));
+                        }
+                        else if (pcLocal.iceConnectionState == "failed") {
+                            console.log("sending to " + remote + " that the connection failed");
+                        }
                     }
                     console.log('Connected');
                     let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
@@ -114,7 +121,7 @@ let Host = function (name) {
                             host.processAnswerMessage(data);
                             break;
                         case "connectionSuccessful" :
-                            // host.processAnswerMessage(data);
+                            host.processConnectionSuccessfulMessage(data);
                             break;
                         default :
                             break;
@@ -168,6 +175,9 @@ let Host = function (name) {
                         break;
                     case "answer" :
                         host.processAnswerMessage(data);
+                        break;
+                    case "connectionSuccessful" :
+                        host.processConnectionSuccessfulMessage(data);
                         break;
                     case "finishGame" :
                         host.endGame(host.PHSon1);
@@ -283,7 +293,6 @@ let Host = function (name) {
     this.getZone = function () {
         return this.zone;
     };
-
 
     this.getFamilyDataChannelByName = function (name) {
         let dataChannel;
@@ -419,17 +428,21 @@ let Host = function (name) {
         if (data.message.to != host.getName()) {
             sendData(data.message, host.getFamilyDataChannelByName(data.message.to));
             //////////////////////////////////////////////////////////////////////
-            host.removeDataChannel(host.getDataChannelByName(createID(host.getName(), data.message.from)));
-            host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(data.message.from));
+            //  host.removeDataChannel(host.getDataChannelByName(createID(host.getName(), data.message.from)));
+            //  host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(data.message.from));
             //////////////////////////////////////////////////////////////////////
             host.neighbours.splice(host.neighbours.indexOf(data.message.from));
             offerSent = false;
         }
         else {
-            remote = data.message.from;
+            remote = data.user;
             finalizeConnection(data.message.data);
             offerSent = false;
         }
+    };
+    this.processConnectionSuccessfulMessage = function (data) {
+        host.removeDataChannel(host.getDataChannelByName(createID(host.getName(), data.message.from)));
+        host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(data.message.from));
     };
     this.processConnectionMessage = function (data) {
         if (!host.god) {
