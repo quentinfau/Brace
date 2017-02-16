@@ -341,7 +341,7 @@ var Game = {
         );
     }
     , createNeighbor: function (p) {
-        var b = game.add.sprite(p.x, p.y, p.skin);
+        var b = game.add.sprite(p.x, p.y, skin);
         b.rotation = p.angle;
         b.anchor.setTo(0.5, 0.5);
         game.physics.enable(b, Phaser.Physics.ARCADE);
