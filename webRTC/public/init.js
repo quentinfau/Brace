@@ -117,6 +117,7 @@ startGame.onclick = function () {
 };
 
 setid.onclick = function () {
+    document.getElementById('setid').style.display='none';
     let name = $("#user").val();
     connectToWebSocket(name);
     $("#setid").attr('style','display:none');

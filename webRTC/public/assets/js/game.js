@@ -14,10 +14,12 @@ const DIAMETER = 400000;
 const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
+
 const NB_OBSTACLES = 100;
 const NB_MALUS = 100;
 const NB_SWITCH_MALUS = 100;
-const DEBUG = true;
+const DEBUG = false;
+
 const UPDATE_DELAY = 20;
 var exist = false;
 var tileSprite;
@@ -27,9 +29,9 @@ var skin ;
 console.log("Skin : " + skin);
 var Game = {
     preload: function () {
-    	
+
     	skin = $( "#skin option:selected" ).text();;;
-    	
+
     	game.load.spritesheet('Bleu', './assets/images/balloon_animated_small.png', 100, 50);
     	game.load.spritesheet('Rouge', './assets/images/balloon_animated_small_Rouge.png', 100, 50);
     	game.load.spritesheet('Rose', './assets/images/balloon_animated_small_Rose.png', 100, 50);
@@ -67,7 +69,7 @@ var Game = {
         this.scale.updateLayout(true);
         
         player.skin = skin;
-        
+
         updateDelay = 0;
         speed = 1; // La vitesse du joueur
         mapCenter = new Phaser.Point(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
@@ -293,10 +295,10 @@ var Game = {
         balloon.animations.add('move', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], ROPE_SPEED, true);
         balloon.animations.play('move');
         balloon.rotation = game.physics.arcade.angleBetween(balloon, mapCenter);
-        var style = { font: "30px Arial", fill: "#000000" };
-        var nameSprite = this.game.add.text(0, 0, player.name, style);
-        nameSprite.rotation=0;
-        balloon.addChild(nameSprite);
+//        var style = { font: "30px Arial", fill: "#000000" };
+//        var nameSprite = this.game.add.text(0, 0, player.name, style);
+//        nameSprite.rotation=0;
+//        balloon.addChild(nameSprite);
     }
     , getRandomInt: function (min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -365,10 +367,10 @@ var Game = {
         b.scale.set(WORLD_SCALE);
         b.oldX = p.x;
         b.oldY = p.y;
-        var style = { font: "30px Arial", fill: "#000000" };
-        var nameSprite = this.game.add.text(0, 0, p.name, style);
-        nameSprite.rotation=0;
-        b.addChild(nameSprite);
+//        var style = { font: "30px Arial", fill: "#000000" };
+//        var nameSprite = this.game.add.text(0, 0, p.name, style);
+//        nameSprite.rotation=0;
+//        b.addChild(nameSprite);
 
         neighborsSprites.push(b);
         // this.updateNeighbors(p);
