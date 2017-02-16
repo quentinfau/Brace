@@ -76,6 +76,7 @@ let Player = function (name) {
     };
 
     this.sendPosition = function () {
+        //////////////////////////////////////////////////////////////////////
         if (!player.isChangingHost) {
             const data = {
                 "name": player.getName(),

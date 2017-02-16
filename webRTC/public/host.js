@@ -67,6 +67,12 @@ let Host = function (name) {
                 };
                 dc1 = pcLocal.createDataChannel(createID(host.getName(), playerName), {reliable: true});
                 dc1.onopen = function () {
+                    if (pcLocal.iceConnectionState == "completed") {
+                        console.log("sending to " + remote + " that the connection was successful");
+                    }
+                    else if (pcLocal.iceConnectionState == "failed"){
+                        console.log("sending to " + remote + " that the connection failed");
+                    }
                     console.log('Connected');
                     let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
                     offerSent = false;
@@ -82,7 +88,7 @@ let Host = function (name) {
                             console.log("RECEIVED : " + data.message);
                             let idUserDatachannel = createID(host.getName(), data.user);
                             let userDatachannel = host.getDataChannelByName(idUserDatachannel);
-                            if (userDatachannel!=null && userDatachannel.readyState == "open") {
+                            if (userDatachannel != null && userDatachannel.readyState == "open") {
                                 host.getNeighbours(data.message);
                                 const data2 = {
                                     "classement": 0,
@@ -106,6 +112,9 @@ let Host = function (name) {
                             break;
                         case "answer" :
                             host.processAnswerMessage(data);
+                            break;
+                        case "connectionSuccessful" :
+                            // host.processAnswerMessage(data);
                             break;
                         default :
                             break;
@@ -409,12 +418,15 @@ let Host = function (name) {
     this.processAnswerMessage = function (data) {
         if (data.message.to != host.getName()) {
             sendData(data.message, host.getFamilyDataChannelByName(data.message.to));
+            //////////////////////////////////////////////////////////////////////
             host.removeDataChannel(host.getDataChannelByName(createID(host.getName(), data.message.from)));
             host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(data.message.from));
+            //////////////////////////////////////////////////////////////////////
             host.neighbours.splice(host.neighbours.indexOf(data.message.from));
             offerSent = false;
         }
         else {
+            remote = data.message.from;
             finalizeConnection(data.message.data);
             offerSent = false;
         }
