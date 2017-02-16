@@ -224,7 +224,7 @@ function getZone(host) {
         case 2 :
             return {
                 "distanceD": 1000,
-                "distanceF": 50000,
+                "distanceF": 3000,
                 "angleD": 0,
                 "angleF": 180
             };
@@ -232,39 +232,39 @@ function getZone(host) {
         case 3 :
             return {
                 "distanceD": 1000,
-                "distanceF": 50000,
+                "distanceF": 3000,
                 "angleD": 180,
                 "angleF": 360
             };
             break;
         case 4 :
             return {
-                "distanceD": 50000,
-                "distanceF": 200000,
+                "distanceD": 3000,
+                "distanceF": 8000,
                 "angleD": 0,
                 "angleF": 90
             };
             break;
         case 5 :
             return {
-                "distanceD": 50000,
-                "distanceF": 200000,
+                "distanceD": 3000,
+                "distanceF": 8000,
                 "angleD": 90,
                 "angleF": 180
             };
             break;
         case 6 :
             return {
-                "distanceD": 50000,
-                "distanceF": 200000,
+                "distanceD": 3000,
+                "distanceF": 8000,
                 "angleD": 180,
                 "angleF": 270
             };
             break;
         case 7 :
             return {
-                "distanceD": 50000,
-                "distanceF": 200000,
+                "distanceD": 3000,
+                "distanceF": 8000,
                 "angleD": 270,
                 "angleF": 360
             };
