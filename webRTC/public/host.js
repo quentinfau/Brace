@@ -5,6 +5,7 @@ let Host = function (name) {
     this.playerList = {};
     this.waitingChangingHostList = [];
     this.name = name;
+    this.timeoutSwitchingHost = null;
     this.nbJoueur = 1;
     this.indicePremierJoueur = 1;
     this.indiceDernierJoueur = 1;
@@ -67,6 +68,19 @@ let Host = function (name) {
                 };
                 dc1 = pcLocal.createDataChannel(createID(host.getName(), playerName), {reliable: true});
                 dc1.onopen = function () {
+                    if (familyType == "switchHost") {
+                        if (pcLocal.iceConnectionState == "completed") {
+                            console.log("sending to " + remote + " that the connection was successful");
+                            const data = {
+                                "type": "connectionSuccessful",
+                                "from": host.getRemote(dc1.label)
+                            };
+                            sendData(data, host.getFamilyDataChannelByName(remote));
+                        }
+                        else if (pcLocal.iceConnectionState == "failed") {
+                            console.log("sending to " + remote + " that the connection failed");
+                        }
+                    }
                     console.log('Connected');
                     let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
                     offerSent = false;
@@ -82,7 +96,7 @@ let Host = function (name) {
                             console.log("RECEIVED : " + data.message);
                             let idUserDatachannel = createID(host.getName(), data.user);
                             let userDatachannel = host.getDataChannelByName(idUserDatachannel);
-                            if (userDatachannel!=null && userDatachannel.readyState == "open") {
+                            if (userDatachannel != null && userDatachannel.readyState == "open") {
                                 host.getNeighbours(data.message);
                                 const data2 = {
                                     "classement": 0,
@@ -107,12 +121,22 @@ let Host = function (name) {
                         case "answer" :
                             host.processAnswerMessage(data);
                             break;
+                        case "connectionSuccessful" :
+                            host.processConnectionSuccessfulMessage(data);
+                            break;
                         default :
                             break;
                     }
                 };
                 dc1.onerror = function (e) {
+                    console.error("ERROR " + e);
                     reject(e)
+                };
+                pcLocal.onerror = function (e) {
+                    console.error("ERROR " + e);
+                };
+                pcLocal.onchange = function (e) {
+                    console.error("CHANGE " + e);
                 };
                 pcLocal.createOffer(function (desc) {
                     pcLocal.setLocalDescription(desc, function () {
@@ -159,6 +183,9 @@ let Host = function (name) {
                         break;
                     case "answer" :
                         host.processAnswerMessage(data);
+                        break;
+                    case "connectionSuccessful" :
+                        host.processConnectionSuccessfulMessage(data);
                         break;
                     case "finishGame" :
                         host.endGame(host.PHSon1);
@@ -275,7 +302,6 @@ let Host = function (name) {
         return this.zone;
     };
 
-
     this.getFamilyDataChannelByName = function (name) {
         let dataChannel;
         if (host.getPHFather() != null && host.getRemote(host.getPHFather().label) == name) {
@@ -306,6 +332,7 @@ let Host = function (name) {
     this.switchToHost = function (newHostDataChannel, player, familyType) {
         console.log("switching host of " + player + " to " + familyType);
         host.waitingChangingHostList.push(player);
+        host.timeoutSwitchingHost = setTimeout(host.removePlayerFromWaitingList,10000,player);
         const data = {
             "type": "connection",
             "player": player,
@@ -409,15 +436,18 @@ let Host = function (name) {
     this.processAnswerMessage = function (data) {
         if (data.message.to != host.getName()) {
             sendData(data.message, host.getFamilyDataChannelByName(data.message.to));
-            host.removeDataChannel(host.getDataChannelByName(createID(host.getName(), data.message.from)));
-            host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(data.message.from));
             host.neighbours.splice(host.neighbours.indexOf(data.message.from));
             offerSent = false;
         }
         else {
+            remote = data.user;
             finalizeConnection(data.message.data);
             offerSent = false;
         }
+    };
+    this.processConnectionSuccessfulMessage = function (data) {
+        host.removeDataChannel(host.getDataChannelByName(createID(host.getName(), data.message.from)));
+        host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(data.message.from));
     };
     this.processConnectionMessage = function (data) {
         if (!host.god) {
@@ -433,7 +463,7 @@ let Host = function (name) {
             host.endGame(host.PHSon1, data.message.player);
             host.endGame(host.PHSon2, data.message.player);
         }
-    }
+    };
 
     this.endGame = function (PHSon, winner) {
         const data = {
@@ -453,5 +483,11 @@ let Host = function (name) {
             };
             host.sendData(data, dataChannel);
         });
+    };
+
+    this.removePlayerFromWaitingList = function (player) {
+        if (host.waitingChangingHostList[0] == player){
+            host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(player));
+        }
     }
 };
