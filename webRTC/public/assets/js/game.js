@@ -13,7 +13,7 @@ const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
 const NB_OBSTACLES = 0;
-const NB_MALUS = 100;
+const NB_MALUS = 200;
 const NB_SWITCH_MALUS = 200;
 const DEBUG = true;
 const UPDATE_DELAY = 20;
@@ -210,7 +210,10 @@ var Game = {
         }
     },malusCollision : function(){
          game.physics.arcade.overlap(balloon, malusGroup, function () {
-             speed=speed/2;
+              if(this.getRandomInt(1,2)%2 == 0){
+              speed=speed/2;}else{
+                  speed = speed*2;
+              }
               balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
         }, null, this);
     },generateSwitchMalus : function(){
@@ -241,8 +244,11 @@ var Game = {
         balloon.body.collideWorldBounds = true;
         balloon.animations.add('move', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], ROPE_SPEED, true);
         balloon.animations.play('move');
-        //            console.log("balloon  x :"+balloon.x+" y : "+balloon.y);
         balloon.rotation = game.physics.arcade.angleBetween(balloon, mapCenter);
+        var style = { font: "30px Arial", fill: "#000000" };
+        var nameSprite = this.game.add.text(0, 0, player.name, style);
+        nameSprite.rotation=0;
+        balloon.addChild(nameSprite);
     }
     , getRandomInt: function (min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -311,8 +317,13 @@ var Game = {
         b.name = p.name;
         b.angle = p.direction;
         b.rotation = p.angle;
+        b.scale.set(WORLD_SCALE);
         b.oldX = p.x;
         b.oldY = p.y;
+        var style = { font: "30px Arial", fill: "#000000" };
+        var nameSprite = this.game.add.text(0, 0, p.name, style);
+        nameSprite.rotation=0;
+        b.addChild(nameSprite);
 
         neighborsSprites.push(b);
         // this.updateNeighbors(p);
