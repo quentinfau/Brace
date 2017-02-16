@@ -332,7 +332,7 @@ let Host = function (name) {
     this.switchToHost = function (newHostDataChannel, player, familyType) {
         console.log("switching host of " + player + " to " + familyType);
         host.waitingChangingHostList.push(player);
-        host.myTimeout = setTimeout(host.functiontest(player),10000);
+        host.myTimeout = setTimeout(host.functiontest,10000,player);
         const data = {
             "type": "connection",
             "player": player,
