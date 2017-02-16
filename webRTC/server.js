@@ -18,6 +18,8 @@ const listObstacle = [];
 const nbZone = 1;
 const diametre = 400000;
 const nbPlayerByHost = 2;
+const nbJoueurMax = 8;
+let firstPlayer = 0;
 
 io.sockets.on('connection', function (socket) {
     console.log('User connected to server !');
@@ -32,6 +34,14 @@ io.sockets.on('connection', function (socket) {
         if (isUnique(name)) {
             socket.user = name;
             socketList.push(socket);
+            if(firstPlayer == 0) {
+            	socket.emit('firstPlayerStart');
+            	firstPlayer = 1;
+            } else {
+            	if(socketList.length == nbJoueurMax) {
+            		socketList[0].emit('nbPlayerReadyToStart');
+            	}
+            }
             console.log('player registered : ' + name);
         }
         else {
@@ -108,6 +118,9 @@ io.sockets.on('connection', function (socket) {
             let username_disconnected = this.user;
             removePlayerOrPlayerHost(username_disconnected);
             console.log('Client disconnected : ' + username_disconnected + ' ' + e);
+            if(socketList.length == 0) {
+            	firstPlayer = 0;
+            }
         }
     });
 });
