@@ -88,7 +88,8 @@ let Player = function (name) {
                 "speed": player.speed,
                 "timestamp": player.timestamp,
                 "direction": player.direction,
-                "type": "position"
+                "type": "position",
+                "skin": player.skin
             };
             sendData(data, player.dataChannel);
        // }
