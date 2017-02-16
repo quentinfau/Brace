@@ -14,6 +14,7 @@ function connectToWebSocket(name) {
     socket.on('nbPlayerReadyToStart', function () {
     	document.getElementById("nbPlayer").setAttribute("style","display:block");
     	document.getElementById("nbPlayerReady").textContent = "The number of players required to start the game is reached";
+    	document.getElementById("startGame").removeAttribute("disabled");
     });
     socket.on('createHost', function (user) {
         host = new Host(user);
