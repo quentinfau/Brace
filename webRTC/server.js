@@ -18,6 +18,8 @@ const listObstacle = [];
 const nbZone = 1;
 const diametre = 400000;
 const nbPlayerByHost = 2;
+const nbJoueurMax = 8;
+let firstPlayer = 0;
 
 io.sockets.on('connection', function (socket) {
     console.log('User connected to server !');
@@ -32,6 +34,14 @@ io.sockets.on('connection', function (socket) {
         if (isUnique(name)) {
             socket.user = name;
             socketList.push(socket);
+            if(firstPlayer == 0) {
+            	socket.emit('firstPlayerStart');
+            	firstPlayer = 1;
+            } else {
+            	if(socketList.length == nbJoueurMax) {
+            		socketList[0].emit('nbPlayerReadyToStart');
+            	}
+            }
             console.log('player registered : ' + name);
         }
         else {
@@ -108,6 +118,9 @@ io.sockets.on('connection', function (socket) {
             let username_disconnected = this.user;
             removePlayerOrPlayerHost(username_disconnected);
             console.log('Client disconnected : ' + username_disconnected + ' ' + e);
+            if(socketList.length == 0) {
+            	firstPlayer = 0;
+            }
         }
     });
 });
@@ -230,7 +243,7 @@ function getZone(host) {
         case '2' :
             return {
                 "distanceD": 1000,
-                "distanceF": 3000,
+                "distanceF": 50000,
                 "angleD": 0,
                 "angleF": 180
             };
@@ -238,39 +251,39 @@ function getZone(host) {
         case '3' :
             return {
                 "distanceD": 1000,
-                "distanceF": 3000,
+                "distanceF": 50000,
                 "angleD": 180,
                 "angleF": 360
             };
             break;
         case '4' :
             return {
-                "distanceD": 3000,
-                "distanceF": 8000,
+                "distanceD": 50000,
+                "distanceF": 200000,
                 "angleD": 0,
                 "angleF": 90
             };
             break;
         case '5' :
             return {
-                "distanceD": 3000,
-                "distanceF": 8000,
+                "distanceD": 50000,
+                "distanceF": 200000,
                 "angleD": 90,
                 "angleF": 180
             };
             break;
         case '6' :
             return {
-                "distanceD": 3000,
-                "distanceF": 8000,
+                "distanceD": 50000,
+                "distanceF": 200000,
                 "angleD": 180,
                 "angleF": 270
             };
             break;
         case '7' :
             return {
-                "distanceD": 3000,
-                "distanceF": 8000,
+                "distanceD": 50000,
+                "distanceF": 200000,
                 "angleD": 270,
                 "angleF": 360
             };

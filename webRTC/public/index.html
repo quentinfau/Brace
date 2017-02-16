@@ -11,23 +11,14 @@
     <title>BRace</title>
 </head>
 <body style="background-image:url(assets/images/background-image.png); background-size: cover; background-repeat: no-repeat; overflow:hidden;" >
-<!-- <div>
-    <h3>Create or join a room?</h3>
-    <input type="text" name="user" autofocus id="user" placeholder="e.g. Alice"
-           onkeydown="if (event.keyCode == 13)
-           document.getElementById('setid').click()" >
-    <button type="submit" id="setid">Connect to WebSocket</button>
-    
-    <input type="text" id="user2" placeholder="e.g. Bob"
+<!--  <input type="text" id="user2" placeholder="e.g. Bob"
            onkeydown="if (event.keyCode == 13)
            document.getElementById('connectToRemote').click()">
     <label for="userList">User List</label><select name="userList" id="userList">
 </select>
     <button id="connectToRemote">Connect to remote</button>
     
-    <button id="startGame">START</button>
-    <button id="sendPositionBtn">Send message</button>
-</div> -->
+    <button id="sendPositionBtn">Send message</button> -->
 	<div class="row" id="accueil">
 	  <div class="col-sm-4"></div>
 	  <div class="col-sm-4" style="margin-top:10%;">
@@ -35,8 +26,23 @@
 	      <input type="text" class="form-control" name="user" autofocus id="user" placeholder="Enter your nickname"
 	           onkeydown="if (event.keyCode == 13)
 	           document.getElementById('setid').click()" ><br />
-	    <center><button type="submit" id="setid" class="btn btn-primary">Log in</button></center><br />
-	    <center><button id="startGame" class="btn btn-primary">START THE GAME</button></center>
+	 <center><h3> Choisissez votre ballon : </h3></center>
+	 <br>
+	 <center><SELECT id="skin" size="1">
+    	<option value="Bleu">Bleu</option>
+   		<option value="Jaune">Jaune</option>
+    	<option value="Rouge">Rouge</option>
+   		<option value="Rose">Rose</option>
+   		<option value="Violet">Violet</option>
+   		<option value="Vert">Vert</option>
+   		<option value="Orange">Bleu</option>
+   		<option value="Coeur">Coeur</option>
+   		<option value="Crane">Crane</option>
+	</SELECT></center>
+	</br>
+	    <center><button type="submit" id="setid" class="btn btn-primary">Log in</button> <h4><span id="message"></span></h4></center><br />
+	    <div id="nbPlayer" style="display:none"><center><h4><span id="nbPlayerReady"></span></h4></center><br /></div>
+	    <center id="centerStartGame"><button id="startGame" class="btn btn-primary btn-lg" style="display:none"><b>START THE GAME</b></button></center>
 	    <center><div id="compte_a_rebours" style="display:none"></div></center>
 	  </div>
 	  <div class="col-sm-4"></div>

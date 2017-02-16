@@ -10,21 +10,38 @@ const INITIAL_SPEED = 634
     , SPEED_MULTIPLICATOR = 35;
 const ROPE_SPEED = 10;
 const  WORLD_SCALE = 0.50;
-const DIAMETER = 16000;
+const DIAMETER = 400000;
 const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
-const NB_OBSTACLES = 0;
+const NB_OBSTACLES = 100;
 const NB_MALUS = 100;
-const NB_SWITCH_MALUS = 200;
+const NB_SWITCH_MALUS = 100;
 const DEBUG = true;
 const UPDATE_DELAY = 20;
 var exist = false;
 var tileSprite;
 var switchLR = false;
+var skin ;
+
+console.log("Skin : " + skin);
 var Game = {
     preload: function () {
-    	game.load.spritesheet('balloon', './assets/images/balloon_animated_small.png', 100, 50);
+    	
+    	skin = $( "#skin option:selected" ).text();;;
+    	
+    	game.load.spritesheet('Bleu', './assets/images/balloon_animated_small.png', 100, 50);
+    	game.load.spritesheet('Rouge', './assets/images/balloon_animated_small_Rouge.png', 100, 50);
+    	game.load.spritesheet('Rose', './assets/images/balloon_animated_small_Rose.png', 100, 50);
+    	game.load.spritesheet('Vert', './assets/images/balloon_animated_small_Vert.png', 100, 50);
+    	game.load.spritesheet('Jaune', './assets/images/balloon_animated_small_Jaune.png', 100, 50);
+    	game.load.spritesheet('Blanc', './assets/images/balloon_animated_small_Blanc.png', 100, 50);
+    	game.load.spritesheet('Violet', './assets/images/balloon_animated_small_Violet.png', 100, 50);
+    	game.load.spritesheet('Orange', './assets/images/balloon_animated_small_Orange.png', 100, 50);
+    	game.load.spritesheet('Coeur', './assets/images/balloon_animated_small_Love.png', 100, 50);
+    	game.load.spritesheet('Crane', './assets/images/balloon_animated_small_Skull.png', 100, 50);
+
+
         game.load.image('background', './assets/images/background3.png');
         game.load.image('cap', 'assets/images/arrowCap_small.png');
         game.load.image('apple', './assets/images/apple.png');
@@ -59,7 +76,7 @@ var Game = {
         graphics.lineStyle(20, 0x00ff00, 30);
         graphics.drawCircle(map.x, map.y, map.diameter);
         graphics.lineStyle(20, 0xFF3300, 1);
-        graphics.drawCircle(map.x, map.y, 6000);
+        graphics.drawCircle(map.x, map.y, 100000);
         graphics.drawCircle(map.x, map.y, 2000);
         graphics.lineStyle(20, 0xFFFF33, 1);
         graphics.moveTo(mapCenter.x, mapCenter.y);
@@ -233,7 +250,10 @@ var Game = {
         }
     },malusCollision : function(){
          game.physics.arcade.overlap(balloon, malusGroup, function () {
-             speed=speed/2;
+              if(this.getRandomInt(1,2)%2 == 0){
+              speed=speed/2;}else{
+                  speed = speed*2;
+              }
               balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
         }, null, this);
     },generateSwitchMalus : function(){
@@ -252,12 +272,7 @@ var Game = {
         }, null, this);
     }
     , generateBalloon: function () {
-        var min_x, max_x, min_y, max_y;
-        max_x = CENTER_WORLD_X + RAYON - 1000;
-        min_x = CENTER_WORLD_X - RAYON;
-        min_y = CENTER_WORLD_Y - RAYON;
-        max_y = CENTER_WORLD_Y + RAYON - 1000;
-        balloon = game.add.sprite(player.coordonneX + 200000, player.coordonneY + 200000, 'balloon');
+        balloon = game.add.sprite(player.coordonneX + 200000, player.coordonneY + 200000,skin);
         balloon.anchor.setTo(0.5, 0.5);
         game.physics.enable(balloon, Phaser.Physics.ARCADE);
         balloon.body.setCircle(50 / 2, 25, 0);
@@ -265,6 +280,10 @@ var Game = {
         balloon.animations.add('move', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], ROPE_SPEED, true);
         balloon.animations.play('move');
         balloon.rotation = game.physics.arcade.angleBetween(balloon, mapCenter);
+        var style = { font: "30px Arial", fill: "#000000" };
+        var nameSprite = this.game.add.text(0, 0, player.name, style);
+        nameSprite.rotation=0;
+        balloon.addChild(nameSprite);
     }
     , getRandomInt: function (min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -318,7 +337,7 @@ var Game = {
         );
     }
     , createNeighbor: function (p) {
-        var b = game.add.sprite(p.x, p.y, 'balloon');
+        var b = game.add.sprite(p.x, p.y, skin);
         b.rotation = p.angle;
         b.anchor.setTo(0.5, 0.5);
         game.physics.enable(b, Phaser.Physics.ARCADE);
@@ -330,8 +349,13 @@ var Game = {
         b.name = p.name;
         b.angle = p.direction;
         b.rotation = p.angle;
+        b.scale.set(WORLD_SCALE);
         b.oldX = p.x;
         b.oldY = p.y;
+        var style = { font: "30px Arial", fill: "#000000" };
+        var nameSprite = this.game.add.text(0, 0, p.name, style);
+        nameSprite.rotation=0;
+        b.addChild(nameSprite);
 
         neighborsSprites.push(b);
         // this.updateNeighbors(p);
