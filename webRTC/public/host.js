@@ -128,7 +128,11 @@ let Host = function (name) {
                     }
                 };
                 dc1.onerror = function (e) {
+                    console.error("ERROR " + e);
                     reject(e)
+                };
+                pcLocal.onerror = function (e) {
+                    console.error("ERROR " + e);
                 };
                 pcLocal.createOffer(function (desc) {
                     pcLocal.setLocalDescription(desc, function () {
