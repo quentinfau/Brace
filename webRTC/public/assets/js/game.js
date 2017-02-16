@@ -240,7 +240,9 @@ var Game = {
         player.radius = rayon;
         player.speed = speed;
         player.sendPosition();
-    },generateMalus : function(){
+    },
+    
+    generateMalus : function(){
         malusGroup = game.add.group();
         malusGroup.enableBody = true;
         for (var i = 0; i < NB_MALUS; i++) {
@@ -250,7 +252,9 @@ var Game = {
             malus.body.setCircle(200 / 2, (-200 / 2 + 0.5 * malus.width / malus.scale.x), (-200 / 2 + 0.5 * malus.height / malus.scale.y));
             malus.scale.set(WORLD_SCALE);
         }
-    },malusCollision : function(){
+    },
+    
+    malusCollision : function(){
          game.physics.arcade.overlap(balloon, malusGroup, function () {
               if(this.getRandomInt(1,2)%2 == 0){
               speed=speed/2;}else{
@@ -258,7 +262,9 @@ var Game = {
               }
               balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
         }, null, this);
-    },generateSwitchMalus : function(){
+    },
+    
+    generateSwitchMalus : function(){
         switchGroup = game.add.group();
         switchGroup.enableBody = true;
         for (var i = 0; i < NB_SWITCH_MALUS; i++) {
@@ -268,14 +274,17 @@ var Game = {
             switchLR.body.setCircle(200 / 2, (-200 / 2 + 0.5 * switchLR.width / switchLR.scale.x), (-200 / 2 + 0.5 * switchLR.height / switchLR.scale.y));
             switchLR.scale.set(WORLD_SCALE);
         }
-    }, switchMalusCollision : function(){
+    }, 
+    
+    switchMalusCollision : function(){
        game.physics.arcade.overlap(balloon, switchGroup, function () {
                 switchLR = !switchLR;
         }, null, this);
-    }
-    , generateBalloon: function () {
+    }, 
+    
+    generateBalloon: function () {
 
-        balloon = game.add.sprite(player.coordonneX + 200000, player.coordonneY + 200000,player.skin);
+        balloon = game.add.sprite(player.coordonneX + RAYON, player.coordonneY + RAYON,player.skin);
 
         balloon.anchor.setTo(0.5, 0.5);
         game.physics.enable(balloon, Phaser.Physics.ARCADE);
