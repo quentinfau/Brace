@@ -10,21 +10,40 @@ const INITIAL_SPEED = 634
     , SPEED_MULTIPLICATOR = 35;
 const ROPE_SPEED = 10;
 const  WORLD_SCALE = 0.50;
-const DIAMETER = 16000;
+const DIAMETER = 400000;
 const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
-const NB_OBSTACLES = 0;
-const NB_MALUS = 0;
-const NB_SWITCH_MALUS = 0;
+
+const NB_OBSTACLES = 100;
+const NB_MALUS = 100;
+const NB_SWITCH_MALUS = 100;
 const DEBUG = false;
+
 const UPDATE_DELAY = 20;
 var exist = false;
 var tileSprite;
 var switchLR = false;
+var skin ;
+
+console.log("Skin : " + skin);
 var Game = {
     preload: function () {
-    	game.load.spritesheet('balloon', './assets/images/balloon_animated_small.png', 100, 50);
+
+    	skin = $( "#skin option:selected" ).text();;;
+
+    	game.load.spritesheet('Bleu', './assets/images/balloon_animated_small.png', 100, 50);
+    	game.load.spritesheet('Rouge', './assets/images/balloon_animated_small_Rouge.png', 100, 50);
+    	game.load.spritesheet('Rose', './assets/images/balloon_animated_small_Rose.png', 100, 50);
+    	game.load.spritesheet('Vert', './assets/images/balloon_animated_small_Vert.png', 100, 50);
+    	game.load.spritesheet('Jaune', './assets/images/balloon_animated_small_Jaune.png', 100, 50);
+    	game.load.spritesheet('Blanc', './assets/images/balloon_animated_small_Blanc.png', 100, 50);
+    	game.load.spritesheet('Violet', './assets/images/balloon_animated_small_Violet.png', 100, 50);
+    	game.load.spritesheet('Orange', './assets/images/balloon_animated_small_Orange.png', 100, 50);
+    	game.load.spritesheet('Coeur', './assets/images/balloon_animated_small_Love.png', 100, 50);
+    	game.load.spritesheet('Crane', './assets/images/balloon_animated_small_Skull.png', 100, 50);
+
+
         game.load.image('background', './assets/images/background3.png');
         game.load.image('cap', 'assets/images/arrowCap_small.png');
         game.load.image('apple', './assets/images/apple.png');
@@ -49,6 +68,8 @@ var Game = {
         this.scale.pageAlignVertically = true;
         this.scale.updateLayout(true);
         
+        player.skin = skin;
+
         updateDelay = 0;
         speed = 1; // La vitesse du joueur
         mapCenter = new Phaser.Point(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
@@ -59,7 +80,7 @@ var Game = {
         graphics.lineStyle(20, 0x00ff00, 30);
         graphics.drawCircle(map.x, map.y, map.diameter);
         graphics.lineStyle(20, 0xFF3300, 1);
-        graphics.drawCircle(map.x, map.y, 6000);
+        graphics.drawCircle(map.x, map.y, 100000);
         graphics.drawCircle(map.x, map.y, 2000);
         graphics.lineStyle(20, 0xFFFF33, 1);
         graphics.moveTo(mapCenter.x, mapCenter.y);
@@ -255,12 +276,9 @@ var Game = {
         }, null, this);
     }
     , generateBalloon: function () {
-        var min_x, max_x, min_y, max_y;
-        max_x = CENTER_WORLD_X + RAYON - 1000;
-        min_x = CENTER_WORLD_X - RAYON;
-        min_y = CENTER_WORLD_Y - RAYON;
-        max_y = CENTER_WORLD_Y + RAYON - 1000;
-        balloon = game.add.sprite(player.coordonneX + 200000, player.coordonneY + 200000, 'balloon');
+
+        balloon = game.add.sprite(player.coordonneX + 200000, player.coordonneY + 200000,player.skin);
+
         balloon.anchor.setTo(0.5, 0.5);
         game.physics.enable(balloon, Phaser.Physics.ARCADE);
         balloon.body.setCircle(50 / 2, 25, 0);
@@ -325,7 +343,7 @@ var Game = {
         );
     }
     , createNeighbor: function (p) {
-        var b = game.add.sprite(p.x, p.y, 'balloon');
+        var b = game.add.sprite(p.x, p.y, skin);
         b.rotation = p.angle;
         b.anchor.setTo(0.5, 0.5);
         game.physics.enable(b, Phaser.Physics.ARCADE);
