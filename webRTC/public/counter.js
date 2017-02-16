@@ -6,7 +6,7 @@ function compte_a_rebours() {
     var date_actuelle = new Date();
     var compte_a_rebours = document.getElementById("compte_a_rebours");
     var total_secondes = (date_evenement - date_actuelle) / 1000;
-    var prefixe = "Compte à rebours terminé dans ";
+    var prefixe = "Le jeu commence dans ";
 
     if (total_secondes < 0) {
 
