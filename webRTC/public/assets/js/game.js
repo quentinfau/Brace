@@ -66,6 +66,8 @@ var Game = {
         this.scale.pageAlignVertically = true;
         this.scale.updateLayout(true);
         
+        player.skin = skin;
+        
         updateDelay = 0;
         speed = 1; // La vitesse du joueur
         mapCenter = new Phaser.Point(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
@@ -277,7 +279,7 @@ var Game = {
         min_x = CENTER_WORLD_X - RAYON;
         min_y = CENTER_WORLD_Y - RAYON;
         max_y = CENTER_WORLD_Y + RAYON - 1000;
-        balloon = game.add.sprite(player.coordonneX + 200000, player.coordonneY + 200000,skin);
+        balloon = game.add.sprite(player.coordonneX + 200000, player.coordonneY + 200000,player.skin);
         balloon.anchor.setTo(0.5, 0.5);
         game.physics.enable(balloon, Phaser.Physics.ARCADE);
         balloon.body.setCircle(50 / 2, 25, 0);
@@ -342,7 +344,7 @@ var Game = {
         );
     }
     , createNeighbor: function (p) {
-        var b = game.add.sprite(p.x, p.y, skin);
+        var b = game.add.sprite(p.x, p.y, p.skin);
         b.rotation = p.angle;
         b.anchor.setTo(0.5, 0.5);
         game.physics.enable(b, Phaser.Physics.ARCADE);
