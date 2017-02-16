@@ -8,6 +8,14 @@ function connectToWebSocket(name) {
     socket.on('errorMessage', function (data) {
         console.log("received error message from the server : " + data.message);
     });
+    socket.on('firstPlayerStart', function () {
+    	document.getElementById("startGame").setAttribute("style","display:block");
+    });
+    socket.on('nbPlayerReadyToStart', function () {
+    	document.getElementById("nbPlayer").setAttribute("style","display:block");
+    	document.getElementById("nbPlayerReady").textContent = "The number of players required to start the game is reached";
+    	document.getElementById("startGame").removeAttribute("disabled");
+    });
     socket.on('createHost', function (user) {
         host = new Host(user);
     });
@@ -41,7 +49,6 @@ function connectToWebSocket(name) {
         fileref.setAttribute("src",'counter.js');
         document.getElementsByTagName("footer")[0].appendChild(fileref);
     	document.getElementById("compte_a_rebours").setAttribute("style","display:block");
-    	//document.getElementById("brace").setAttribute("style","display:block");
     });
     socket.on('negotiationMessage', function (data) {
         console.log("received message from the server : " + data);
@@ -113,5 +120,7 @@ setid.onclick = function () {
     document.getElementById('setid').style.display='none';
     let name = $("#user").val();
     connectToWebSocket(name);
+    $("#setid").attr('style','display:none');
+    $('#message').text('You are connected with the login '+name);
     return false;
 };

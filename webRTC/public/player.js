@@ -12,6 +12,7 @@ let Player = function (name) {
 	this.direction = 0;
 	this.winner = null;
     this.isChangingHost = false;
+    this.skin = 'Rouge';
 
     console.log('Nouvel objet Player créé : ' + name);
 
@@ -76,7 +77,8 @@ let Player = function (name) {
     };
 
     this.sendPosition = function () {
-        if (!player.isChangingHost) {
+        //////////////////////////////////////////////////////////////////////
+      //  if (!player.isChangingHost) {
             const data = {
                 "name": player.getName(),
                 "radius": player.radius,
@@ -86,10 +88,11 @@ let Player = function (name) {
                 "speed": player.speed,
                 "timestamp": player.timestamp,
                 "direction": player.direction,
-                "type": "position"
+                "type": "position",
+                "skin": player.skin
             };
             sendData(data, player.dataChannel);
-        }
+       // }
     };
 
     this.receiveConnection = function (offer, familyType) {
@@ -103,7 +106,7 @@ let Player = function (name) {
                 let data = {user: "system", message: "the datachannel " + dc2.label + " has been opened"};
                 answerSent = false;
                 console.log("DONE");
-                player.isChangingHost = false;
+              //  player.isChangingHost = false;
             };
             dc2.onmessage = function (e) {
                 let data = JSON.parse(e.data);
@@ -116,7 +119,7 @@ let Player = function (name) {
                     	let max = data.message.angleF;
                     	let angleStart = Math.floor(Math.random() * (max-min+1)) + min;
                     	player.angle = angleStart;
-                    	player.radius = 7800;
+                    	player.radius = 199000;
                     	let angleRadian = angleStart * Math.PI / 180;
                     	player.coordonneX = player.radius * Math.cos(angleRadian);
                     	player.coordonneY = player.radius * Math.sin(angleRadian);
@@ -125,7 +128,7 @@ let Player = function (name) {
                         break;
                     case "offer" :
                         console.log("switching host from " + remote + " to " + data.message.from);
-                        player.isChangingHost = true;
+                    //    player.isChangingHost = true;
                         remote = data.message.from;
                         player.receiveConnection(data.message.data, "switchHost");
                         break;
