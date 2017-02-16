@@ -286,7 +286,7 @@ var Game = {
 
     generateBalloon: function () {
 
-        balloon = game.add.sprite(player.coordonneX + RAYON, player.coordonneY + RAYON,player.skin);
+        balloon = game.add.sprite(player.coordonneX + 200000, player.coordonneY + 200000,player.skin);
 
         balloon.anchor.setTo(0.5, 0.5);
         game.physics.enable(balloon, Phaser.Physics.ARCADE);
