@@ -22,9 +22,26 @@ const UPDATE_DELAY = 20;
 var exist = false;
 var tileSprite;
 var switchLR = false;
+var skin ;
+
+console.log("Skin : " + skin);
 var Game = {
     preload: function () {
-    	game.load.spritesheet('balloon', './assets/images/balloon_animated_small.png', 100, 50);
+    	
+    	skin = $( "#skin option:selected" ).text();;;
+    	
+    	game.load.spritesheet('Bleu', './assets/images/balloon_animated_small.png', 100, 50);
+    	game.load.spritesheet('Rouge', './assets/images/balloon_animated_small_Rouge.png', 100, 50);
+    	game.load.spritesheet('Rose', './assets/images/balloon_animated_small_Rose.png', 100, 50);
+    	game.load.spritesheet('Vert', './assets/images/balloon_animated_small_Vert.png', 100, 50);
+    	game.load.spritesheet('Jaune', './assets/images/balloon_animated_small_Jaune.png', 100, 50);
+    	game.load.spritesheet('Blanc', './assets/images/balloon_animated_small_Blanc.png', 100, 50);
+    	game.load.spritesheet('Violet', './assets/images/balloon_animated_small_Violet.png', 100, 50);
+    	game.load.spritesheet('Orange', './assets/images/balloon_animated_small_Orange.png', 100, 50);
+    	game.load.spritesheet('Coeur', './assets/images/balloon_animated_small_Love.png', 100, 50);
+    	game.load.spritesheet('Crane', './assets/images/balloon_animated_small_Skull.png', 100, 50);
+
+
         game.load.image('background', './assets/images/background3.png');
         game.load.image('cap', 'assets/images/arrowCap_small.png');
         game.load.image('apple', './assets/images/apple.png');
@@ -260,7 +277,7 @@ var Game = {
         min_x = CENTER_WORLD_X - RAYON;
         min_y = CENTER_WORLD_Y - RAYON;
         max_y = CENTER_WORLD_Y + RAYON - 1000;
-        balloon = game.add.sprite(player.coordonneX + 200000, player.coordonneY + 200000, 'balloon');
+        balloon = game.add.sprite(player.coordonneX + 200000, player.coordonneY + 200000,skin);
         balloon.anchor.setTo(0.5, 0.5);
         game.physics.enable(balloon, Phaser.Physics.ARCADE);
         balloon.body.setCircle(50 / 2, 25, 0);
