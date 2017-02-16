@@ -12,6 +12,7 @@ let Player = function (name) {
 	this.direction = 0;
 	this.winner = null;
     this.isChangingHost = false;
+    this.skin = 'Rouge';
 
     console.log('Nouvel objet Player créé : ' + name);
 
