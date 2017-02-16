@@ -5,7 +5,7 @@ let Host = function (name) {
     this.playerList = {};
     this.waitingChangingHostList = [];
     this.name = name;
-    this.myTimeout = null;
+    this.timeoutSwitchingHost = null;
     this.nbJoueur = 1;
     this.indicePremierJoueur = 1;
     this.indiceDernierJoueur = 1;
@@ -332,7 +332,7 @@ let Host = function (name) {
     this.switchToHost = function (newHostDataChannel, player, familyType) {
         console.log("switching host of " + player + " to " + familyType);
         host.waitingChangingHostList.push(player);
-        host.myTimeout = setTimeout(host.functiontest,10000,player);
+        host.timeoutSwitchingHost = setTimeout(host.removePlayerFromWaitingList,10000,player);
         const data = {
             "type": "connection",
             "player": player,
@@ -436,10 +436,6 @@ let Host = function (name) {
     this.processAnswerMessage = function (data) {
         if (data.message.to != host.getName()) {
             sendData(data.message, host.getFamilyDataChannelByName(data.message.to));
-            //////////////////////////////////////////////////////////////////////
-            //  host.removeDataChannel(host.getDataChannelByName(createID(host.getName(), data.message.from)));
-            //  host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(data.message.from));
-            //////////////////////////////////////////////////////////////////////
             host.neighbours.splice(host.neighbours.indexOf(data.message.from));
             offerSent = false;
         }
@@ -467,7 +463,7 @@ let Host = function (name) {
             host.endGame(host.PHSon1, data.message.player);
             host.endGame(host.PHSon2, data.message.player);
         }
-    }
+    };
 
     this.endGame = function (PHSon, winner) {
         const data = {
@@ -489,8 +485,7 @@ let Host = function (name) {
         });
     };
 
-    this.functiontest = function (player) {
-        console.log("functpnYest set timeout " + player);
+    this.removePlayerFromWaitingList = function (player) {
         if (host.waitingChangingHostList[0] == player){
             host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(player));
         }
