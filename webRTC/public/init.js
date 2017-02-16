@@ -27,6 +27,22 @@ function connectToWebSocket(name) {
     socket.on('initPlayerPosition', function () {
        host.initPositionPlayer();
     });
+    socket.on('readyToStart', function () {
+    	var fileref=document.createElement('script');
+        fileref.setAttribute("type","text/javascript");
+        fileref.setAttribute("src",'assets/js/main.js');
+        document.getElementsByTagName("footer")[0].appendChild(fileref);
+        document.getElementById("accueil").setAttribute("style","display:none");
+    });
+    socket.on('removeStart', function () {
+    	document.getElementById("startGame").setAttribute("style","display:none");
+    	var fileref=document.createElement('script');
+        fileref.setAttribute("type","text/javascript");
+        fileref.setAttribute("src",'counter.js');
+        document.getElementsByTagName("footer")[0].appendChild(fileref);
+    	document.getElementById("compte_a_rebours").setAttribute("style","display:block");
+    	//document.getElementById("brace").setAttribute("style","display:block");
+    });
     socket.on('negotiationMessage', function (data) {
         console.log("received message from the server : " + data);
         if (data.action.type == "offer") {
@@ -82,7 +98,7 @@ function initHostFamily(host) {
                                 host.setPHSon2(dataChannel);
                             }
                             console.log("host " + host.getName() + " finished the init method ");
-                            socket.emit("initHostOver", host.getName());
+                            socket.emit("initHostOver", host.getName());                            
                         })
                 })
         });

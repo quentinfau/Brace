@@ -8,6 +8,7 @@ const server = express()
     .use(express.static(__dirname + '/public'))
     .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
+
 const io = require('socket.io').listen(server);
 
 const socketList = [];
@@ -80,6 +81,10 @@ io.sockets.on('connection', function (socket) {
 
         const hostId = listPlayerHost.length - 1;
         initHost(listPlayerHost[hostId], getSubListPlayer(hostId));
+        
+        listPlayer.forEach(function (player) {
+            getSocketByName(player).emit("removeStart");
+        });
     });
 
     socket.on("initHostOver", function (name) {
@@ -90,6 +95,9 @@ io.sockets.on('connection', function (socket) {
             console.log("all host have finished their init");
             listPlayerHost.forEach(function (host) {
                 getSocketByName(host).emit("initPlayerPosition");
+            });
+            listPlayer.forEach(function (player) {
+                getSocketByName(player).emit("readyToStart");
             });
         }
     });
