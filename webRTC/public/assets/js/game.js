@@ -184,9 +184,9 @@ var Game = {
         updateDelay++;
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
         
-        balloon.scale.set(WORLD_SCALE);
-        apple.scale.set(WORLD_SCALE);
-        tileSprite.tileScale.set(WORLD_SCALE);
+       // balloon.scale.set(WORLD_SCALE);
+       // apple.scale.set(WORLD_SCALE);
+       // tileSprite.tileScale.set(WORLD_SCALE);
         
         textClassement.setText(player.rank+ "%");
 
