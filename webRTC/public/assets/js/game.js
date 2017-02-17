@@ -15,9 +15,9 @@ const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
 
-const NB_OBSTACLES = 100;
-const NB_MALUS = 100;
-const NB_SWITCH_MALUS = 100;
+const NB_OBSTACLES = 10000;
+const NB_MALUS = 0;
+const NB_SWITCH_MALUS = 0;
 const DEBUG = false;
 
 const UPDATE_DELAY = 20;
