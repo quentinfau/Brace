@@ -15,9 +15,9 @@ const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
 
-const NB_OBSTACLES = 1000;
-const NB_MALUS = 1000;
-const NB_SWITCH_MALUS = 1000;
+const NB_OBSTACLES = 2000;
+const NB_MALUS = 2000;
+const NB_SWITCH_MALUS = 2000;
 const DEBUG = false;
 
 const UPDATE_DELAY = 20;
@@ -184,9 +184,9 @@ var Game = {
         updateDelay++;
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
         
-        balloon.scale.set(WORLD_SCALE);
-        apple.scale.set(WORLD_SCALE);
-        tileSprite.tileScale.set(WORLD_SCALE);
+       // balloon.scale.set(WORLD_SCALE);
+       // apple.scale.set(WORLD_SCALE);
+       // tileSprite.tileScale.set(WORLD_SCALE);
         
         textClassement.setText(player.rank+ "%");
 
