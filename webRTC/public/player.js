@@ -33,7 +33,8 @@ let Player = function (name) {
             "speed": player.speed,
             "timestamp": player.timestamp,
             "direction": player.direction,
-            "type": "position"
+            "type": "position",
+            "skin": player.skin
         };
         sendData(data, player.dataChannel);
     };
@@ -52,6 +53,7 @@ let Player = function (name) {
                 switch (data.message.type) {
                     case "voisinage" :
                         player.neighborhood = data.message.voisinage;
+                        player.rank = data.message.classement;
                         break;
                     case "initPosition" :
                         let min = data.message.angleD;
