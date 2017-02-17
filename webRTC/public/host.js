@@ -445,7 +445,8 @@ let Host = function (name) {
             'x': dataMessage.x,
             'y': dataMessage.y,
             'speed': dataMessage.speed,
-            'direction': dataMessage.direction
+            'direction': dataMessage.direction,
+            'skin': dataMessage.skin
         };
         trouve = 0;
         i = 0;
