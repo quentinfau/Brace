@@ -26,7 +26,6 @@ var tileSprite;
 var switchLR = false;
 var skin ;
 
-console.log("Skin : " + skin);
 var Game = {
     preload: function () {
 
@@ -188,6 +187,8 @@ var Game = {
         balloon.scale.set(WORLD_SCALE);
         apple.scale.set(WORLD_SCALE);
         tileSprite.tileScale.set(WORLD_SCALE);
+        
+        textClassement.setText(player.rank+ "%");
 
 	    if(player.winner != null) {
         	if(player.winner == "winner") {
