@@ -96,7 +96,7 @@ let Host = function (name) {
                                 let position = host.GetClassementByPlayer(host.classement, data.user)
 
                                 const data2 = {
-                                    "classement": 0,
+                                    "classement": position,
                                     "voisinage": host.neighbours,
                                     "type": "voisinage"
                                 };
@@ -534,7 +534,6 @@ let Host = function (name) {
             sendData(data, dataChannel);
         });
     };
-    }
 
     this.getClassement = function (DataChannel)
         {
@@ -584,7 +583,7 @@ let Host = function (name) {
             host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(player));
         }
     }
-};
+
         /**
          * Récupération du dernier joueur
          */
@@ -654,7 +653,7 @@ let Host = function (name) {
             	}
             	return position
             };
-};
+            }
 
 let Classement = function(p,z,c) {
 	this.player=p;
