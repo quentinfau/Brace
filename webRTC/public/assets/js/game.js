@@ -1,4 +1,4 @@
-var balloon, speed, cursors, map, cap, apple, mapCenter, obstacles=[],malusGroup, switchGroup, rayon, angleDegree, updateDelay, neighborsSprites = [],textClassement;
+var balloon, speed, cursors, map, cap, apple, mapCenter, obstacles,malusGroup, switchGroup, rayon, angleDegree, updateDelay, neighborsSprites = [],textClassement;
 // VARs for smartphone control
 var btnDeviceSpeedUp,btnDeviceSpeedDown,btnDeviceDirLeft,btnDeviceDirRight,deviceControlUp=false,deviceControlDown=false,deviceControlLeft=false,deviceControlRight=false;
 const WORLD_WIDTH = 400000
@@ -10,14 +10,14 @@ const INITIAL_SPEED = 634
     , SPEED_MULTIPLICATOR = 35;
 const ROPE_SPEED = 10;
 const  WORLD_SCALE = 0.50;
-const DIAMETER = 16000;
+const DIAMETER = 400000;
 const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
 
-const NB_OBSTACLES = 100;
-const NB_MALUS = 100;
-const NB_SWITCH_MALUS = 100;
+const NB_OBSTACLES = 2000;
+const NB_MALUS = 2000;
+const NB_SWITCH_MALUS = 2000;
 const DEBUG = false;
 
 const UPDATE_DELAY = 20;
@@ -79,7 +79,7 @@ var Game = {
         graphics.lineStyle(20, 0x00ff00, 30);
         graphics.drawCircle(map.x, map.y, map.diameter);
         graphics.lineStyle(20, 0xFF3300, 1);
-        graphics.drawCircle(map.x, map.y, 6000);
+        graphics.drawCircle(map.x, map.y, 100000);
         graphics.drawCircle(map.x, map.y, 2000);
         graphics.lineStyle(20, 0xFFFF33, 1);
         graphics.moveTo(mapCenter.x, mapCenter.y);
@@ -326,54 +326,21 @@ var Game = {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
     , generateObstacles: function () {
-        obstacles[0] = game.add.group();
-        obstacles[1] = game.add.group();
-        obstacles[2] = game.add.group();
-        obstacles[3] = game.add.group();
-            var j = 0;
-        var x,y;
-        obstacles.forEach(function(o){
-            x=this.Game.getRandomInt(CENTER_WORLD_X - RAYON+1000, CENTER_WORLD_X + RAYON-1000);
-            y= this.Game.getRandomInt(CENTER_WORLD_Y - RAYON+1000, CENTER_WORLD_Y + RAYON - 1000);
-
-            while(Math.sqrt(Math.pow(WORLD_WIDTH / 2 - x, 2) + Math.pow(WORLD_HEIGHT / 2 - y, 2)) >= RAYON-400){
-                x=this.Game.getRandomInt(CENTER_WORLD_X - RAYON+1000, CENTER_WORLD_X + RAYON-1000);
-                y= this.Game.getRandomInt(CENTER_WORLD_Y - RAYON+1000, CENTER_WORLD_Y + RAYON - 1000);
-            }
-
-            o.enableBody = true;
-            for (var i = 0; i < NB_OBSTACLES/4; i++) {
-
-                var obstacle = o.create(x, y, 'sida');
-               while(game.physics.arcade.collide(obstacle,obstacles)){
-                   obstacle.destroy();
-                   x=this.Game.getRandomInt(CENTER_WORLD_X - RAYON+1000, CENTER_WORLD_X + RAYON-1000);
-                    y= this.Game.getRandomInt(CENTER_WORLD_Y - RAYON+1000, CENTER_WORLD_Y + RAYON - 1000);
-
-            while(Math.sqrt(Math.pow(WORLD_WIDTH / 2 - x, 2) + Math.pow(WORLD_HEIGHT / 2 - y, 2)) >= RAYON-400){
-                x=this.Game.getRandomInt(CENTER_WORLD_X - RAYON+1000, CENTER_WORLD_X + RAYON-1000);
-                y= this.Game.getRandomInt(CENTER_WORLD_Y - RAYON+1000, CENTER_WORLD_Y + RAYON - 1000);
-            }
-                 obstacle = o.create(x, y, 'sida');
-               }
-                obstacle.body.immovable = true;
-                game.physics.enable([obstacle], Phaser.Physics.ARCADE);
-                obstacle.scale.set(WORLD_SCALE+j);
-
-                obstacle.body.setCircle(obstacle.width / 2, (-obstacle.width / 2 + 0.5 * obstacle.width / obstacle.scale.x), (-obstacle.height / 2 + 0.5 * obstacle.height / obstacle.scale.y));
+        obstacles = game.add.group();
+        obstacles.enableBody = true;
+        for (var i = 0; i < NB_OBSTACLES; i++) {
+            var obstacle = obstacles.create(this.getRandomInt(CENTER_WORLD_X - RAYON, CENTER_WORLD_X + RAYON), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'sida');
+            obstacle.body.immovable = true;
+            game.physics.enable([obstacle], Phaser.Physics.ARCADE);
+            obstacle.scale.set(WORLD_SCALE);
+            obstacle.body.setCircle(obstacle.width / 2, (-obstacle.width / 2 + 0.5 * obstacle.width / obstacle.scale.x), (-obstacle.height / 2 + 0.5 * obstacle.height / obstacle.scale.y));
         }
-            j=j+1;
-        });
-
-
     }
     , obstacleCollision: function () {
-        obstacles.forEach(function(o){
-        game.physics.arcade.collide(balloon, o, null, function () {
-            game.physics.arcade.collide(balloon, o);
+        game.physics.arcade.collide(balloon, obstacles, null, function () {
+            game.physics.arcade.collide(balloon, obstacles);
             game.camera.shake(0.002, 50);
         }, null, this);
-        });
     }
     , mockNeighborhood: function () {
 

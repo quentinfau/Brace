@@ -10,10 +10,6 @@ game.state.add('Menu', Menu);
 // Adding the Game state.
 game.state.add('Game', Game);
 
-//game.state.add('3', no_3);
-//game.state.add('2', no_2);
-//game.state.add('1', no_1);
-
 game.state.add('Game_Over', Game_Over);
 
 game.state.add('Game_Done', Game_Done);
