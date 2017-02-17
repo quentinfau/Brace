@@ -96,8 +96,11 @@ var Game = {
         cap.fixedToCamera = true;
         cap.cameraOffset.setTo(35, 40);
         
-        var style = { font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
-        textClassement = game.add.text(0, 0, "69", style);
+        var style = { font: "bold 64px Arial", fill: "#81319d", boundsAlignH: "center", boundsAlignV: "middle" };
+        textClassement = game.add.text(110, 0, "69%", style);
+        textClassement.fixedToCamera = true;
+        textClassement.cameraOffset.setTo(90, 10);
+        textClassement.setShadow(3, 3, 'rgba(228,185,240,0.7)', 2);
         
         this.generateBalloon();
         game.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
@@ -335,7 +338,7 @@ var Game = {
     , obstacleCollision: function () {
         game.physics.arcade.collide(balloon, obstacles, null, function () {
             game.physics.arcade.collide(balloon, obstacles);
-            game.camera.shake(0.02, 100);
+            game.camera.shake(0.002, 50);
         }, null, this);
     }
     , mockNeighborhood: function () {
