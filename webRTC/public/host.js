@@ -554,7 +554,7 @@ let Host = function (name) {
     var timer = setInterval(initClassement, 5000);
 
     function initClassement(){
-        if(host.god)
+        if(host.god && game.state.current == "Game")
         {
             if(host.PHSon1!= null & host.PHSon2 != null)
             {
