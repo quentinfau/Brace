@@ -16,9 +16,9 @@ const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
 
-const NB_OBSTACLES = 2000;
-const NB_MALUS = 2000;
-const NB_SWITCH_MALUS = 2000;
+const NB_OBSTACLES = 1000;
+const NB_MALUS = 1000;
+const NB_SWITCH_MALUS = 1000;
 const DEBUG = false;
 
 const UPDATE_DELAY = 20;
@@ -257,7 +257,7 @@ var Game = {
         malusGroup = game.add.group();
         malusGroup.enableBody = true;
         for (var i = 0; i < NB_MALUS; i++) {
-            var malus = malusGroup.create(this.getRandomInt(CENTER_WORLD_X - RAYON/DIVISATATOR, CENTER_WORLD_X + RAYON/DIVISATATOR), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'malus');
+            var malus = malusGroup.create(this.getRandomInt(CENTER_WORLD_X - RAYON, CENTER_WORLD_X + RAYON), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'malus');
             malus.body.immovable = true;
             game.physics.enable([malus], Phaser.Physics.ARCADE);
             malus.body.setCircle(200 / 2, (-200 / 2 + 0.5 * malus.width / malus.scale.x), (-200 / 2 + 0.5 * malus.height / malus.scale.y));
@@ -279,7 +279,7 @@ var Game = {
         switchGroup = game.add.group();
         switchGroup.enableBody = true;
         for (var i = 0; i < NB_SWITCH_MALUS; i++) {
-            var switchLR = switchGroup.create(this.getRandomInt(CENTER_WORLD_X - RAYON/DIVISATATOR, CENTER_WORLD_X + RAYON/DIVISATATOR), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'switch');
+            var switchLR = switchGroup.create(this.getRandomInt(CENTER_WORLD_X - RAYON, CENTER_WORLD_X + RAYON), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'switch');
             switchLR.body.immovable = true;
             game.physics.enable([switchLR], Phaser.Physics.ARCADE);
             switchLR.body.setCircle(200 / 2, (-200 / 2 + 0.5 * switchLR.width / switchLR.scale.x), (-200 / 2 + 0.5 * switchLR.height / switchLR.scale.y));
@@ -330,7 +330,7 @@ var Game = {
         obstacles = game.add.group();
         obstacles.enableBody = true;
         for (var i = 0; i < NB_OBSTACLES; i++) {
-            var obstacle = obstacles.create(this.getRandomInt(CENTER_WORLD_X - RAYON/DIVISATATOR, CENTER_WORLD_X + RAYON/DIVISATATOR), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'sida');
+            var obstacle = obstacles.create(this.getRandomInt(CENTER_WORLD_X - RAYON, CENTER_WORLD_X + RAYON), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'sida');
             obstacle.body.immovable = true;
             game.physics.enable([obstacle], Phaser.Physics.ARCADE);
             obstacle.scale.set(WORLD_SCALE);
