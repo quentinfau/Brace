@@ -1,6 +1,7 @@
 function connectToWebSocket(name) {
 
     socket = io.connect(location.origin);
+
     socket.emit('new_player', name);
     socket.on('welcomeMessage', function (data) {
         console.log("received message from the server : " + data.message);
@@ -14,6 +15,7 @@ function connectToWebSocket(name) {
     socket.on('nbPlayerReadyToStart', function () {
     	document.getElementById("nbPlayer").setAttribute("style","display:block");
     	document.getElementById("nbPlayerReady").textContent = "The number of players required to start the game is reached";
+    	document.getElementById("startGame").removeAttribute("disabled");
     });
     socket.on('createHost', function (user) {
         host = new Host(user);
@@ -35,7 +37,7 @@ function connectToWebSocket(name) {
        host.initPositionPlayer();
     });
     socket.on('readyToStart', function () {
-    	var fileref=document.createElement('script');
+    	let fileref=document.createElement('script');
         fileref.setAttribute("type","text/javascript");
         fileref.setAttribute("src",'assets/js/main.js');
         document.getElementsByTagName("footer")[0].appendChild(fileref);
@@ -43,7 +45,7 @@ function connectToWebSocket(name) {
     });
     socket.on('removeStart', function () {
     	document.getElementById("startGame").setAttribute("style","display:none");
-    	var fileref=document.createElement('script');
+    	let fileref=document.createElement('script');
         fileref.setAttribute("type","text/javascript");
         fileref.setAttribute("src",'counter.js');
         document.getElementsByTagName("footer")[0].appendChild(fileref);
@@ -109,13 +111,14 @@ function initHostFamily(host) {
                 })
         });
 }
+
 startGame.onclick = function () {
     console.log("socket emit startGame");
     socket.emit('startGame');
-    //window.location = "index_Brace.html";
 };
 
 setid.onclick = function () {
+    document.getElementById('setid').style.display='none';
     let name = $("#user").val();
     connectToWebSocket(name);
     $("#setid").attr('style','display:none');
