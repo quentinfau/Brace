@@ -1,4 +1,4 @@
-var balloon, speed, cursors, map, cap, apple, mapCenter, obstacles,malusGroup, switchGroup, rayon, angleDegree, updateDelay, neighborsSprites = [];
+var balloon, speed, cursors, map, cap, apple, mapCenter, obstacles,malusGroup, switchGroup, rayon, angleDegree, updateDelay, neighborsSprites = [],textClassement;
 // VARs for smartphone control
 var btnDeviceSpeedUp,btnDeviceSpeedDown,btnDeviceDirLeft,btnDeviceDirRight,deviceControlUp=false,deviceControlDown=false,deviceControlLeft=false,deviceControlRight=false;
 const WORLD_WIDTH = 400000
@@ -95,6 +95,10 @@ var Game = {
         cap.anchor.setTo(0.5, 0.5);
         cap.fixedToCamera = true;
         cap.cameraOffset.setTo(35, 40);
+        
+        var style = { font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
+        textClassement = game.add.text(0, 0, "69", style);
+        
         this.generateBalloon();
         game.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
@@ -324,8 +328,8 @@ var Game = {
             var obstacle = obstacles.create(this.getRandomInt(CENTER_WORLD_X - RAYON, CENTER_WORLD_X + RAYON), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'sida');
             obstacle.body.immovable = true;
             game.physics.enable([obstacle], Phaser.Physics.ARCADE);
-            obstacle.body.setCircle(200 / 2, (-200 / 2 + 0.5 * obstacle.width / obstacle.scale.x), (-200 / 2 + 0.5 * obstacle.height / obstacle.scale.y));
             obstacle.scale.set(WORLD_SCALE);
+            obstacle.body.setCircle(obstacle.width / 2, (-obstacle.width / 2 + 0.5 * obstacle.width / obstacle.scale.x), (-obstacle.height / 2 + 0.5 * obstacle.height / obstacle.scale.y));
         }
     }
     , obstacleCollision: function () {
