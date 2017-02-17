@@ -1,16 +1,17 @@
 var balloon, speed, cursors, map, cap, apple, mapCenter, obstacles,malusGroup, switchGroup, rayon, angleDegree, updateDelay, neighborsSprites = [],textClassement;
 // VARs for smartphone control
 var btnDeviceSpeedUp,btnDeviceSpeedDown,btnDeviceDirLeft,btnDeviceDirRight,deviceControlUp=false,deviceControlDown=false,deviceControlLeft=false,deviceControlRight=false;
-const WORLD_WIDTH = 400000
-    , WORLD_HEIGHT = 400000;
+const DIVISATATOR = 4;
+const WORLD_WIDTH = 400000/DIVISATATOR
+    , WORLD_HEIGHT = 400000/DIVISATATOR;
 const ROTATE_SPEED = 200;
-const MAX_PLAYER_SPEED = 1000
+const MAX_PLAYER_SPEED = 10
     , MIN_PLAYER_SPEED = 1;
-const INITIAL_SPEED = 634
-    , SPEED_MULTIPLICATOR = 35;
+const INITIAL_SPEED = 634/DIVISATATOR
+    , SPEED_MULTIPLICATOR = 35/DIVISATATOR;
 const ROPE_SPEED = 10;
 const  WORLD_SCALE = 0.50;
-const DIAMETER = 400000;
+const DIAMETER = 400000/DIVISATATOR;
 const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
@@ -79,7 +80,7 @@ var Game = {
         graphics.lineStyle(20, 0x00ff00, 30);
         graphics.drawCircle(map.x, map.y, map.diameter);
         graphics.lineStyle(20, 0xFF3300, 1);
-        graphics.drawCircle(map.x, map.y, 100000);
+        graphics.drawCircle(map.x, map.y, 100000/DIVISATATOR);
         graphics.drawCircle(map.x, map.y, 2000);
         graphics.lineStyle(20, 0xFFFF33, 1);
         graphics.moveTo(mapCenter.x, mapCenter.y);
@@ -256,7 +257,7 @@ var Game = {
         malusGroup = game.add.group();
         malusGroup.enableBody = true;
         for (var i = 0; i < NB_MALUS; i++) {
-            var malus = malusGroup.create(this.getRandomInt(CENTER_WORLD_X - RAYON, CENTER_WORLD_X + RAYON), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'malus');
+            var malus = malusGroup.create(this.getRandomInt(CENTER_WORLD_X - RAYON/DIVISATATOR, CENTER_WORLD_X + RAYON/DIVISATATOR), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'malus');
             malus.body.immovable = true;
             game.physics.enable([malus], Phaser.Physics.ARCADE);
             malus.body.setCircle(200 / 2, (-200 / 2 + 0.5 * malus.width / malus.scale.x), (-200 / 2 + 0.5 * malus.height / malus.scale.y));
@@ -278,7 +279,7 @@ var Game = {
         switchGroup = game.add.group();
         switchGroup.enableBody = true;
         for (var i = 0; i < NB_SWITCH_MALUS; i++) {
-            var switchLR = switchGroup.create(this.getRandomInt(CENTER_WORLD_X - RAYON, CENTER_WORLD_X + RAYON), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'switch');
+            var switchLR = switchGroup.create(this.getRandomInt(CENTER_WORLD_X - RAYON/DIVISATATOR, CENTER_WORLD_X + RAYON/DIVISATATOR), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'switch');
             switchLR.body.immovable = true;
             game.physics.enable([switchLR], Phaser.Physics.ARCADE);
             switchLR.body.setCircle(200 / 2, (-200 / 2 + 0.5 * switchLR.width / switchLR.scale.x), (-200 / 2 + 0.5 * switchLR.height / switchLR.scale.y));
@@ -294,7 +295,7 @@ var Game = {
 
     generateBalloon: function () {
 
-        balloon = game.add.sprite(player.coordonneX + 200000, player.coordonneY + 200000,player.skin);
+        balloon = game.add.sprite(player.coordonneX + 200000/DIVISATATOR, player.coordonneY + 200000/DIVISATATOR,player.skin);
 
         balloon.anchor.setTo(0.5, 0.5);
         game.physics.enable(balloon, Phaser.Physics.ARCADE);
@@ -329,7 +330,7 @@ var Game = {
         obstacles = game.add.group();
         obstacles.enableBody = true;
         for (var i = 0; i < NB_OBSTACLES; i++) {
-            var obstacle = obstacles.create(this.getRandomInt(CENTER_WORLD_X - RAYON, CENTER_WORLD_X + RAYON), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'sida');
+            var obstacle = obstacles.create(this.getRandomInt(CENTER_WORLD_X - RAYON/DIVISATATOR, CENTER_WORLD_X + RAYON/DIVISATATOR), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'sida');
             obstacle.body.immovable = true;
             game.physics.enable([obstacle], Phaser.Physics.ARCADE);
             obstacle.scale.set(WORLD_SCALE);

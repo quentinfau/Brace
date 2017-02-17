@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-
+const DIVISATATOR = 4;
 const PORT = process.env.PORT || 3000;
 
 const server = express()
@@ -14,7 +14,7 @@ let listPlayer = [];
 let listPlayerHost = [];
 const listObstacle = [];
 const nbZone = 1;
-const diametre = 400000;
+const diametre = 400000/DIVISATATOR;
 const nbPlayerByHost = 2;
 const nbJoueurMax = 8;
 let nbPlayerLeft;
@@ -235,7 +235,7 @@ function getZone(host) {
         case 2 :
             return {
                 "distanceD": 1000,
-                "distanceF": 50000,
+                "distanceF": 50000/DIVISATATOR,
                 "angleD": 0,
                 "angleF": 180
             };
@@ -243,39 +243,39 @@ function getZone(host) {
         case 3 :
             return {
                 "distanceD": 1000,
-                "distanceF": 50000,
+                "distanceF": 50000/DIVISATATOR,
                 "angleD": 180,
                 "angleF": 360
             };
             break;
         case 4 :
             return {
-                "distanceD": 50000,
-                "distanceF": 200000,
+                "distanceD": 50000/DIVISATATOR,
+                "distanceF": 200000/DIVISATATOR,
                 "angleD": 0,
                 "angleF": 90
             };
             break;
         case 5 :
             return {
-                "distanceD": 50000,
-                "distanceF": 200000,
+                "distanceD": 50000/DIVISATATOR,
+                "distanceF": 200000/DIVISATATOR,
                 "angleD": 90,
                 "angleF": 180
             };
             break;
         case 6 :
             return {
-                "distanceD": 50000,
-                "distanceF": 200000,
+                "distanceD": 50000/DIVISATATOR,
+                "distanceF": 200000/DIVISATATOR,
                 "angleD": 180,
                 "angleF": 270
             };
             break;
         case 7 :
             return {
-                "distanceD": 50000,
-                "distanceF": 200000,
+                "distanceD": 50000/DIVISATATOR,
+                "distanceF": 200000/DIVISATATOR,
                 "angleD": 270,
                 "angleF": 360
             };
