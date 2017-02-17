@@ -17,9 +17,9 @@ let Host = function (name) {
 
 
     //Classement
-    let dataL = null;
-    let dataR = null;
-    let classement = [];
+    this.dataL = null;
+    this.dataR = null;
+    this.classement = [];
 
     // Coordonnées zones :
 
@@ -93,7 +93,7 @@ let Host = function (name) {
                             if (userDatachannel != null && userDatachannel.readyState == "open") {
                                 host.getNeighbours(data.message);
 
-                                let position = host.GetClassementByPlayer(host.classement, data.user)
+                                let position = host.getClassementByPlayer(host.classement, data.user);
 
                                 const data2 = {
                                     "classement": position,
@@ -122,46 +122,39 @@ let Host = function (name) {
                             host.processConnectionSuccessfulMessage(data);
                             break;
                         case "classement" :
-                        if(e.target == host.PHSon1)
-                        {
-                            host.dataL = data.message.data;
-                        }
+                            if (e.target == host.PHSon1) {
+                                host.dataL = data.message.data;
+                            }
 
-                        if(e.target == host.PHSon2)
-                        {
-                            host.dataR = data.message.data;
-                        }
-                        let dataLR = [];
-                        if(host.dataR != null && host.dataL != null)
-                        {
-                            dataLR = host.dataL.concat(host.dataR);
-                            dataLR.sort(host.comparePlayers);
+                            if (e.target == host.PHSon2) {
+                                host.dataR = data.message.data;
+                            }
+                            let dataLR = [];
+                            if (host.dataR != null && host.dataL != null) {
+                                dataLR = host.dataL.concat(host.dataR);
+                                dataLR.sort(host.comparePlayers);
 
+                                if (host.god) {
+                                    host.classement = dataLR;
+                                    host.sendClassement(dataLR, host.PHSon1);
+                                    host.sendClassement(dataLR, host.PHSon2);
+                                }
+                                else {
+                                    let dataF = [];
+                                    if (host.getPlayersCount() != 0)
+                                        dataF.push(new Classement(host.getFirstPlayer(), host.name, host.getPlayersCount()));
+                                    if (host.getPlayersCount() != 0)
+                                        dataF.push(new Classement(host.getLastPlayer(), host.name, host.getPlayersCount()));
 
-                        let dataSend = [];
-                        if(host.god)
-                        {
-                        host.classement = dataLR;
-                        host.sendClassement(dataLR, host.PHSon1);
-                        host.sendClassement(dataLR, host.PHSon2);
-                        }
-                        else
-                        {
-                        let dataF = [];
-                          if(host.getPlayersCount() != 0)
-                             dataF.push(new Classement(host.getFirstPlayer(),host.name,host.getPlayersCount()));
-                          if(host.getPlayersCount() != 0)
-                             dataF.push(new Classement(host.getLastPlayer(),host.name,host.getPlayersCount()));
+                                    data = dataLR.concat(dataF);
+                                    data.sort(host.comparePlayers);
 
-                        data = dataLR.concat(dataF);
-                        data.sort(host.comparePlayers);
-
-                        host.sendClassement(data, host.PHFather);
-                        host.dataR = null;
-                        host.dataL = null;
-                        }
-                        }
-                        break;
+                                    host.sendClassement(data, host.PHFather);
+                                    host.dataR = null;
+                                    host.dataL = null;
+                                }
+                            }
+                            break;
                         default :
                             break;
                     }
@@ -223,37 +216,34 @@ let Host = function (name) {
                         host.sendToPlayerList(data.message.winner);
                         break;
                     case "getClassement" :
-                            let classementTransfer = [];
-                            if(host.PHSon1 != null && host.PHSon2 != null)
-                            {
-                                host.getClassement(host.PHSon1);
-                                host.getClassement(host.PHSon2);
-                                console.log("I want a classement !");
-                            }
-                            else
-                            {
-                                console.log("I have no son... :'-(");
-                                if(host.getPlayersCount() != 0)
-                                    classementTransfer.push(new Classement(host.getFirstPlayer(),host.name,host.getPlayersCount()));
-                                if(host.getPlayersCount() != 0)
-                                    classementTransfer.push(new Classement(host.getLastPlayer(),host.name,host.getPlayersCount()));
+                        let classementTransfer = [];
+                        if (host.PHSon1 != null && host.PHSon2 != null) {
+                            host.getClassement(host.PHSon1);
+                            host.getClassement(host.PHSon2);
+                            console.log("I want a classement !");
+                        }
+                        else {
+                            console.log("I have no son... :'-(");
+                            if (host.getPlayersCount() != 0)
+                                classementTransfer.push(new Classement(host.getFirstPlayer(), host.name, host.getPlayersCount()));
+                            if (host.getPlayersCount() != 0)
+                                classementTransfer.push(new Classement(host.getLastPlayer(), host.name, host.getPlayersCount()));
 
-                                // Suppression des doublons pour les cas où le premier et le dernier joueur sont le même joueur (un joueur dans la zone)
-                                var cache = {};
-                                classementTransfer = classementTransfer.filter(function(elem,index,array){
-                                    return cache[elem.player.name]?0:cache[elem.player.name]=1;
-                                });
-                                host.sendClassement(classementTransfer, host.PHFather);
-                            }
-                            break;
+                            // Suppression des doublons pour les cas où le premier et le dernier joueur sont le même joueur (un joueur dans la zone)
+                            let cache = {};
+                            classementTransfer = classementTransfer.filter(function (elem, index, array) {
+                                return cache[elem.player.name] ? 0 : cache[elem.player.name] = 1;
+                            });
+                            host.sendClassement(classementTransfer, host.PHFather);
+                        }
+                        break;
                     case "classement" :
                         host.classement = data.message.data;
-                        if(host.PHSon1 != null && host.PHSon2 != null)
-                        {
-                        host.sendClassement(data.message.data, host.PHSon1)
-                        host.sendClassement(data.message.data, host.PHSon2)
+                        if (host.PHSon1 != null && host.PHSon2 != null) {
+                            host.sendClassement(data.message.data, host.PHSon1);
+                            host.sendClassement(data.message.data, host.PHSon2)
                         }
-                    break;
+                        break;
                     default :
                 }
             }
@@ -535,28 +525,24 @@ let Host = function (name) {
         });
     };
 
-    this.getClassement = function (DataChannel)
-        {
-            const data = {
-                "type": "getClassement"
-            }
-            sendData(data, DataChannel)
-        }
-        this.sendClassement = function (data, DataChannel)
-        {
-            const post = {
-               "type": "classement",
-               "data": data
-            }
-            sendData(post, DataChannel)
-        }
-    var timer = setInterval(initClassement, 5000);
+    this.getClassement = function (DataChannel) {
+        const data = {
+            "type": "getClassement"
+        };
+        sendData(data, DataChannel)
+    };
+    this.sendClassement = function (data, DataChannel) {
+        const post = {
+            "type": "classement",
+            "data": data
+        };
+        sendData(post, DataChannel)
+    };
+    let timer = setInterval(initClassement, 5000);
 
-    function initClassement(){
-        if(host.god)
-        {
-            if(host.PHSon1!= null & host.PHSon2 != null)
-            {
+    function initClassement() {
+        if (host.god) {
+            if (host.PHSon1 != null && host.PHSon2 != null) {
                 host.getClassement(host.PHSon1);
                 host.getClassement(host.PHSon2);
                 console.log("GOD send a message")
@@ -564,99 +550,97 @@ let Host = function (name) {
         }
     }
 
-    this.getFirstPlayer = function(){
-        	let min = 250000;
-        	let first = null;
-        	for (let p of host.neighbours)
-        	{
-        		if(p.radius < min) {
-        			min = p.radius;
-        			first = p;
-        		}
-        	}
+    this.getFirstPlayer = function () {
+        let min = 250000;
+        let first = null;
+        for (let p of host.neighbours) {
+            if (p.radius < min) {
+                min = p.radius;
+                first = p;
+            }
+        }
 
-        	return first;
-        };
+        return first;
+    };
 
     this.removePlayerFromWaitingList = function (player) {
         if (host.waitingChangingHostList[0] == player) {
             host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(player));
         }
-    }
+    };
 
-        /**
-         * Récupération du dernier joueur
-         */
-        this.getLastPlayer = function(){
-        	let max = -1;
-        	let last = null;
-        	for (let p of this.neighbours)
-        	{
-        		if(p.radius > max) {
-        			max = p.radius;
-        			last = p;
-        		}
-        	}
-
-        	return last;
-        };
-
-        this.getPlayersCount = function(){
-            	return host.neighbours.length;
-            };
-
-        this.comparePlayers = function(a,b) {
-            	return a.player.radius-b.player.radius;
-            };
-
-        this.GetClassementByPlayer = function(data, playerName) {
-        	let top=null;
-        	let topClass;
-        	let bottom=null;
-        	let bottomClass;
-
-        	for (var i=0; i <= data.length-1; i++)
-        	{
-        		if(top==null && data[i].zone==host.name) {
-        			top = data[i].player.radius;
-        			topClass = i+1;
-        		}
-        		if(top!=null && data[i].zone==host.name) {
-        			bottom = data[i].player.radius;
-        			bottomClass = i+1;
-        		}
-        	}
-
-            return (this.generateClassementPlayer(topClass, bottomClass, data.length, playerName));
-        };
-
-        this.generateClassementPlayer = function(topId, bottomId, size, playerName){
-            	let ax = 1;
-            	let ay;
-            	if(topId==1) {
-            		ay=1;
-            	} else {
-                	ay = topId*100/size | 0;
-            	}
-            	let bx = host.getPlayersCount();
-            	let by = bottomId*100/size | 0;
-            	let position;
-            	//console.log("ax:" + ax + "_ay:" + ay + "_bx:" + bx + "_by:" + by);
-            	let fctA = (by-ay)/(bx-ax) | 0;
-            	let fctB = by-fctA*bx | 0;
-            	host.neighbours.sort(function(a, b){return a.radius-b.radius});
-            	for(var i=0; i <= host.neighbours.length-1; i++) {
-                    if(host.neighbours[i].name == playerName)
-                    {
-                        position = (i+1)*fctA + fctB | 0; // FONCTION AFFINE
-                    }
-            	}
-            	return position
-            };
+    /**
+     * Récupération du dernier joueur
+     */
+    this.getLastPlayer = function () {
+        let max = -1;
+        let last = null;
+        for (let p of this.neighbours) {
+            if (p.radius > max) {
+                max = p.radius;
+                last = p;
             }
+        }
 
-let Classement = function(p,z,c) {
-	this.player=p;
-	this.zone=z;
-	this.count=c;
-}
+        return last;
+    };
+
+    this.getPlayersCount = function () {
+        return host.neighbours.length;
+    };
+
+    this.comparePlayers = function (a, b) {
+        return a.player.radius - b.player.radius;
+    };
+
+    this.getClassementByPlayer = function (data, playerName) {
+        let top = null;
+        let topClass;
+        let bottom = null;
+        let bottomClass;
+
+        for (let i = 0; i <= data.length - 1; i++) {
+            if (top == null && data[i].zone == host.getName()) {
+                top = data[i].player.radius;
+                topClass = i + 1;
+            }
+            if (top != null && data[i].zone == host.getName()) {
+                bottom = data[i].player.radius;
+                bottomClass = i + 1;
+            }
+        }
+
+        return (this.generateClassementPlayer(topClass, bottomClass, data.length, playerName));
+    };
+
+    this.generateClassementPlayer = function (topId, bottomId, size, playerName) {
+        let ax = 1;
+        let ay;
+        if (topId == 1) {
+            ay = 1;
+        } else {
+            ay = topId * 100 / size | 0;
+        }
+        let bx = host.getPlayersCount();
+        let by = bottomId * 100 / size | 0;
+        let position;
+        //console.log("ax:" + ax + "_ay:" + ay + "_bx:" + bx + "_by:" + by);
+        let fctA = (by - ay) / (bx - ax) | 0;
+        let fctB = by - fctA * bx | 0;
+        host.neighbours.sort(function (a, b) {
+            return a.radius - b.radius
+        });
+        for (let i = 0; i <= host.neighbours.length - 1; i++) {
+            if (host.neighbours[i].name == playerName) {
+                position = (i + 1) * fctA + fctB | 0; // FONCTION AFFINE
+            }
+        }
+        return position
+    };
+};
+
+let Classement = function (p, z, c) {
+    this.player = p;
+    this.zone = z;
+    this.count = c;
+};
