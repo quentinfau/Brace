@@ -10,14 +10,14 @@ const INITIAL_SPEED = 634
     , SPEED_MULTIPLICATOR = 35;
 const ROPE_SPEED = 10;
 const  WORLD_SCALE = 0.50;
-const DIAMETER = 16000;
+const DIAMETER = 400000;
 const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
 
-const NB_OBSTACLES = 100;
-const NB_MALUS = 100;
-const NB_SWITCH_MALUS = 100;
+const NB_OBSTACLES = 1000;
+const NB_MALUS = 1000;
+const NB_SWITCH_MALUS = 1000;
 const DEBUG = false;
 
 const UPDATE_DELAY = 20;
@@ -29,18 +29,18 @@ var skin ;
 var Game = {
     preload: function () {
 
-    	skin = $( "#skin option:selected" ).text();;;
+    	skin = $( "#skin option:selected" ).text();
 
-    	game.load.spritesheet('Bleu', './assets/images/balloon_animated_small.png', 100, 50);
-    	game.load.spritesheet('Rouge', './assets/images/balloon_animated_small_Rouge.png', 100, 50);
-    	game.load.spritesheet('Rose', './assets/images/balloon_animated_small_Rose.png', 100, 50);
-    	game.load.spritesheet('Vert', './assets/images/balloon_animated_small_Vert.png', 100, 50);
-    	game.load.spritesheet('Jaune', './assets/images/balloon_animated_small_Jaune.png', 100, 50);
-    	game.load.spritesheet('Blanc', './assets/images/balloon_animated_small_Blanc.png', 100, 50);
-    	game.load.spritesheet('Violet', './assets/images/balloon_animated_small_Violet.png', 100, 50);
+    	game.load.spritesheet('Blue', './assets/images/balloon_animated_small.png', 100, 50);
+    	game.load.spritesheet('Red', './assets/images/balloon_animated_small_Rouge.png', 100, 50);
+    	game.load.spritesheet('Pink', './assets/images/balloon_animated_small_Rose.png', 100, 50);
+    	game.load.spritesheet('Green', './assets/images/balloon_animated_small_Vert.png', 100, 50);
+    	game.load.spritesheet('Yellow', './assets/images/balloon_animated_small_Jaune.png', 100, 50);
+    	game.load.spritesheet('White', './assets/images/balloon_animated_small_Blanc.png', 100, 50);
+    	game.load.spritesheet('Purple', './assets/images/balloon_animated_small_Violet.png', 100, 50);
     	game.load.spritesheet('Orange', './assets/images/balloon_animated_small_Orange.png', 100, 50);
-    	game.load.spritesheet('Coeur', './assets/images/balloon_animated_small_Love.png', 100, 50);
-    	game.load.spritesheet('Crane', './assets/images/balloon_animated_small_Skull.png', 100, 50);
+    	game.load.spritesheet('Love', './assets/images/balloon_animated_small_Love.png', 100, 50);
+    	game.load.spritesheet('Skull', './assets/images/balloon_animated_small_Skull.png', 100, 50);
 
 
         game.load.image('background', './assets/images/background3.png');
@@ -360,7 +360,7 @@ var Game = {
         );
     }
     , createNeighbor: function (p) {
-        var b = game.add.sprite(p.x, p.y, skin);
+        var b = game.add.sprite(p.x, p.y, p.skin);
         b.rotation = p.angle;
         b.anchor.setTo(0.5, 0.5);
         game.physics.enable(b, Phaser.Physics.ARCADE);

@@ -33,7 +33,8 @@ let Player = function (name) {
             "speed": player.speed,
             "timestamp": player.timestamp,
             "direction": player.direction,
-            "type": "position"
+            "type": "position",
+            "skin": player.skin
         };
         sendData(data, player.dataChannel);
     };
@@ -52,13 +53,14 @@ let Player = function (name) {
                 switch (data.message.type) {
                     case "voisinage" :
                         player.neighborhood = data.message.voisinage;
+                        player.rank = data.message.classement;
                         break;
                     case "initPosition" :
                         let min = data.message.angleD;
                         let max = data.message.angleF;
                         let angleStart = Math.floor(Math.random() * (max - min + 1)) + min;
                         player.angle = angleStart;
-                        player.radius = 7800;
+                        player.radius = 199800;
                         let angleRadian = angleStart * Math.PI / 180;
                         player.coordonneX = player.radius * Math.cos(angleRadian);
                         player.coordonneY = player.radius * Math.sin(angleRadian);

@@ -17,6 +17,7 @@ const nbZone = 1;
 const diametre = 400000;
 const nbPlayerByHost = 2;
 const nbJoueurMax = 8;
+let nbPlayerLeft;
 let firstPlayer = 0;
 
 io.sockets.on('connection', function (socket) {
@@ -32,13 +33,13 @@ io.sockets.on('connection', function (socket) {
         if (isUnique(name)) {
             socket.user = name;
             socketList.push(socket);
-            if(firstPlayer == 0) {
-            	socket.emit('firstPlayerStart');
-            	firstPlayer = 1;
+            if (firstPlayer == 0) {
+                socket.emit('firstPlayerStart');
+                firstPlayer = 1;
             } else {
-            	if(socketList.length == nbJoueurMax) {
-            		socketList[0].emit('nbPlayerReadyToStart');
-            	}
+                if (socketList.length == nbJoueurMax) {
+                    socketList[0].emit('nbPlayerReadyToStart');
+                }
             }
             console.log('player registered : ' + name);
         }
@@ -85,7 +86,7 @@ io.sockets.on('connection', function (socket) {
         listPlayerHost.forEach(function (playerHostName) {
             getSocketByName(playerHostName).emit("createHost", playerHostName);
         });
-
+        nbPlayerLeft = listPlayer.length;
         const hostId = listPlayerHost.length - 1;
         initHost(hostId, getSubListPlayer(hostId));
 
@@ -115,8 +116,8 @@ io.sockets.on('connection', function (socket) {
             let username_disconnected = this.user;
             removePlayerOrPlayerHost(username_disconnected);
             console.log('Client disconnected : ' + username_disconnected + ' ' + e);
-            if(socketList.length == 0) {
-            	firstPlayer = 0;
+            if (socketList.length == 0) {
+                firstPlayer = 0;
             }
         }
     });
@@ -134,9 +135,19 @@ function isUnique(name) {
 
 function getSubListPlayer(idHost) {
     const reverseId = listPlayerHost.length - idHost - 1;
-    return listPlayer.slice(reverseId * 2, reverseId * 2 + 2);
+    if (reverseId<4){
+        const nbPlayer = getPlayerLeft(4-reverseId);
+        const index = listPlayer.length - nbPlayerLeft;
+        nbPlayerLeft = nbPlayerLeft - nbPlayer;
+        return listPlayer.slice(index, index + nbPlayer );
+    }
+ return [];
 }
-
+function getPlayerLeft(a) {
+    const nb = Math.floor(nbPlayerLeft / a);
+    const nb2 = nbPlayerLeft % a;
+    return nb + nb2;
+}
 function removePlayerOrPlayerHost(username_disconnected) {
     let i = 0;
     listPlayerHost.forEach(function (playerHostName) {
@@ -224,7 +235,7 @@ function getZone(host) {
         case 2 :
             return {
                 "distanceD": 1000,
-                "distanceF": 3000,
+                "distanceF": 50000,
                 "angleD": 0,
                 "angleF": 180
             };
@@ -232,39 +243,39 @@ function getZone(host) {
         case 3 :
             return {
                 "distanceD": 1000,
-                "distanceF": 3000,
+                "distanceF": 50000,
                 "angleD": 180,
                 "angleF": 360
             };
             break;
         case 4 :
             return {
-                "distanceD": 3000,
-                "distanceF": 8000,
+                "distanceD": 50000,
+                "distanceF": 200000,
                 "angleD": 0,
                 "angleF": 90
             };
             break;
         case 5 :
             return {
-                "distanceD": 3000,
-                "distanceF": 8000,
+                "distanceD": 50000,
+                "distanceF": 200000,
                 "angleD": 90,
                 "angleF": 180
             };
             break;
         case 6 :
             return {
-                "distanceD": 3000,
-                "distanceF": 8000,
+                "distanceD": 50000,
+                "distanceF": 200000,
                 "angleD": 180,
                 "angleF": 270
             };
             break;
         case 7 :
             return {
-                "distanceD": 3000,
-                "distanceF": 8000,
+                "distanceD": 50000,
+                "distanceF": 200000,
                 "angleD": 270,
                 "angleF": 360
             };
