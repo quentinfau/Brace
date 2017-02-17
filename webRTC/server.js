@@ -136,16 +136,16 @@ function isUnique(name) {
 function getSubListPlayer(idHost) {
     const reverseId = listPlayerHost.length - idHost - 1;
     if (reverseId<4){
-        const nbPlayer = getPlayerLeft(4-reverseId);
+        const nbPlayer = getPlayerList(4-reverseId);
         const index = listPlayer.length - nbPlayerLeft;
         nbPlayerLeft = nbPlayerLeft - nbPlayer;
         return listPlayer.slice(index, index + nbPlayer );
     }
  return [];
 }
-function getPlayerLeft(a) {
-    const nb = Math.floor(nbPlayerLeft / a);
-    const nb2 = nbPlayerLeft % a;
+function getPlayerList(idHost) {
+    const nb = Math.floor(nbPlayerLeft / idHost);
+    const nb2 = nbPlayerLeft % idHost;
     return nb + nb2;
 }
 function removePlayerOrPlayerHost(username_disconnected) {
