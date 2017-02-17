@@ -625,7 +625,7 @@ let Host = function (name) {
         let bx = host.getPlayersCount();
         let by = bottomId * 100 / size | 0;
         let position;
-        //console.log("ax:" + ax + "_ay:" + ay + "_bx:" + bx + "_by:" + by);
+
         let fctA = (by - ay) / (bx - ax) | 0;
         let fctB = by - fctA * bx | 0;
         host.neighbours.sort(function (a, b) {
