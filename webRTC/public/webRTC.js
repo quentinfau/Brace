@@ -23,24 +23,15 @@ function finalizeConnection(answer) {
     let answerDesc = new RTCSessionDescription(answer);
     pcLocal.setRemoteDescription(answerDesc);
     console.log("------ PROCESSED ANSWER ------");
-    return true;
-}
-
-function sendMessage() {
-    sendData(messageTextBox.value, player.dataChannel);
-    return false
 }
 
 function sendData(data, dataChannel) {
-    if (data) {
-        if (dataChannel!=null){
-            dataChannel.send(JSON.stringify({message: data, user: player.getName()}));
-        }
-        else {
-            console.error("bug");
-        }
+    if (data && dataChannel) {
+        dataChannel.send(JSON.stringify({message: data, user: player.getName()}));
     }
-    return false
+    else {
+        console.warn("the dataChannel is null");
+    }
 }
 
 function sendNegotiation(type, sdp, sender, receiver) {
@@ -52,7 +43,7 @@ function sendNegotiation(type, sdp, sender, receiver) {
 function sendNegotiationSwitchHost(type, sdp, sender, receiver, dataChannel) {
     let json = {from: sender, to: receiver, type: type, data: sdp};
     console.log("Sending [" + sender + "] to [" + receiver + "]: " + JSON.stringify(sdp));
-    sendData(json,dataChannel);
+    sendData(json, dataChannel);
 }
 
 if (navigator.webkitGetUserMedia) {

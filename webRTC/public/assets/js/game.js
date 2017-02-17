@@ -1,4 +1,6 @@
-var balloon, speed, cursors, map, cap, apple, mapCenter, obstacles,malusGroup, switchGroup, rayon, angleDegree, updateDelay, neighborsSprites = [];
+var balloon, speed, cursors, map, cap, apple, mapCenter, obstacles,malusGroup, switchGroup, rayon, angleDegree, updateDelay, neighborsSprites = [],textClassement;
+// VARs for smartphone control
+var btnDeviceSpeedUp,btnDeviceSpeedDown,btnDeviceDirLeft,btnDeviceDirRight,deviceControlUp=false,deviceControlDown=false,deviceControlLeft=false,deviceControlRight=false;
 const WORLD_WIDTH = 400000
     , WORLD_HEIGHT = 400000;
 const ROTATE_SPEED = 200;
@@ -12,45 +14,61 @@ const DIAMETER = 16000;
 const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
-const NB_OBSTACLES = 0;
+
+const NB_OBSTACLES = 100;
 const NB_MALUS = 100;
-const NB_SWITCH_MALUS = 200;
-const DEBUG = true;
+const NB_SWITCH_MALUS = 100;
+const DEBUG = false;
+
 const UPDATE_DELAY = 20;
 var exist = false;
 var tileSprite;
 var switchLR = false;
+var skin ;
+
 var Game = {
     preload: function () {
-        game.load.spritesheet('balloon', './assets/images/balloon_animated_small.png', 100, 50);
+
+    	skin = $( "#skin option:selected" ).text();;;
+
+    	game.load.spritesheet('Bleu', './assets/images/balloon_animated_small.png', 100, 50);
+    	game.load.spritesheet('Rouge', './assets/images/balloon_animated_small_Rouge.png', 100, 50);
+    	game.load.spritesheet('Rose', './assets/images/balloon_animated_small_Rose.png', 100, 50);
+    	game.load.spritesheet('Vert', './assets/images/balloon_animated_small_Vert.png', 100, 50);
+    	game.load.spritesheet('Jaune', './assets/images/balloon_animated_small_Jaune.png', 100, 50);
+    	game.load.spritesheet('Blanc', './assets/images/balloon_animated_small_Blanc.png', 100, 50);
+    	game.load.spritesheet('Violet', './assets/images/balloon_animated_small_Violet.png', 100, 50);
+    	game.load.spritesheet('Orange', './assets/images/balloon_animated_small_Orange.png', 100, 50);
+    	game.load.spritesheet('Coeur', './assets/images/balloon_animated_small_Love.png', 100, 50);
+    	game.load.spritesheet('Crane', './assets/images/balloon_animated_small_Skull.png', 100, 50);
+
+
         game.load.image('background', './assets/images/background3.png');
         game.load.image('cap', 'assets/images/arrowCap_small.png');
         game.load.image('apple', './assets/images/apple.png');
         game.load.image('sida', './assets/images/sida.png');
-                game.load.image('malus', './assets/images/malus.png');
-                        game.load.image('switch', './assets/images/switchLR.png');
-
-
+		game.load.image('malus', './assets/images/malus.png');
+		game.load.image('switch', './assets/images/switchLR.png');
+        game.load.image('deviceSpeed', './assets/images/btn_device_speed.png');
+        game.load.image('deviceDirection', './assets/images/btn_device_direction.png');
+        
         neighborsSprites = [];
-
-
-         game.scale.maxWidth = 800;
+        
+        game.scale.maxWidth = 800;
         game.scale.maxHeight = 600;
         game.scale.width = 800;
         game.scale.height = 600;
-
-    //  Then we tell Phaser that we want it to scale up to whatever the browser can handle, but to do it proportionally
-    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    }
-    , create: function () {
-
-        if (!game.device.desktop) {
-            swipe = new Swipe(this.game);
-        }
+        
+        game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    },
+    
+    create: function () {
         this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        //this.scale.pageAlignHorizontally = true;
         this.scale.pageAlignVertically = true;
         this.scale.updateLayout(true);
+        
+        player.skin = skin;
+
         updateDelay = 0;
         speed = 1; // La vitesse du joueur
         mapCenter = new Phaser.Point(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
@@ -61,7 +79,7 @@ var Game = {
         graphics.lineStyle(20, 0x00ff00, 30);
         graphics.drawCircle(map.x, map.y, map.diameter);
         graphics.lineStyle(20, 0xFF3300, 1);
-        graphics.drawCircle(map.x, map.y, 6000);
+        graphics.drawCircle(map.x, map.y, 100000);
         graphics.drawCircle(map.x, map.y, 2000);
         graphics.lineStyle(20, 0xFFFF33, 1);
         graphics.moveTo(mapCenter.x, mapCenter.y);
@@ -76,41 +94,77 @@ var Game = {
         cap.anchor.setTo(0.5, 0.5);
         cap.fixedToCamera = true;
         cap.cameraOffset.setTo(35, 40);
+        
+        var style = { font: "bold 64px Arial", fill: "#81319d", boundsAlignH: "center", boundsAlignV: "middle" };
+        textClassement = game.add.text(110, 0, "69%", style);
+        textClassement.fixedToCamera = true;
+        textClassement.cameraOffset.setTo(90, 10);
+        textClassement.setShadow(3, 3, 'rgba(228,185,240,0.7)', 2);
+        
         this.generateBalloon();
         game.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
-//        game.camera.width = 1000;
-//        game.camera.height = 1000;
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
         apple = game.add.sprite(CENTER_WORLD_X, CENTER_WORLD_Y, 'apple');
         this.generateObstacles();
         this.generateMalus();
         this.generateSwitchMalus();
         game.physics.enable([balloon, apple, mapCenter, neighborsSprites], Phaser.Physics.ARCADE);
-        //  console.log("Angle : " + game.physics.arcade.angleBetween(mapCenter, balloon));
-    }
-    , update: function () {
-        //smartphone control : https://github.com/flogvit/phaser-swipe
+        if (!game.device.desktop) {
+        	
+        	btnDeviceSpeedUp = game.add.button(game.camera.x,game.camera.y,'deviceSpeed', null,this);
+			btnDeviceSpeedUp.fixedToCamera = true;
+			btnDeviceSpeedUp.alpha=0;
+			btnDeviceSpeedUp.events.onInputOver.add(function(){deviceControlUp=true;});
+			btnDeviceSpeedUp.events.onInputOut.add(function(){deviceControlUp=false;});
+			btnDeviceSpeedUp.events.onInputDown.add(function(){deviceControlUp=true;});
+			btnDeviceSpeedUp.events.onInputUp.add(function(){deviceControlUp=false;});
+			
+			btnDeviceSpeedDown = game.add.button(game.camera.x,game.camera.height-150,'deviceSpeed', null,this);
+			btnDeviceSpeedDown.fixedToCamera = true;
+			btnDeviceSpeedDown.alpha=0;
+			btnDeviceSpeedDown.events.onInputOver.add(function(){deviceControlDown=true;});
+			btnDeviceSpeedDown.events.onInputOut.add(function(){deviceControlDown=false;});
+			btnDeviceSpeedDown.events.onInputDown.add(function(){deviceControlDown=true;});
+			btnDeviceSpeedDown.events.onInputUp.add(function(){deviceControlDown=false;});
+			
+			btnDeviceDirLeft = game.add.button(game.camera.x,game.camera.height/2-780/2,'deviceDirection', null,this);
+			btnDeviceDirLeft.fixedToCamera = true;
+			btnDeviceDirLeft.alpha=0;
+			btnDeviceDirLeft.events.onInputOver.add(function(){deviceControlLeft=true;});
+			btnDeviceDirLeft.events.onInputOut.add(function(){deviceControlLeft=false;});
+			btnDeviceDirLeft.events.onInputDown.add(function(){deviceControlLeft=true;});
+			btnDeviceDirLeft.events.onInputUp.add(function(){deviceControlLeft=false;});
+			
+			btnDeviceDirRight = game.add.button(game.camera.width/2,game.camera.height/2-780/2,'deviceDirection', null,this);
+			btnDeviceDirRight.fixedToCamera = true;
+			btnDeviceDirRight.alpha=0;
+			btnDeviceDirRight.events.onInputOver.add(function(){deviceControlRight=true;});
+			btnDeviceDirRight.events.onInputOut.add(function(){deviceControlRight=false;});
+			btnDeviceDirRight.events.onInputDown.add(function(){deviceControlRight=true;});
+			btnDeviceDirRight.events.onInputUp.add(function(){deviceControlRight=false;});
+			
+			
+        }
+    },
+    
+    update: function () {
         this.mockNeighborhood();
         balloon.body.velocity.x = 0;
         balloon.body.velocity.y = 0;
         balloon.body.angularVelocity = 0;
         this.obstacleCollision();
-        if (!game.device.desktop) {
-            this.checkSmartphoneControl();
-        }
         this.switchMalusCollision();
-        if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+        if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) || deviceControlRight) {
             this.moveChecker();
         }
-        else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+        else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || deviceControlLeft) {
             this.moveChecker();
-
         }
-        else if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && speed <= MAX_PLAYER_SPEED) {
+        else if ((game.input.keyboard.isDown(Phaser.Keyboard.UP) || deviceControlUp) && speed <= MAX_PLAYER_SPEED) {
             speed++;
             balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
         }
-        else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN) && speed > MIN_PLAYER_SPEED) {
+        else if ((game.input.keyboard.isDown(Phaser.Keyboard.DOWN) || deviceControlDown) && speed > MIN_PLAYER_SPEED) {
             speed--;
             balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
         }
@@ -122,26 +176,19 @@ var Game = {
         this.obstacleCollision();
         this.neighborCollision();
         rayon = Math.sqrt(Math.pow(WORLD_WIDTH / 2 - balloon.body.x, 2) + Math.pow(WORLD_HEIGHT / 2 - balloon.body.y, 2));
-        //Calcul de rayon entre balloon et l'ovule
-        // console.log("Rayon : " + rayon);
-        if (balloon.angle < 0) {
-            //    console.log(360 + balloon.angle);
-        }
-        else {
-            //    console.log(balloon.angle);
-        }
+        
         this.updatePlayer();
         neighborsSprites.forEach(function (p) {
             this.Game.updateNeighborSprite(p);
         });
         updateDelay++;
         game.camera.follow(balloon, Phaser.Camera.FOLLOW_LOCKON);
-
-
-    // set our world scale as needed
-    balloon.scale.set(WORLD_SCALE);
-    apple.scale.set(WORLD_SCALE);
-    tileSprite.tileScale.set(WORLD_SCALE);
+        
+        balloon.scale.set(WORLD_SCALE);
+        apple.scale.set(WORLD_SCALE);
+        tileSprite.tileScale.set(WORLD_SCALE);
+        
+        textClassement.setText(player.rank+ "%");
 
 	    if(player.winner != null) {
         	if(player.winner == "winner") {
@@ -150,20 +197,28 @@ var Game = {
 	        	game.state.start('Game_Over');
 	        }
 	    }
-    }
-    , render: function () {
+    },
+    
+    render: function () {
         if (DEBUG == true) {
             game.debug.spriteInfo(balloon, 32, 32);
         }
-    }
-    , moveChecker: function () {
-        if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-            if(switchLR){            balloon.body.angularVelocity = ROTATE_SPEED;
-}else {balloon.body.angularVelocity = -ROTATE_SPEED;}
+    },
+    
+    moveChecker: function () {
+        if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || deviceControlLeft) {
+            if(switchLR) {
+				balloon.body.angularVelocity = ROTATE_SPEED;
+			} else {
+				balloon.body.angularVelocity = -ROTATE_SPEED;
+			}
         }
-        else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-            if(switchLR){            balloon.body.angularVelocity = -ROTATE_SPEED;
-}else {balloon.body.angularVelocity = ROTATE_SPEED;}
+        else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) || deviceControlRight) {
+            if(switchLR) {
+            	balloon.body.angularVelocity = -ROTATE_SPEED;
+            } else {
+            	balloon.body.angularVelocity = ROTATE_SPEED;
+            }
         }
     }
     , wallCollision: function () {
@@ -177,8 +232,6 @@ var Game = {
     , updatePlayer: function () {
         player.coordonneX = balloon.x;
         player.coordonneY = balloon.y;
-        // console.log("Angle :"+balloon.angle);
-        //Calcul de l'angle de balloon par rapport au vagin
 
         var angleB = game.physics.arcade.angleBetween(mapCenter, balloon) * (180 / Math.PI);
         if (angleB < 0) {
@@ -197,8 +250,9 @@ var Game = {
         player.radius = rayon;
         player.speed = speed;
         player.sendPosition();
-        //  console.log("SENT");
-    },generateMalus : function(){
+    },
+
+    generateMalus : function(){
         malusGroup = game.add.group();
         malusGroup.enableBody = true;
         for (var i = 0; i < NB_MALUS; i++) {
@@ -208,12 +262,19 @@ var Game = {
             malus.body.setCircle(200 / 2, (-200 / 2 + 0.5 * malus.width / malus.scale.x), (-200 / 2 + 0.5 * malus.height / malus.scale.y));
             malus.scale.set(WORLD_SCALE);
         }
-    },malusCollision : function(){
+    },
+
+    malusCollision : function(){
          game.physics.arcade.overlap(balloon, malusGroup, function () {
-             speed=speed/2;
+              if(this.getRandomInt(1,2)%2 == 0){
+              speed=speed/2;}else{
+                  speed = speed*2;
+              }
               balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
         }, null, this);
-    },generateSwitchMalus : function(){
+    },
+
+    generateSwitchMalus : function(){
         switchGroup = game.add.group();
         switchGroup.enableBody = true;
         for (var i = 0; i < NB_SWITCH_MALUS; i++) {
@@ -223,34 +284,35 @@ var Game = {
             switchLR.body.setCircle(200 / 2, (-200 / 2 + 0.5 * switchLR.width / switchLR.scale.x), (-200 / 2 + 0.5 * switchLR.height / switchLR.scale.y));
             switchLR.scale.set(WORLD_SCALE);
         }
-    }, switchMalusCollision : function(){
+    },
+
+    switchMalusCollision : function(){
        game.physics.arcade.overlap(balloon, switchGroup, function () {
                 switchLR = !switchLR;
         }, null, this);
-    }
-    , generateBalloon: function () {
-        var min_x, max_x, min_y, max_y;
-        max_x = CENTER_WORLD_X + RAYON - 1000;
-        min_x = CENTER_WORLD_X - RAYON;
-        min_y = CENTER_WORLD_Y - RAYON;
-        max_y = CENTER_WORLD_Y + RAYON - 1000;
-        balloon = game.add.sprite(player.coordonneX + 200000, player.coordonneY + 200000, 'balloon');
+    },
+
+    generateBalloon: function () {
+
+        balloon = game.add.sprite(player.coordonneX + 200000, player.coordonneY + 200000,player.skin);
+
         balloon.anchor.setTo(0.5, 0.5);
         game.physics.enable(balloon, Phaser.Physics.ARCADE);
         balloon.body.setCircle(50 / 2, 25, 0);
         balloon.body.collideWorldBounds = true;
         balloon.animations.add('move', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], ROPE_SPEED, true);
         balloon.animations.play('move');
-        //            console.log("balloon  x :"+balloon.x+" y : "+balloon.y);
         balloon.rotation = game.physics.arcade.angleBetween(balloon, mapCenter);
+//        var style = { font: "30px Arial", fill: "#000000" };
+//        var nameSprite = this.game.add.text(0, 0, player.name, style);
+//        nameSprite.rotation=0;
+//        balloon.addChild(nameSprite);
     }
     , getRandomInt: function (min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
     , appleCollision: function (balloon, apple) {
         game.physics.arcade.collide(balloon, apple, null, function () {
-            // Next time the snake moves, a new block will be added to its length.
-            //apple.destroy();
             neighborsSprites.forEach(function (p) {
                 p.destroy();
             });
@@ -270,14 +332,14 @@ var Game = {
             var obstacle = obstacles.create(this.getRandomInt(CENTER_WORLD_X - RAYON, CENTER_WORLD_X + RAYON), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'sida');
             obstacle.body.immovable = true;
             game.physics.enable([obstacle], Phaser.Physics.ARCADE);
-            obstacle.body.setCircle(200 / 2, (-200 / 2 + 0.5 * obstacle.width / obstacle.scale.x), (-200 / 2 + 0.5 * obstacle.height / obstacle.scale.y));
             obstacle.scale.set(WORLD_SCALE);
+            obstacle.body.setCircle(obstacle.width / 2, (-obstacle.width / 2 + 0.5 * obstacle.width / obstacle.scale.x), (-obstacle.height / 2 + 0.5 * obstacle.height / obstacle.scale.y));
         }
     }
     , obstacleCollision: function () {
         game.physics.arcade.collide(balloon, obstacles, null, function () {
             game.physics.arcade.collide(balloon, obstacles);
-            game.camera.shake(0.02, 100);
+            game.camera.shake(0.002, 50);
         }, null, this);
     }
     , mockNeighborhood: function () {
@@ -296,10 +358,9 @@ var Game = {
                 }
             }
         );
-        // console.log("Neighbors : " + player.neighborhood.length);
     }
     , createNeighbor: function (p) {
-        var b = game.add.sprite(p.x, p.y, 'balloon');
+        var b = game.add.sprite(p.x, p.y, skin);
         b.rotation = p.angle;
         b.anchor.setTo(0.5, 0.5);
         game.physics.enable(b, Phaser.Physics.ARCADE);
@@ -311,8 +372,13 @@ var Game = {
         b.name = p.name;
         b.angle = p.direction;
         b.rotation = p.angle;
+        b.scale.set(WORLD_SCALE);
         b.oldX = p.x;
         b.oldY = p.y;
+//        var style = { font: "30px Arial", fill: "#000000" };
+//        var nameSprite = this.game.add.text(0, 0, p.name, style);
+//        nameSprite.rotation=0;
+//        b.addChild(nameSprite);
 
         neighborsSprites.push(b);
         // this.updateNeighbors(p);
@@ -336,7 +402,6 @@ var Game = {
             }
         });
     }, updateNeighborSprite: function (s) {
-        // console.log(s.name+" BEFORE x="+s.x+" y="+s.y);
         s.body.velocity.x = 0;
         s.body.velocity.y = 0;
         s.body.angularVelocity = 0;
@@ -351,39 +416,5 @@ var Game = {
                 this.exist = true;
             }
         });
-    },
-
-    checkSmartphoneControl: function () {
-        var direction = this.swipe.check();
-        if (direction !== null) {
-            switch (direction.direction) {
-                case this.swipe.DIRECTION_LEFT:
-                    balloon.body.angularVelocity = -ROTATE_SPEED;
-                    break;
-                case this.swipe.DIRECTION_RIGHT:
-                    balloon.body.angularVelocity = ROTATE_SPEED;
-                    break;
-                case this.swipe.DIRECTION_UP:
-                    speed++;
-                    balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
-                    break;
-                case this.swipe.DIRECTION_DOWN:
-                    speed--;
-                    balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
-                    break;
-                case this.swipe.DIRECTION_UP_LEFT:
-                    balloon.body.angularVelocity = -ROTATE_SPEED;
-                    break;
-                case this.swipe.DIRECTION_UP_RIGHT:
-                    balloon.body.angularVelocity = ROTATE_SPEED;
-                    break;
-                case this.swipe.DIRECTION_DOWN_LEFT:
-                    balloon.body.angularVelocity = -ROTATE_SPEED;
-                    break;
-                case this.swipe.DIRECTION_DOWN_RIGHT:
-                    balloon.body.angularVelocity = ROTATE_SPEED;
-                    break;
-            }
-        }
     }
 };

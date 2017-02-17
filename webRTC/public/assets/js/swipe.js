@@ -36,7 +36,7 @@ function Swipe(game, model) {
   });
   this.game.input.onUp.add(function () {
     self.swiping = false;
-  })
+  });
 
   this.setupKeyboard();
 }
@@ -65,7 +65,7 @@ Swipe.prototype.setupKeyboard = function() {
       self.tmpDirection = self.DIRECTION_UP;
       self.tmpCallback = self.model !== null && self.model.up ? self.model.up : null;
     }
-  })
+  });
   up.onUp.add(this.keyUp, this);
 
   var down = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
@@ -90,7 +90,7 @@ Swipe.prototype.setupKeyboard = function() {
       self.tmpDirection = self.DIRECTION_DOWN;
       self.tmpCallback = self.model !== null && self.model.down ? self.model.down : null;
     }
-  })
+  });
   down.onUp.add(this.keyUp, this);
 
   var left = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
@@ -115,7 +115,7 @@ Swipe.prototype.setupKeyboard = function() {
       self.tmpDirection = self.DIRECTION_LEFT;
       self.tmpCallback = self.model !== null && self.model.left ? self.model.left : null;
     }
-  })
+  });
   left.onUp.add(this.keyUp, this);
   var right = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
   right.onDown.add(function () {
@@ -139,9 +139,9 @@ Swipe.prototype.setupKeyboard = function() {
       self.tmpDirection = self.DIRECTION_RIGHT;
       self.tmpCallback = self.model !== null && self.model.right ? self.model.right : null;
     }
-  })
+  });
   right.onUp.add(this.keyUp, this);
-}
+};
 
 Swipe.prototype.keyUp = function() {
   this.direction = this.tmpDirection;
@@ -150,7 +150,7 @@ Swipe.prototype.keyUp = function() {
     this.tmpCallback.call(this.model);
     this.tmpCallback = null;
   }
-}
+};
 
 Swipe.prototype.check = function () {
   if (this.direction !== null) {
@@ -214,7 +214,7 @@ Swipe.prototype.check = function () {
     return result;
   }
   return null;
-}
+};
 
 if (typeof exports !== 'undefined') {
   if (typeof module !== 'undefined' && module.exports) {

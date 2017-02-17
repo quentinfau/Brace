@@ -5,9 +5,8 @@ let Host = function (name) {
     this.playerList = {};
     this.waitingChangingHostList = [];
     this.name = name;
-    this.nbJoueur = 1;
-    this.indicePremierJoueur = 1;
-    this.indiceDernierJoueur = 1;
+    this.timeoutSwitchingHost = null;
+    this.timeoutOfferSent = null;
     this.PHLeftB = null;
     this.PHRightB = null;
     this.PHFather = null;
@@ -26,18 +25,9 @@ let Host = function (name) {
 
     this.distanceD = 0;
     this.distanceF = 8000;
-
     this.angleD = 0;
     this.angleF = 360;
-
     this.timestamp = new Date().getTime();
-
-    this.sendData = function (data, dataChannel) {
-        if (data && dataChannel) {
-            dataChannel.send(JSON.stringify({message: data, user: host.getName()}));
-        }
-        return false;
-    };
 
     this.getDataChannelByName = function (nameUserDatachannel) {
         let temp = null;
@@ -52,12 +42,15 @@ let Host = function (name) {
     this.createConnection = function (playerName, familyType, dataChannel) {
         return new Promise(function (resolve, reject) {
             if (playerName != null && playerName != "") {
-
                 pcLocal = new RTCPeerConnection(cfg, con);
                 pcLocal.onicecandidate = function () {
                     console.log("offerSent = " + offerSent);
                     if (pcLocal.iceGatheringState == "complete" && !offerSent) {
                         offerSent = true;
+                        host.timeoutOfferSent = setTimeout(function () {
+                            host.offerSent = false;
+                        }, 10000);
+
                         const type = {
                             'type': 'offer',
                             'familyType': familyType
@@ -72,32 +65,42 @@ let Host = function (name) {
                 };
                 dc1 = pcLocal.createDataChannel(createID(host.getName(), playerName), {reliable: true});
                 dc1.onopen = function () {
+                    if (familyType == "switchHost") {
+                        if (pcLocal.iceConnectionState == "completed") {
+                            console.log("sending to " + remote + " that the connection was successful");
+                            const data = {
+                                "type": "connectionSuccessful",
+                                "from": host.getRemote(dc1.label)
+                            };
+                            sendData(data, host.getFamilyDataChannelByName(remote));
+                        }
+                        else if (pcLocal.iceConnectionState == "failed") {
+                            console.log("sending to " + remote + " that the connection failed");
+                        }
+                    }
                     console.log('Connected');
-                    let data = {user: "system", message: "the datachannel " + dc1.label + " has been opened"};
                     offerSent = false;
+                    clearTimeout(host.timeoutOfferSent);
                     resolve(dc1);
                 };
                 dc1.onmessage = function (e) {
-                    if (e.data.charCodeAt(0) == 2) {
-                        return
-                    }
                     let data = JSON.parse(e.data);
                     switch (data.message.type) {
                         case "position" :
                             console.log("RECEIVED : " + data.message);
                             let idUserDatachannel = createID(host.getName(), data.user);
                             let userDatachannel = host.getDataChannelByName(idUserDatachannel);
-                            if (userDatachannel!=null && userDatachannel.readyState == "open") {
+                            if (userDatachannel != null && userDatachannel.readyState == "open") {
                                 host.getNeighbours(data.message);
 
                                 let position = host.GetClassementByPlayer(host.classement, data.user)
 
                                 const data2 = {
-                                    "classement": position,
+                                    "classement": 0,
                                     "voisinage": host.neighbours,
                                     "type": "voisinage"
                                 };
-                                host.sendData(data2, userDatachannel);
+                                sendData(data2, userDatachannel);
                             }
                             else {
                                 console.warn("the dataChannel " + idUserDatachannel + "is null or not in open state");
@@ -114,6 +117,9 @@ let Host = function (name) {
                             break;
                         case "answer" :
                             host.processAnswerMessage(data);
+                            break;
+                        case "connectionSuccessful" :
+                            host.processConnectionSuccessfulMessage(data);
                             break;
                         case "classement" :
                         if(e.target == host.PHSon1)
@@ -195,7 +201,6 @@ let Host = function (name) {
                 }
                 console.log('Connected');
                 answerSent = false;
-                console.log("DONE");
             };
             dc2.onmessage = function (e) {
                 let data = JSON.parse(e.data);
@@ -208,6 +213,9 @@ let Host = function (name) {
                         break;
                     case "answer" :
                         host.processAnswerMessage(data);
+                        break;
+                    case "connectionSuccessful" :
+                        host.processConnectionSuccessfulMessage(data);
                         break;
                     case "finishGame" :
                         host.endGame(host.PHSon1);
@@ -295,14 +303,6 @@ let Host = function (name) {
         this.dataChannels.splice(this.dataChannels.indexOf(dataChannel), 1);
     };
 
-    this.addPlayerList = function (player1) {
-        this.playerList.push(player1);
-    };
-
-    this.removePlayerList = function (player1) {
-        this.playerList.splice(player1);
-    };
-
     this.setPHRightB = function (PHRightB) {
         this.PHRightB = PHRightB;
     };
@@ -352,11 +352,6 @@ let Host = function (name) {
         this.angleF = angle2;
     };
 
-    this.getZone = function () {
-        return this.zone;
-    };
-
-
     this.getFamilyDataChannelByName = function (name) {
         let dataChannel;
         if (host.getPHFather() != null && host.getRemote(host.getPHFather().label) == name) {
@@ -387,6 +382,7 @@ let Host = function (name) {
     this.switchToHost = function (newHostDataChannel, player, familyType) {
         console.log("switching host of " + player + " to " + familyType);
         host.waitingChangingHostList.push(player);
+        host.timeoutSwitchingHost = setTimeout(host.removePlayerFromWaitingList, 10000, player);
         const data = {
             "type": "connection",
             "player": player,
@@ -394,7 +390,6 @@ let Host = function (name) {
             "host": host.getName()
         };
         sendData(data, newHostDataChannel);
-        return false
     };
 
     this.verifSwitchHost = function (angle1, distance1, player) {
@@ -440,10 +435,6 @@ let Host = function (name) {
             console.log("left");
             host.switchToHost(host.PHLeftB, player, "PHLeftB");
         }
-        /*  else if (angle1 < host.angleD) {
-         console.log("right");
-         host.switchToHost(host.PHRightB, player, "PHRightB");
-         }*/
     };
 
     this.getNeighbours = function (dataMessage) {
@@ -480,26 +471,35 @@ let Host = function (name) {
                 "angleF": host.angleF,
                 "type": "initPosition"
             };
-            host.sendData(data, dataChannel);
+            sendData(data, dataChannel);
         });
     };
 
     this.processOfferMessage = function (data) {
         sendData(data.message, host.getDataChannelByName(createID(host.getName(), data.message.to)));
     };
+
     this.processAnswerMessage = function (data) {
         if (data.message.to != host.getName()) {
             sendData(data.message, host.getFamilyDataChannelByName(data.message.to));
-            host.removeDataChannel(host.getDataChannelByName(createID(host.getName(), data.message.from)));
-            host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(data.message.from));
             host.neighbours.splice(host.neighbours.indexOf(data.message.from));
             offerSent = false;
+            clearTimeout(host.timeoutOfferSent);
         }
         else {
+            remote = data.user;
             finalizeConnection(data.message.data);
             offerSent = false;
+            clearTimeout(host.timeoutOfferSent);
         }
     };
+
+    this.processConnectionSuccessfulMessage = function (data) {
+        host.removeDataChannel(host.getDataChannelByName(createID(host.getName(), data.message.from)));
+        host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(data.message.from));
+        clearTimeout(host.timeoutSwitchingHost);
+    };
+
     this.processConnectionMessage = function (data) {
         if (!host.god) {
             host.createConnection(data.message.player, "switchHost", host.getFamilyDataChannelByName(data.message.host))
@@ -509,12 +509,11 @@ let Host = function (name) {
                 });
         }
         else {
-            //data.message.player won the game
             console.log(data.message.player + " won the game");
             host.endGame(host.PHSon1, data.message.player);
             host.endGame(host.PHSon2, data.message.player);
         }
-    }
+    };
 
     this.endGame = function (PHSon, winner) {
         const data = {
@@ -522,9 +521,9 @@ let Host = function (name) {
             "type": "finishGame"
         };
         if (PHSon != null) {
-            host.sendData(data, PHSon);
+            sendData(data, PHSon);
         }
-    }
+    };
 
     this.sendToPlayerList = function (winner) {
         host.dataChannels.forEach(function (dataChannel) {
@@ -532,8 +531,9 @@ let Host = function (name) {
                 "winner": winner,
                 "type": "finishGame"
             };
-            host.sendData(data, dataChannel);
+            sendData(data, dataChannel);
         });
+    };
     }
 
     this.getClassement = function (DataChannel)
@@ -579,6 +579,12 @@ let Host = function (name) {
         	return first;
         };
 
+    this.removePlayerFromWaitingList = function (player) {
+        if (host.waitingChangingHostList[0] == player) {
+            host.waitingChangingHostList.splice(host.waitingChangingHostList.indexOf(player));
+        }
+    }
+};
         /**
          * Récupération du dernier joueur
          */

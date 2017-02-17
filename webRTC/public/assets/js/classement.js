@@ -213,7 +213,7 @@ let Zone = function(nameZone,god) {
     	let display = this.name + "=from:" + this.getFirstPlayer().id + "_to:" + this.getLastPlayer().id + "_count:" + this.getPlayersCount();
     	console.log(display);
     };
-}
+};
 
 let Player = function(namePlayer,zone,position) {
 	this.id = namePlayer;
@@ -230,13 +230,13 @@ let Player = function(namePlayer,zone,position) {
 		console.log(display);
 		//sconsole.log("----------");
     };
-}
+};
 
 let Classement = function(p,z,c) {
 	this.player=p;
 	this.zone=z;
 	this.count=c;
-}
+};
 
 let d = function(o) {
 	let l="----------------------";
