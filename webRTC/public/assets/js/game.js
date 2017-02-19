@@ -395,7 +395,7 @@ var Game = {
     , neighborCollision: function () {
         game.physics.arcade.collide(balloon, neighborsSprites, null, function () {
             game.physics.arcade.collide(balloon, neighborsSprites);
-            game.camera.shake(0.02, 100);
+            game.camera.shake(0.002, 70);
         }, null, this);
     }
     , updateNeighbors: function (p) {
