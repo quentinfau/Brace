@@ -113,32 +113,40 @@ var Game = {
         if (!game.device.desktop) {
         	
         	btnDeviceSpeedUp = game.add.button(game.camera.x,game.camera.y,'deviceSpeed', null,this);
+        	btnDeviceSpeedUp.width = game.camera.width;
+        	btnDeviceSpeedUp.height = game.camera.height/4;
 			btnDeviceSpeedUp.fixedToCamera = true;
-			btnDeviceSpeedUp.alpha=0;
+			btnDeviceSpeedUp.alpha=0.5;
 			btnDeviceSpeedUp.events.onInputOver.add(function(){deviceControlUp=true;});
 			btnDeviceSpeedUp.events.onInputOut.add(function(){deviceControlUp=false;});
 			btnDeviceSpeedUp.events.onInputDown.add(function(){deviceControlUp=true;});
 			btnDeviceSpeedUp.events.onInputUp.add(function(){deviceControlUp=false;});
 			
-			btnDeviceSpeedDown = game.add.button(game.camera.x,game.camera.height-150,'deviceSpeed', null,this);
+			btnDeviceSpeedDown = game.add.button(game.camera.x,game.camera.height-game.camera.height/4,'deviceSpeed', null,this);
+			btnDeviceSpeedDown.width=game.camera.width;
+			btnDeviceSpeedDown.height=game.camera.height/4;
 			btnDeviceSpeedDown.fixedToCamera = true;
-			btnDeviceSpeedDown.alpha=0;
+			btnDeviceSpeedDown.alpha=0.5;
 			btnDeviceSpeedDown.events.onInputOver.add(function(){deviceControlDown=true;});
 			btnDeviceSpeedDown.events.onInputOut.add(function(){deviceControlDown=false;});
 			btnDeviceSpeedDown.events.onInputDown.add(function(){deviceControlDown=true;});
 			btnDeviceSpeedDown.events.onInputUp.add(function(){deviceControlDown=false;});
 			
-			btnDeviceDirLeft = game.add.button(game.camera.x,game.camera.height/2-780/2,'deviceDirection', null,this);
+			btnDeviceDirLeft = game.add.button(game.camera.x,game.camera.height/4,'deviceDirection', null,this);
+			btnDeviceDirLeft.width=game.camera.width/2;
+			btnDeviceDirLeft.height=game.camera.height/2;
 			btnDeviceDirLeft.fixedToCamera = true;
-			btnDeviceDirLeft.alpha=0;
+			btnDeviceDirLeft.alpha=0.7;
 			btnDeviceDirLeft.events.onInputOver.add(function(){deviceControlLeft=true;});
 			btnDeviceDirLeft.events.onInputOut.add(function(){deviceControlLeft=false;});
 			btnDeviceDirLeft.events.onInputDown.add(function(){deviceControlLeft=true;});
 			btnDeviceDirLeft.events.onInputUp.add(function(){deviceControlLeft=false;});
 			
-			btnDeviceDirRight = game.add.button(game.camera.width/2,game.camera.height/2-780/2,'deviceDirection', null,this);
+			btnDeviceDirRight = game.add.button(game.camera.width/2,game.camera.height/4,'deviceDirection', null,this);
+			btnDeviceDirRight.width=game.camera.width/2;
+			btnDeviceDirRight.height=game.camera.height/2;
 			btnDeviceDirRight.fixedToCamera = true;
-			btnDeviceDirRight.alpha=0;
+			btnDeviceDirRight.alpha=0.7;
 			btnDeviceDirRight.events.onInputOver.add(function(){deviceControlRight=true;});
 			btnDeviceDirRight.events.onInputOut.add(function(){deviceControlRight=false;});
 			btnDeviceDirRight.events.onInputDown.add(function(){deviceControlRight=true;});
