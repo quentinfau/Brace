@@ -15,7 +15,7 @@ const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
 
-const NB_OBSTACLES = 1000;
+const NB_OBSTACLES = 5000;
 const NB_MALUS = 0;
 const NB_SWITCH_MALUS = 0;
 const DEBUG = true;
@@ -152,58 +152,10 @@ var Game = {
 			btnDeviceDirRight.events.onInputUp.add(function(){deviceControlRight=false;});
 			
         }
-        
-/*if (game.device.desktop) {
-	
-	smartphoneControlGroup = game.add.group();
-        	
-			btnDeviceSpeedUp = new Phaser.Rectangle(game.camera.x,game.camera.y,game.camera.width,game.camera.height/4);
-			btnDeviceSpeedUp.fixedToCamera = true;
-//			btnDeviceSpeedUp.alpha=0.5;
-//			btnDeviceSpeedUp.events.onInputOver.add(function(){deviceControlUp=true;});
-//			btnDeviceSpeedUp.events.onInputOut.add(function(){deviceControlUp=false;});
-//			btnDeviceSpeedUp.events.onInputDown.add(function(){deviceControlUp=true;});
-//			btnDeviceSpeedUp.events.onInputUp.add(function(){deviceControlUp=false;});
-
-
-			btnDeviceSpeedUp = new Phaser.Rectangle(game.camera.x,game.camera.y,game.camera.width,game.camera.height/4);
-			btnDeviceSpeedDown = new Phaser.Rectangle(0,game.camera.height-game.camera.height/4,game.camera.width,game.camera.height/4);
-			btnDeviceDirLeft = new Phaser.Rectangle(0,game.camera.height/2,game.camera.width/2,game.camera.height/2);
-			btnDeviceDirRight = new Phaser.Rectangle(game.camera.width/2,game.camera.height/2,game.camera.width/2,game.camera.height/2);
-			
-			
-			
-			//btnDeviceSpeedDown.fixedToCamera = true;
-//			btnDeviceSpeedDown.alpha=0.5;
-//			btnDeviceSpeedDown.events.onInputOver.add(function(){deviceControlDown=true;});
-//			btnDeviceSpeedDown.events.onInputOut.add(function(){deviceControlDown=false;});
-//			btnDeviceSpeedDown.events.onInputDown.add(function(){deviceControlDown=true;});
-//			btnDeviceSpeedDown.events.onInputUp.add(function(){deviceControlDown=false;});
-			
-			//btnDeviceDirLeft = new Phaser.Rectangle(0,game.camera.height/2,game.camera.width/2,game.camera.height/2);
-			//btnDeviceDirLeft.fixedToCamera = true;
-			//btnDeviceDirLeft.alpha=0.7;
-//			btnDeviceDirLeft.events.onInputOver.add(function(){deviceControlLeft=true;});
-//			btnDeviceDirLeft.events.onInputOut.add(function(){deviceControlLeft=false;});
-//			btnDeviceDirLeft.events.onInputDown.add(function(){deviceControlLeft=true;});
-//			btnDeviceDirLeft.events.onInputUp.add(function(){deviceControlLeft=false;});
-//			
-			//btnDeviceDirRight = new Phaser.Rectangle(game.camera.width/2,game.camera.height/2,game.camera.width/2,game.camera.height/2);
-			//btnDeviceDirRight.fixedToCamera = true;
-//			btnDeviceDirRight.alpha=0.7;
-//			btnDeviceDirRight.events.onInputOver.add(function(){deviceControlRight=true;});
-//			btnDeviceDirRight.events.onInputOut.add(function(){deviceControlRight=false;});
-//			btnDeviceDirRight.events.onInputDown.add(function(){deviceControlRight=true;});
-//			btnDeviceDirRight.events.onInputUp.add(function(){deviceControlRight=false;});
-			
-			//smartphoneControlGroup.add(btnDeviceSpeedUp);
-			
-			game.world.bringToTop(smartphoneControlGroup);
-			
-        }*/
     },
     
     update: function () {
+    	//obstacles.forEach(this.improveObstaclesDisplaying);
         //this.mockNeighborhood();
         balloon.body.velocity.x = 0;
         balloon.body.velocity.y = 0;
@@ -263,6 +215,37 @@ var Game = {
         	//game.debug.geom(btnDeviceDirLeft,'#A4408D');
         	//game.debug.geom(btnDeviceDirRight,'#40A475');
         }
+    },
+    
+    improveObstaclesDisplaying: function(o){
+    	var minx=game.camera.x-100;
+    	var maxx=minx + game.camera.width+100;
+    	var miny=game.camera.y-100;
+    	var maxy= miny + game.camera.height+100;
+    	//console.log(minx + ":" + maxx + ":" + miny + ":" + maxy);
+    	
+    	if(o.alive) {
+    		if(o.x < minx || o.x > maxx || o.y < miny || o.y > maxy) {
+    			o.kill();
+        		//console.log("killed");
+    		}
+    	} else {
+    		if(o.x >= minx && o.x <= maxx && o.y >= miny && o.y <= maxy){
+    			//console.log("reset at (" + o.x + ";" + o.y + ")");
+    			o.reset(o.x,o.y);
+    		}
+    	}
+   
+    	if(o.x < minx
+    			|| o.x > maxx
+    			|| o.y < miny
+    			|| o.y > maxy) {
+    		o.kill();
+    		console.log("killed");
+    	} else {
+    		o.reset(o.x,o.y);
+    		console.log("reset");
+    	}
     },
     
     moveChecker: function () {
