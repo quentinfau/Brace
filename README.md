@@ -4,7 +4,7 @@
 
 ### Prérequis
 
-* Installation de NodeJS
+* Installation de [NodeJS](https://nodejs.org/en/) (Le projet a été réalisé avec la version 7.7.3)
 * Récupération du fichier zip
 
 ### Procédure d'installation
