@@ -1,11 +1,11 @@
 var balloon, speed, cursors, map, cap, apple, mapCenter, obstacles,malusGroup, switchGroup, rayon, angleDegree, updateDelay, neighborsSprites = [],textClassement;
 // VARs for smartphone control
 var btnDeviceSpeedUp,btnDeviceSpeedDown,btnDeviceDirLeft,btnDeviceDirRight,deviceControlUp=false,deviceControlDown=false,deviceControlLeft=false,deviceControlRight=false;
-const DIVISATATOR = 4;
+const DIVISATATOR = 8;
 const WORLD_WIDTH = 400000/DIVISATATOR
     , WORLD_HEIGHT = 400000/DIVISATATOR;
-const ROTATE_SPEED = 200;
-const MAX_PLAYER_SPEED = 10
+const ROTATE_SPEED = 250;
+const MAX_PLAYER_SPEED = 120
     , MIN_PLAYER_SPEED = 1;
 const INITIAL_SPEED = 634/DIVISATATOR
     , SPEED_MULTIPLICATOR = 35/DIVISATATOR;
@@ -16,9 +16,9 @@ const CENTER_WORLD_X = WORLD_WIDTH / 2;
 const CENTER_WORLD_Y = WORLD_HEIGHT / 2;
 const RAYON = DIAMETER / 2;
 
-const NB_OBSTACLES = 1000;
-const NB_MALUS = 1000;
-const NB_SWITCH_MALUS = 1000;
+const NB_OBSTACLES = 8000;
+const NB_MALUS = 700;
+const NB_SWITCH_MALUS = 700;
 const DEBUG = false;
 
 const UPDATE_DELAY = 20;
@@ -170,11 +170,14 @@ var Game = {
             this.moveChecker();
         }
         else if ((game.input.keyboard.isDown(Phaser.Keyboard.UP) || deviceControlUp) && speed <= MAX_PLAYER_SPEED) {
-            speed++;
+            speed = speed+3;
             balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
         }
         else if ((game.input.keyboard.isDown(Phaser.Keyboard.DOWN) || deviceControlDown) && speed > MIN_PLAYER_SPEED) {
-            speed--;
+            speed = speed-6;
+            if(speed < MIN_PLAYER_SPEED) {
+            	speed = MIN_PLAYER_SPEED;
+            }
             balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
         }
         this.malusCollision();
@@ -276,7 +279,7 @@ var Game = {
     malusCollision : function(){
          game.physics.arcade.overlap(balloon, malusGroup, function () {
               if(this.getRandomInt(1,2)%2 == 0){
-              speed=speed/2;}else{
+              speed=speed/2;}else if(speed*2 <= MAX_PLAYER_SPEED*4){
                   speed = speed*2;
               }
               balloon.animations.currentAnim.speed = ROPE_SPEED * speed;
@@ -335,20 +338,24 @@ var Game = {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
     , generateObstacles: function () {
-        obstacles = game.add.group();
-        obstacles.enableBody = true;
-        for (var i = 0; i < NB_OBSTACLES; i++) {
-            var obstacle = obstacles.create(this.getRandomInt(CENTER_WORLD_X - RAYON, CENTER_WORLD_X + RAYON), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'sida');
-            obstacle.body.immovable = true;
+    	var sprites = game.add.spriteBatch();
+        obstacles = [];
+        for (var i = 0; i < NB_OBSTACLES; i++)
+        {
+            var obstacle = game.make.sprite(this.getRandomInt(CENTER_WORLD_X - RAYON, CENTER_WORLD_X + RAYON), this.getRandomInt(CENTER_WORLD_Y - RAYON, CENTER_WORLD_Y + RAYON), 'sida');
+            obstacle.anchor.set(0.5);
             game.physics.enable([obstacle], Phaser.Physics.ARCADE);
+            obstacle.body.immovable = true;
             obstacle.scale.set(WORLD_SCALE);
             obstacle.body.setCircle(obstacle.width / 2, (-obstacle.width / 2 + 0.5 * obstacle.width / obstacle.scale.x), (-obstacle.height / 2 + 0.5 * obstacle.height / obstacle.scale.y));
+            sprites.addChild(obstacle);
+            obstacles.push(obstacle);
         }
     }
     , obstacleCollision: function () {
         game.physics.arcade.collide(balloon, obstacles, null, function () {
             game.physics.arcade.collide(balloon, obstacles);
-            game.camera.shake(0.002, 50);
+            //game.camera.shake(0.002, 50);
         }, null, this);
     }
     , mockNeighborhood: function () {
